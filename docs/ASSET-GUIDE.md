@@ -4,7 +4,7 @@ This document describes the artwork behind the DikaOfc GitHub profile README: wh
 
 ## Concept and art direction
 
-The profile is a small digital identity lab: a near-black studio, one signature ice-blue light, engineered metallic forms, and precise technical metadata. The centerpiece is an original 3D scene with a geometric **D** monogram and an extruded **DIKAOFC** wordmark. The animated hero is pre-rendered, because GitHub Markdown cannot run JavaScript, Three.js, or WebGL.
+The profile is a small digital identity lab: a near-black studio, one signature ice-blue light, engineered metallic forms, and precise technical metadata. The centerpiece is an original 3D scene with a geometric **D** monogram and an extruded **DIKAOFC** wordmark. Around it, three animated editorial panels carry the identity story: a scanned portrait, a capability map, and a contact gate. Every animation is pre-rendered, because GitHub Markdown cannot run JavaScript, Three.js, or WebGL.
 
 | Token          | Value     | Use                          |
 | -------------- | --------- | ---------------------------- |
@@ -21,13 +21,18 @@ Typography: **Archivo Black** for the 3D wordmark, **JetBrains Mono** for metada
 
 | File                              | Size    | Dimensions | Used in README | Purpose                                                                 |
 | --------------------------------- | ------- | ---------- | -------------- | ----------------------------------------------------------------------- |
-| `assets/dikaofc-hero.gif`         | 1.73 MB | 1440 × 540 | yes            | Animated 3D hero, 48 frames, 15 fps, 3.2 s seamless loop                |
-| `assets/dikaofc-hero.png`         | 397 KB  | 1440 × 540 | linked         | Static poster, identical to frame 0 of the GIF                          |
-| `assets/dikaofc-og.png`           | 392 KB  | 1200 × 630 | no             | Open Graph / social preview for ObitoGlory or posts                     |
-| `assets/dikaofc-avatar.png`       | 418 KB  | 1024 × 1024| no             | Optional GitHub avatar (monogram, dark studio)                          |
+| `assets/dikaofc-hero.gif`         | 4.3 MB  | 1200 × 450 | yes            | Animated 3D hero, 90 frames, 15 fps, 6 s seamless loop                  |
+| `assets/dikaofc-hero.png`         | 458 KB  | 1440 × 540 | linked         | Full-resolution static hero poster                                      |
+| `assets/dikaofc-og.png`           | 454 KB  | 1200 × 630 | no             | Open Graph / social preview for ObitoGlory or posts                     |
+| `assets/dikaofc-avatar.png`       | 466 KB  | 1024 × 1024 | no             | Optional GitHub avatar (monogram, dark studio)                          |
 | `assets/dikaofc-mark.svg`         | 2 KB    | 512 × 512  | no             | Scalable monogram / favicon / small mark                                |
-| `assets/dikaofc-identity.png`     | 489 KB  | 960 × 600  | yes            | Editorial identity panel with the intentionally obscured portrait       |
+| `assets/dikaofc-identity.gif`     | 2.0 MB  | 800 × 500  | yes            | Animated identity scan panel, 48 frames, 12 fps, 4 s loop               |
+| `assets/dikaofc-identity.png`     | 489 KB  | 960 × 600  | linked         | Static identity fallback with the obscured portrait                     |
 | `assets/dikaofc-identity.svg`     | 3 KB    | 960 × 600  | no             | Editable source for the identity panel                                  |
+| `assets/dikaofc-focus.gif`        | 1.9 MB  | 1200 × 440 | yes            | Animated capability map, 72 frames, 15 fps, 4.8 s loop                  |
+| `assets/dikaofc-focus.png`        | 250 KB  | 1200 × 440 | linked         | Static capability map fallback                                          |
+| `assets/dikaofc-contact.gif`      | 730 KB  | 1200 × 260 | yes            | Animated contact gate, 48 frames, 12 fps, 4 s loop                      |
+| `assets/dikaofc-contact.png`      | 132 KB  | 1200 × 260 | no             | Static contact banner fallback                                          |
 | `assets/dikaofc-projects.png`     | 143 KB  | 1200 × 350 | no             | Optional project schematic (removed from README; kept as an asset)      |
 | `assets/dikaofc-projects.svg`     | 4 KB    | 1200 × 350 | no             | Editable source for the optional project schematic                      |
 | `assets/dikaofc-hero.svg`         | 4 KB    | 1200 × 630 | no             | Alternate flat hero poster kept as an earlier design study              |
@@ -47,22 +52,27 @@ Requirements:
 Commands:
 
 ```sh
-npm run render:assets     # 3D hero, GIF, hero poster, OG still, avatar, identity and project panels
-npm run optimize:assets   # recompress the GIF / print the asset inventory
+npm run render:assets     # hero, posters, identity, capability map, contact gate, GIFs
+SKIP_HERO=1 npm run render:assets  # panels only; reuse the committed 3D hero assets
+npm run optimize:assets   # recompress the hero GIF / print the asset inventory
 npm run check:links       # verify README assets and external links
 ```
 
-`render:assets` opens `scripts/hero-scene.html` in headless Chromium. The scene is built with Three.js r180, using PBR materials, PMREM environment lighting, a shadow catcher, and a restrained camera move. Chromium renders with SwiftShader software WebGL in this environment; no Blender or GPU renderer was available here. The committed assets are the output of this pipeline, so a reader never needs to run it.
+`render:assets` opens four scenes in headless Chromium: `scripts/hero-scene.html` (Three.js), `scripts/identity-scene.html` (inline SVG plus overlays), `scripts/focus-scene.html` (canvas), and `scripts/cta-scene.html` (canvas). The hero uses Three.js r180 with PBR materials, a PMREM environment, a shadow catcher, and a deliberately slow camera orbit. Chromium renders with SwiftShader software WebGL in this environment; no Blender or GPU renderer was available here. The committed assets are the output of this pipeline, so a reader never needs to run it.
+
+On a memory-constrained machine the 3D hero can exhaust Chromium's memory. `SKIP_HERO=1` skips the WebGL scenes and the hero GIF encode while still regenerating the animated editorial panels; the committed hero files are already in `assets/`.
 
 Intermediate frames are written to a temporary directory and are not committed. Set `KEEP_RENDERS=1` if you want to inspect them.
 
 ### Animation notes
 
-- 48 frames at 15 fps, 3.2 seconds per loop.
-- All motion is periodic with the loop: slow camera drift, a small monogram rotation, a soft light sweep, and a moving radial glow.
-- No flashing, no rapid brightness changes, no particle storm.
-- Frame 0 is the static poster, so the README still reads correctly when animation is disabled.
-- The GIF is optimized with `gifsicle -O3 --lossy=15`. A typical run encodes to an intermediate ffmpeg GIF of about 2.7 MB and lands around 1.7 MB after optimization (roughly a third smaller). An animated WebP was also tested (≈ 808 KB), but GIF was kept for the widest compatibility. If a smaller file is needed later, test the WebP version on GitHub before switching.
+- **Hero:** 90 frames at 15 fps, 6 seconds per loop. The camera orbits and dollies, the **D** rotates to reveal its extrusion, each **DIKAOFC** letter floats at its own depth, and orbital rings, satellites, floor reflections, dust, and HUD telemetry keep moving. All motion is periodic, so the loop is seamless. The GIF is encoded at 1200 × 450, 160 colors, Bayer-5 dither, and `gifsicle --lossy=30`; the static poster is rendered at 1440 × 540.
+- **Identity panel:** 48 frames at 12 fps, 4 seconds. A scanner bar crosses the portrait, a thin scanline crosses the panel, a sheen passes over the text, status dots pulse, and the scan/signal ticker updates. Encoded at 800 × 500, 96 colors, Bayer-5, `--lossy=35`.
+- **Capability map:** 72 frames at 15 fps, 4.8 seconds. Five cards bob independently, scan bands cross them, reticles rotate, and data pulses travel along the bus. Encoded at 1200 × 440, 128 colors, Bayer-5, `--lossy=30`.
+- **Contact gate:** 48 frames at 12 fps, 4 seconds. The portal rings counter-rotate, satellites orbit, the core breathes, and a sheen crosses the display type. Encoded at 1200 × 260, 128 colors, Bayer-5, `--lossy=30`.
+- No flashing, no rapid brightness changes, no particle storm. The face in the portrait is obscured by choice.
+- Static fallbacks: `dikaofc-hero.png`, `dikaofc-identity.png`, `dikaofc-focus.png`, and `dikaofc-contact.png`. The README links the first three; the contact section keeps its real HTML links below the animated banner.
+- The four animated panels total roughly 9 MB (hero 4.3 MB, identity 2.0 MB, capability map 1.9 MB, contact gate 730 KB). Below-the-fold panels use `loading="lazy"` where GitHub preserves the attribute. If a smaller payload is needed, reduce the hero's color count or resolution first; test the result on GitHub before switching formats.
 
 ## Link audit
 

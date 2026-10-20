@@ -10,7 +10,12 @@ const files = [
   'dikaofc-hero.png',
   'dikaofc-og.png',
   'dikaofc-avatar.png',
+  'dikaofc-identity.gif',
   'dikaofc-identity.png',
+  'dikaofc-focus.gif',
+  'dikaofc-focus.png',
+  'dikaofc-contact.gif',
+  'dikaofc-contact.png',
   'dikaofc-projects.png',
   'dikaofc-mark.svg',
 ];

@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=960, initial-scale=1">
+<title>DikaOfc animated identity panel</title>
+<style>
+  @font-face {
+    font-family: 'JBMono';
+    src: url('/scripts/fonts/JetBrainsMono.ttf') format('truetype');
+    font-weight: 100 800;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; width: 960px; height: 600px; overflow: hidden; background: #07090c; }
+  #panel { position: relative; width: 960px; height: 600px; overflow: hidden; background: #07090c; }
+  #panel > svg { display: block; width: 960px; height: 600px; }
+  .scan {
+    position: absolute;
+    left: 54px;
+    top: 54px;
+    width: 500px;
+    height: 500px;
+    overflow: hidden;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .scan .bar {
+    position: absolute;
+    left: -30px;
+    right: -30px;
+    top: 0;
+    height: 120px;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(142, 220, 240, 0.10) 30%,
+      rgba(142, 220, 240, 0.34) 48%,
+      rgba(234, 241, 245, 0.30) 50%,
+      rgba(142, 220, 240, 0.20) 54%,
+      transparent 100%);
+    filter: blur(0.4px);
+    will-change: transform;
+  }
+  .scan .noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0.18;
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(142, 220, 240, 0.22) 0px,
+      rgba(142, 220, 240, 0.22) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+    mix-blend-mode: screen;
+    will-change: transform;
+  }
+  .line {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(142, 220, 240, 0.55), transparent);
+    opacity: 0.55;
+    will-change: transform;
+  }
+  .sheen {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    width: 250px;
+    height: 800px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(142, 220, 240, 0.05) 32%,
+      rgba(142, 220, 240, 0.16) 50%,
+      rgba(142, 220, 240, 0.05) 68%,
+      transparent 100%);
+    transform: rotate(18deg);
+    mix-blend-mode: screen;
+    filter: blur(2px);
+    will-change: transform, opacity;
+  }
+  .dot {
+    position: absolute;
+    left: 594px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #8edcf0;
+    box-shadow: 0 0 10px rgba(142, 220, 240, 0.95);
+    will-change: transform, opacity;
+  }
+  .dot.d1 { top: 323px; }
+  .dot.d2 { top: 399px; }
+  .dot.d3 { top: 475px; }
+  .ticker {
+    position: absolute;
+    left: 610px;
+    bottom: 46px;
+    font-family: 'JBMono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: #6f8792;
+    text-transform: uppercase;
+  }
+  .ticker b { color: #8edcf0; font-weight: 400; }
+  .ticker em { font-style: normal; color: #445863; margin: 0 0.6em; }
+</style>
+</head>
+<body>
+<div id="panel">
+  <div class="scan"><div class="bar" id="bar"></div><div class="noise" id="noise"></div></div>
+  <div class="sheen" id="sheen"></div>
+  <div class="line" id="line"></div>
+  <div class="dot d1" id="dot1"></div>
+  <div class="dot d2" id="dot2"></div>
+  <div class="dot d3" id="dot3"></div>
+  <div class="ticker">SCAN <b id="scanIndex">000</b><em>/</em>048 <em>·</em> SIGNAL <b id="signal">98.0%</b></div>
+</div>
+<script type="module">
+const panel = document.getElementById('panel');
+const svgText = await fetch('/assets/dikaofc-identity.svg').then(r => r.text());
+const photoBlob = await fetch('/assets/dika.jpg').then(r => r.blob());
+const photoUrl = await new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result);
+  reader.onerror = reject;
+  reader.readAsDataURL(photoBlob);
+});
+panel.insertAdjacentHTML('afterbegin', svgText.replace('href="dika.jpg"', `href="${photoUrl}"`));
+
+const bar = document.getElementById('bar');
+const noise = document.getElementById('noise');
+const sheen = document.getElementById('sheen');
+const line = document.getElementById('line');
+const dots = [document.getElementById('dot1'), document.getElementById('dot2'), document.getElementById('dot3')];
+const scanIndex = document.getElementById('scanIndex');
+const signal = document.getElementById('signal');
+const FRAMES = 48;
+
+function setFrame(t) {
+  const a = t * Math.PI * 2;
+
+  // A soft scanner bar travels down the portrait.
+  bar.style.transform = `translateY(${-120 + t * 640}px)`;
+  // Fine scanline texture drifts slowly in the opposite direction.
+  noise.style.transform = `translateY(${-t * 12}px)`;
+  // A faint sheen crosses the text side once per loop.
+  sheen.style.transform = `translateX(${-260 + t * 1260}px) rotate(18deg)`;
+  sheen.style.opacity = String(0.25 + 0.75 * Math.sin(Math.PI * t));
+  // A single crisp scanline crosses the whole panel.
+  line.style.transform = `translateY(${t * 600}px)`;
+
+  dots.forEach((dot, i) => {
+    const p = 0.5 + 0.5 * Math.sin(a * 2 - i * 1.15);
+    dot.style.opacity = String(0.22 + 0.78 * p);
+    dot.style.transform = `scale(${0.75 + p * 0.6})`;
+  });
+
+  scanIndex.textContent = String(Math.round(t * FRAMES)).padStart(3, '0');
+  signal.textContent = `${(97.6 + Math.sin(a) * 1.1).toFixed(1)}%`;
+}
+
+setFrame(0);
+window.__setFrame = setFrame;
+window.__ready = true;
+</script>
+</body>
+</html>

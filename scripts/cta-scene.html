@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200, initial-scale=1">
+<title>DikaOfc contact gate</title>
+<style>
+  @font-face {
+    font-family: 'JBMono';
+    src: url('/scripts/fonts/JetBrainsMono.ttf') format('truetype');
+    font-weight: 100 800;
+  }
+  @font-face {
+    font-family: 'ArchivoBlack';
+    src: url('/scripts/fonts/ArchivoBlack-Regular.ttf') format('truetype');
+    font-weight: 400;
+  }
+  html, body { margin: 0; padding: 0; width: 1200px; height: 260px; overflow: hidden; background: #07090c; }
+  canvas { display: block; width: 1200px; height: 260px; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1200" height="260"></canvas>
+<script type="module">
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = 1200;
+const H = 260;
+const FRAMES = 48;
+const ACCENT = '#8edcf0';
+const INK = '#eaf1f5';
+const MUTED = '#93a6b0';
+
+const mono = new FontFace('JBMono', 'url(/scripts/fonts/JetBrainsMono.ttf)');
+const display = new FontFace('ArchivoBlack', 'url(/scripts/fonts/ArchivoBlack-Regular.ttf)');
+await Promise.all([mono.load(), display.load()]);
+document.fonts.add(mono);
+document.fonts.add(display);
+
+function drawBackground(a) {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#07090c';
+  ctx.fillRect(0, 0, W, H);
+
+  const glow = ctx.createRadialGradient(980, 130, 10, 980, 130, 520);
+  glow.addColorStop(0, 'rgba(36, 91, 112, 0.26)');
+  glow.addColorStop(0.5, 'rgba(24, 58, 72, 0.10)');
+  glow.addColorStop(1, 'rgba(7, 9, 12, 0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(155, 168, 178, 0.04)';
+  ctx.lineWidth = 1;
+  const drift = (a / (Math.PI * 2)) * 30;
+  for (let x = -30 + drift; x < W + 30; x += 30) {
+    ctx.beginPath();
+    ctx.moveTo(x + 0.5, 0);
+    ctx.lineTo(x + 0.5, H);
+    ctx.stroke();
+  }
+  for (let y = 0; y < H; y += 30) {
+    ctx.beginPath();
+    ctx.moveTo(0, y + 0.5);
+    ctx.lineTo(W, y + 0.5);
+    ctx.stroke();
+  }
+
+  const beam = ctx.createLinearGradient(820, 0, 1160, 0);
+  beam.addColorStop(0, 'rgba(142, 220, 240, 0)');
+  beam.addColorStop(0.5, 'rgba(142, 220, 240, 0.08)');
+  beam.addColorStop(1, 'rgba(142, 220, 240, 0)');
+  ctx.fillStyle = beam;
+  ctx.fillRect(820, 100, 340, 60);
+}
+
+function drawText(a) {
+  ctx.textAlign = 'left';
+  ctx.font = '600 11px JBMono';
+  ctx.fillStyle = ACCENT;
+  ctx.fillText('OPEN CHANNEL / 2026', 70, 54);
+
+  const pulse = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(a * 4));
+  ctx.fillStyle = ACCENT;
+  ctx.globalAlpha = pulse;
+  ctx.beginPath();
+  ctx.arc(286, 50, 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  ctx.font = '400 44px ArchivoBlack';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+  ctx.fillText("LET'S BUILD", 72, 114);
+  ctx.fillText('SOMETHING USEFUL.', 72, 158);
+
+  ctx.fillStyle = INK;
+  ctx.fillText("LET'S BUILD", 70, 112);
+  ctx.fillText('SOMETHING USEFUL.', 70, 156);
+
+  // moving sheen across the display type
+  const sweep = ((a / (Math.PI * 2)) * 1.4) % 1;
+  const sx = 40 + sweep * 700;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(60, 72, 720, 100);
+  ctx.clip();
+  const sheen = ctx.createLinearGradient(sx - 90, 0, sx + 90, 0);
+  sheen.addColorStop(0, 'rgba(255, 255, 255, 0)');
+  sheen.addColorStop(0.5, 'rgba(234, 241, 245, 0.10)');
+  sheen.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  ctx.fillStyle = sheen;
+  ctx.fillRect(sx - 90, 72, 180, 100);
+  ctx.restore();
+
+  ctx.font = '13px JBMono';
+  ctx.fillStyle = MUTED;
+  ctx.fillText('Open to selected projects and collaboration.', 70, 194);
+
+  ctx.font = '10px JBMono';
+  ctx.fillStyle = 'rgba(147, 166, 176, 0.72)';
+  ctx.fillText('PORTFOLIO · PROJECTS · CONTACT', 70, 226);
+
+  const rule = ctx.createLinearGradient(70, 0, 760, 0);
+  rule.addColorStop(0, 'rgba(142, 220, 240, 0.42)');
+  rule.addColorStop(0.6, 'rgba(142, 220, 240, 0.08)');
+  rule.addColorStop(1, 'rgba(142, 220, 240, 0)');
+  ctx.strokeStyle = rule;
+  ctx.beginPath();
+  ctx.moveTo(70, 238.5);
+  ctx.lineTo(760, 238.5);
+  ctx.stroke();
+
+  const mx = 70 + ((a / (Math.PI * 2)) % 1) * 690;
+  const moving = ctx.createLinearGradient(mx - 80, 0, mx, 0);
+  moving.addColorStop(0, 'rgba(142, 220, 240, 0)');
+  moving.addColorStop(1, 'rgba(142, 220, 240, 0.5)');
+  ctx.strokeStyle = moving;
+  ctx.beginPath();
+  ctx.moveTo(Math.max(70, mx - 80), 238.5);
+  ctx.lineTo(mx, 238.5);
+  ctx.stroke();
+}
+
+function drawPortal(a) {
+  const cx = 980;
+  const cy = 128;
+  const squash = 0.7;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1, squash);
+
+  // tunnel depth: several offset ellipses behind the main ring
+  for (let d = 4; d >= 1; d--) {
+    ctx.strokeStyle = `rgba(142, 220, 240, ${0.028 * d})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(0, d * 9, 88 - d * 3, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // outer ring
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.20)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, 0, 92, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // rotating tick ring
+  const rot = a / (Math.PI * 2);
+  for (let i = 0; i < 48; i++) {
+    const ang = (i / 48) * Math.PI * 2 + rot * Math.PI * 2;
+    const major = i % 6 === 0;
+    const r1 = 86;
+    const r2 = major ? 77 : 82;
+    ctx.strokeStyle = major
+      ? 'rgba(168, 236, 255, 0.72)'
+      : 'rgba(142, 220, 240, 0.22)';
+    ctx.lineWidth = major ? 1.6 : 1;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(ang) * r1, Math.sin(ang) * r1);
+    ctx.lineTo(Math.cos(ang) * r2, Math.sin(ang) * r2);
+    ctx.stroke();
+  }
+
+  // counter-rotating arcs
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.55)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 70, a + 0.2, a + 1.25);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.28)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 70, a + Math.PI + 0.5, a + Math.PI + 1.5);
+  ctx.stroke();
+
+  // inner thin rings
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.32)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 56, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.16)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 44, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // counter-rotating dashed ring
+  ctx.save();
+  ctx.rotate(-a * 1.4);
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.36)';
+  ctx.setLineDash([4, 9]);
+  ctx.beginPath();
+  ctx.arc(0, 0, 34, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  // glowing core
+  const breathe = 0.5 + 0.5 * Math.sin(a * 2);
+  const core = ctx.createRadialGradient(0, 0, 1, 0, 0, 30 + breathe * 6);
+  core.addColorStop(0, 'rgba(234, 250, 255, 0.96)');
+  core.addColorStop(0.18, 'rgba(168, 236, 255, 0.9)');
+  core.addColorStop(0.45, 'rgba(142, 220, 240, 0.34)');
+  core.addColorStop(1, 'rgba(36, 91, 112, 0)');
+  ctx.fillStyle = core;
+  ctx.beginPath();
+  ctx.arc(0, 0, 32 + breathe * 6, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(245, 252, 255, 0.98)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 3.2 + breathe * 1.0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // orbiting satellites
+  for (let k = 0; k < 6; k++) {
+    const dir = k % 2 === 0 ? 1 : -1;
+    const ang = a * dir * (1.2 + k * 0.12) + (k / 6) * Math.PI * 2;
+    const radius = 50 + (k % 3) * 8;
+    const x = Math.cos(ang) * radius;
+    const y = Math.sin(ang) * radius;
+    ctx.fillStyle = k === 3 ? 'rgba(255, 176, 138, 0.9)' : 'rgba(168, 236, 255, 0.9)';
+    ctx.beginPath();
+    ctx.arc(x, y, k % 2 === 0 ? 2.2 : 1.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(142, 220, 240, 0.12)';
+    ctx.beginPath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+
+  // floating shards around the rim
+  ctx.save();
+  ctx.translate(cx, cy);
+  for (let i = 0; i < 5; i++) {
+    const ang = a * (0.5 + i * 0.08) + i * 1.9;
+    const radius = 116 + (i % 2) * 12;
+    const x = Math.cos(ang) * radius;
+    const y = Math.sin(ang) * radius * 0.7;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(ang + a);
+    ctx.fillStyle = i === 2 ? 'rgba(255, 176, 138, 0.34)' : 'rgba(142, 220, 240, 0.26)';
+    ctx.fillRect(-2, -2, 4, 4);
+    ctx.restore();
+  }
+  ctx.restore();
+
+  // vertical divider
+  const divider = ctx.createLinearGradient(0, 38, 0, 222);
+  divider.addColorStop(0, 'rgba(142, 220, 240, 0)');
+  divider.addColorStop(0.5, 'rgba(142, 220, 240, 0.16)');
+  divider.addColorStop(1, 'rgba(142, 220, 240, 0)');
+  ctx.strokeStyle = divider;
+  ctx.beginPath();
+  ctx.moveTo(824.5, 38);
+  ctx.lineTo(824.5, 222);
+  ctx.stroke();
+}
+
+function drawFooter(a) {
+  ctx.textAlign = 'right';
+  ctx.font = '10px JBMono';
+  ctx.fillStyle = 'rgba(147, 166, 176, 0.68)';
+  const signal = 97.8 + Math.sin(a) * 0.8;
+  ctx.fillText(`GATE / 01 · SIGNAL ${signal.toFixed(1)}%`, 1130, 238);
+  ctx.textAlign = 'left';
+}
+
+function setFrame(t) {
+  const a = t * Math.PI * 2;
+  drawBackground(a);
+  drawText(a);
+  drawPortal(a);
+  drawFooter(a);
+}
+
+window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

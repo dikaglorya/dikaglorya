@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200, initial-scale=1">
+<title>DikaOfc technical focus map</title>
+<style>
+  @font-face {
+    font-family: 'JBMono';
+    src: url('/scripts/fonts/JetBrainsMono.ttf') format('truetype');
+    font-weight: 100 800;
+  }
+  html, body { margin: 0; padding: 0; width: 1200px; height: 440px; overflow: hidden; background: #07090c; }
+  canvas { display: block; width: 1200px; height: 440px; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1200" height="440"></canvas>
+<script type="module">
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = 1200;
+const H = 440;
+const FRAMES = 72;
+
+const ACCENT = '#8edcf0';
+const INK = '#eaf1f5';
+const MUTED = '#93a6b0';
+const WARM = '#ffb08a';
+
+const font = new FontFace('JBMono', 'url(/scripts/fonts/JetBrainsMono.ttf)');
+await font.load();
+document.fonts.add(font);
+
+const cards = [
+  {
+    label: 'LANGUAGES',
+    items: ['TypeScript', 'JavaScript', 'Python', 'Kotlin'],
+    warm: false,
+  },
+  {
+    label: 'WEB',
+    items: ['React', 'Vite', 'Node.js'],
+    warm: false,
+  },
+  {
+    label: 'SYSTEMS',
+    items: ['Linux', 'Termux', 'Android', 'Shell tooling'],
+    warm: false,
+  },
+  {
+    label: 'AI',
+    items: ['OpenAI-compatible', 'APIs', 'Local model tooling', 'Coding agents'],
+    warm: true,
+  },
+  {
+    label: 'AUTOMATION',
+    items: ['Telegram Bot API', 'Telethon', 'Workflow', 'automation'],
+    warm: false,
+  },
+];
+
+const CARD_W = 200;
+const CARD_H = 168;
+const GAP = 20;
+const START_X = (W - (cards.length * CARD_W + (cards.length - 1) * GAP)) / 2;
+const CARD_Y = 124;
+const BUS_Y = 330;
+
+function rr(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r);
+}
+
+function drawBackground(a) {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#07090c';
+  ctx.fillRect(0, 0, W, H);
+
+  const glow = ctx.createRadialGradient(600, 220, 20, 600, 220, 620);
+  glow.addColorStop(0, 'rgba(36, 91, 112, 0.22)');
+  glow.addColorStop(0.55, 'rgba(24, 58, 72, 0.08)');
+  glow.addColorStop(1, 'rgba(7, 9, 12, 0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = 'rgba(155, 168, 178, 0.045)';
+  ctx.lineWidth = 1;
+  const drift = (a / (Math.PI * 2)) * 40;
+  for (let x = -40 + drift; x < W + 40; x += 40) {
+    ctx.beginPath();
+    ctx.moveTo(x + 0.5, 0);
+    ctx.lineTo(x + 0.5, H);
+    ctx.stroke();
+  }
+  for (let y = 0; y < H; y += 40) {
+    ctx.beginPath();
+    ctx.moveTo(0, y + 0.5);
+    ctx.lineTo(W, y + 0.5);
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.07)';
+  ctx.beginPath();
+  ctx.arc(600, 220, 292, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.035)';
+  ctx.beginPath();
+  ctx.arc(600, 220, 352, 0, Math.PI * 2);
+  ctx.stroke();
+}
+
+function drawHeader(a) {
+  ctx.textAlign = 'left';
+  ctx.font = '600 11px JBMono';
+  ctx.fillStyle = ACCENT;
+  ctx.fillText('TECHNICAL FOCUS', 60, 38);
+
+  ctx.font = '600 27px JBMono';
+  ctx.fillStyle = INK;
+  ctx.fillText('CAPABILITY MAP', 60, 76);
+
+  ctx.font = '11px JBMono';
+  ctx.fillStyle = MUTED;
+  ctx.fillText('SOFTWARE · WEB · SYSTEMS · AI · AUTOMATION', 60, 101);
+
+  const pulse = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(a * 4));
+  ctx.fillStyle = ACCENT;
+  ctx.globalAlpha = pulse;
+  ctx.beginPath();
+  ctx.arc(1044, 32, 3.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  ctx.textAlign = 'right';
+  ctx.font = '600 11px JBMono';
+  ctx.fillStyle = INK;
+  ctx.fillText('LIVE / 05 DOMAINS', 1140, 36);
+  ctx.font = '10px JBMono';
+  ctx.fillStyle = MUTED;
+  const signal = 97.8 + Math.sin(a) * 1.0;
+  ctx.fillText(`SIGNAL ${signal.toFixed(1)}%`, 1140, 58);
+
+  const rule = ctx.createLinearGradient(60, 0, 1140, 0);
+  rule.addColorStop(0, 'rgba(142, 220, 240, 0.55)');
+  rule.addColorStop(0.35, 'rgba(142, 220, 240, 0.14)');
+  rule.addColorStop(1, 'rgba(142, 220, 240, 0.03)');
+  ctx.strokeStyle = rule;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(60, 114.5);
+  ctx.lineTo(1140, 114.5);
+  ctx.stroke();
+}
+
+function drawBus(a) {
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.18)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(52, BUS_Y + 0.5);
+  ctx.lineTo(1148, BUS_Y + 0.5);
+  ctx.stroke();
+
+  cards.forEach((_, i) => {
+    const cx = START_X + i * (CARD_W + GAP) + CARD_W / 2;
+    const bob = Math.sin(a + i * 0.8) * 2.5;
+    ctx.strokeStyle = 'rgba(142, 220, 240, 0.16)';
+    ctx.beginPath();
+    ctx.moveTo(cx + 0.5, CARD_Y + CARD_H + bob);
+    ctx.lineTo(cx + 0.5, BUS_Y);
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(cx, BUS_Y);
+    ctx.rotate(Math.PI / 4);
+    ctx.fillStyle = 'rgba(142, 220, 240, 0.42)';
+    ctx.fillRect(-2, -2, 4, 4);
+    ctx.restore();
+  });
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (let k = 0; k < 4; k++) {
+    const p = (a / (Math.PI * 2) + k / 4) % 1;
+    const x = 52 + p * 1096;
+    const trail = ctx.createLinearGradient(x - 68, 0, x, 0);
+    trail.addColorStop(0, 'rgba(142, 220, 240, 0)');
+    trail.addColorStop(1, 'rgba(142, 220, 240, 0.34)');
+    ctx.strokeStyle = trail;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(Math.max(52, x - 68), BUS_Y + 0.5);
+    ctx.lineTo(x, BUS_Y + 0.5);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(168, 236, 255, 0.9)';
+    ctx.beginPath();
+    ctx.arc(x, BUS_Y, 2.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(142, 220, 240, 0.18)';
+    ctx.beginPath();
+    ctx.arc(x, BUS_Y, 7, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawCard(card, i, a) {
+  const x = START_X + i * (CARD_W + GAP);
+  const bob = Math.sin(a + i * 0.8) * 2.5;
+  const y = CARD_Y + bob;
+
+  ctx.save();
+
+  // offset back plate gives the card a slab / depth feel
+  rr(x + 5, y + 8, CARD_W, CARD_H, 6);
+  ctx.fillStyle = 'rgba(36, 91, 112, 0.14)';
+  ctx.fill();
+
+  const fill = ctx.createLinearGradient(x, y, x, y + CARD_H);
+  fill.addColorStop(0, 'rgba(18, 24, 30, 0.96)');
+  fill.addColorStop(0.55, 'rgba(12, 17, 22, 0.95)');
+  fill.addColorStop(1, 'rgba(8, 11, 15, 0.96)');
+  rr(x, y, CARD_W, CARD_H, 6);
+  ctx.fillStyle = fill;
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.16)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // clipped scan band inside the card
+  ctx.save();
+  rr(x, y, CARD_W, CARD_H, 6);
+  ctx.clip();
+  const scanX = x + (((a / (Math.PI * 2)) * 1.25 + i * 0.19) % 1) * (CARD_W + 90) - 45;
+  const band = ctx.createLinearGradient(scanX - 35, 0, scanX + 35, 0);
+  band.addColorStop(0, 'rgba(142, 220, 240, 0)');
+  band.addColorStop(0.5, 'rgba(142, 220, 240, 0.075)');
+  band.addColorStop(1, 'rgba(142, 220, 240, 0)');
+  ctx.fillStyle = band;
+  ctx.fillRect(scanX - 35, y, 70, CARD_H);
+  ctx.restore();
+
+  // top edge highlight
+  const topLine = ctx.createLinearGradient(x + 10, 0, x + CARD_W - 10, 0);
+  topLine.addColorStop(0, 'rgba(142, 220, 240, 0.42)');
+  topLine.addColorStop(0.55, 'rgba(142, 220, 240, 0.10)');
+  topLine.addColorStop(1, 'rgba(142, 220, 240, 0)');
+  ctx.strokeStyle = topLine;
+  ctx.beginPath();
+  ctx.moveTo(x + 10, y + 0.5);
+  ctx.lineTo(x + CARD_W - 10, y + 0.5);
+  ctx.stroke();
+
+  // corner bracket
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.55)';
+  ctx.beginPath();
+  ctx.moveTo(x + 8, y + 17);
+  ctx.lineTo(x + 8, y + 8);
+  ctx.lineTo(x + 17, y + 8);
+  ctx.stroke();
+
+  const accentColor = card.warm ? WARM : ACCENT;
+  const pulse = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(a * 2 + i * 0.9));
+
+  ctx.fillStyle = accentColor;
+  ctx.globalAlpha = pulse;
+  ctx.beginPath();
+  ctx.arc(x + 23, y + 24, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  ctx.textAlign = 'left';
+  ctx.font = '600 11px JBMono';
+  ctx.fillStyle = accentColor;
+  ctx.fillText(card.label, x + 33, y + 28);
+
+  // rotating reticle
+  const rx = x + CARD_W - 24;
+  const ry = y + 24;
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.34)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(rx, ry, 7.5, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.strokeStyle = accentColor;
+  ctx.beginPath();
+  ctx.arc(rx, ry, 7.5, a + i * 0.7, a + i * 0.7 + 1.25);
+  ctx.stroke();
+  ctx.fillStyle = accentColor;
+  ctx.beginPath();
+  ctx.arc(rx, ry, 1.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(142, 220, 240, 0.12)';
+  ctx.beginPath();
+  ctx.moveTo(x + 18, y + 42.5);
+  ctx.lineTo(x + CARD_W - 18, y + 42.5);
+  ctx.stroke();
+
+  ctx.font = '14px JBMono';
+  card.items.forEach((item, j) => {
+    ctx.fillStyle = j === 0 ? INK : 'rgba(183, 196, 203, 0.86)';
+    ctx.fillText(item, x + 18, y + 66 + j * 21);
+  });
+
+  ctx.textAlign = 'right';
+  ctx.font = '10px JBMono';
+  ctx.fillStyle = 'rgba(147, 166, 176, 0.7)';
+  ctx.fillText(String(i + 1).padStart(2, '0'), x + CARD_W - 18, y + CARD_H - 14);
+  ctx.textAlign = 'left';
+
+  // accent segment along the bottom edge
+  const segX = x + 14 + (((a / (Math.PI * 2)) + i * 0.17) % 1) * (CARD_W - 60);
+  const seg = ctx.createLinearGradient(segX, 0, segX + 40, 0);
+  seg.addColorStop(0, 'rgba(142, 220, 240, 0)');
+  seg.addColorStop(0.5, 'rgba(142, 220, 240, 0.7)');
+  seg.addColorStop(1, 'rgba(142, 220, 240, 0)');
+  ctx.strokeStyle = seg;
+  ctx.beginPath();
+  ctx.moveTo(segX, y + CARD_H - 0.5);
+  ctx.lineTo(segX + 40, y + CARD_H - 0.5);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawFooter(a) {
+  ctx.textAlign = 'left';
+  ctx.font = '10px JBMono';
+  ctx.fillStyle = 'rgba(147, 166, 176, 0.8)';
+  ctx.fillText('A MAP OF WHAT I WORK WITH — NOT A CLAIM OF EQUAL DEPTH IN EVERY ITEM.', 60, 408);
+
+  ctx.textAlign = 'right';
+  const signal = 97.8 + Math.sin(a) * 1.0;
+  ctx.fillStyle = 'rgba(147, 166, 176, 0.72)';
+  ctx.fillText(`SCAN ${String(Math.round((a / (Math.PI * 2)) * FRAMES)).padStart(3, '0')} / 072`, 1140, 408);
+  ctx.fillStyle = ACCENT;
+  ctx.fillText(`SIGNAL ${signal.toFixed(1)}%`, 1000, 408);
+  ctx.textAlign = 'left';
+
+  const x = 60 + ((a / (Math.PI * 2)) % 1) * 1080;
+  const line = ctx.createLinearGradient(x - 100, 0, x, 0);
+  line.addColorStop(0, 'rgba(142, 220, 240, 0)');
+  line.addColorStop(1, 'rgba(142, 220, 240, 0.35)');
+  ctx.strokeStyle = line;
+  ctx.beginPath();
+  ctx.moveTo(Math.max(60, x - 100), 422.5);
+  ctx.lineTo(x, 422.5);
+  ctx.stroke();
+}
+
+function setFrame(t) {
+  const a = t * Math.PI * 2;
+  drawBackground(a);
+  drawHeader(a);
+  drawBus(a);
+  cards.forEach((card, i) => drawCard(card, i, a));
+  drawFooter(a);
+}
+
+window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

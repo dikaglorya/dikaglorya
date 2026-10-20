@@ -8,7 +8,11 @@ Checked on 2026-10-20 with `npm run check:links` (HTTP GET, redirects followed) 
 | ------------------------------- | ------ |
 | `assets/dikaofc-hero.gif`       | OK     |
 | `assets/dikaofc-hero.png`       | OK     |
+| `assets/dikaofc-identity.gif`   | OK     |
 | `assets/dikaofc-identity.png`   | OK     |
+| `assets/dikaofc-focus.gif`      | OK     |
+| `assets/dikaofc-focus.png`      | OK     |
+| `assets/dikaofc-contact.gif`    | OK     |
 
 ## External links used in the README
 
