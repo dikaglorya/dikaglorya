@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200, initial-scale=1">
+<title>DikaOfc engineering principles</title>
+<link rel="stylesheet" href="/scripts/panel.css">
+<style>
+  .core {
+    position: absolute;
+    left: 50%;
+    top: 57%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 3;
+  }
+
+  .core-halo {
+    position: absolute;
+    left: -260px;
+    top: -260px;
+    width: 520px;
+    height: 520px;
+    background: radial-gradient(circle, rgba(51, 153, 180, 0.3), rgba(25, 76, 92, 0.08) 46%, transparent 68%);
+    filter: blur(18px);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .core-sphere {
+    position: absolute;
+    left: -82px;
+    top: -82px;
+    width: 164px;
+    height: 164px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 34% 28%, #f4feff 0%, #c6f2fa 8%, #69b9cb 22%, #2f7b8f 42%, #0b2630 68%, #051015 100%);
+    box-shadow:
+      0 0 38px rgba(108, 218, 240, 0.42),
+      0 0 110px rgba(49, 138, 160, 0.3),
+      inset -18px -24px 42px rgba(0, 0, 0, 0.65),
+      inset 10px 12px 30px rgba(210, 250, 255, 0.18);
+    z-index: 2;
+  }
+
+  .core-sphere::before {
+    content: '';
+    position: absolute;
+    inset: 24px;
+    border-radius: 50%;
+    border: 1px solid rgba(224, 252, 255, 0.22);
+    box-shadow: inset 0 0 28px rgba(159, 232, 255, 0.15);
+  }
+
+  .core-sphere::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    margin: -4px;
+    border-radius: 50%;
+    background: #eaffff;
+    box-shadow: 0 0 18px #bff7ff, 0 0 46px rgba(159, 232, 255, 0.65);
+  }
+
+  .core-ring {
+    position: absolute;
+    left: -150px;
+    top: -150px;
+    width: 300px;
+    height: 300px;
+    border: 1px solid rgba(159, 232, 255, 0.26);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 1;
+  }
+
+  .core-ring.b {
+    left: -198px;
+    top: -198px;
+    width: 396px;
+    height: 396px;
+    border-color: rgba(159, 232, 255, 0.14);
+    border-style: dashed;
+    z-index: 0;
+  }
+
+  .core-ring.c {
+    left: -246px;
+    top: -246px;
+    width: 492px;
+    height: 492px;
+    border-color: rgba(255, 155, 107, 0.12);
+    z-index: 0;
+  }
+
+  .core-ring .bead {
+    position: absolute;
+    left: 50%;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 16px var(--accent);
+  }
+
+  .core-ring.c .bead {
+    background: var(--warm);
+    box-shadow: 0 0 14px var(--warm);
+  }
+
+  .core-beam {
+    position: absolute;
+    left: -1px;
+    top: -260px;
+    width: 2px;
+    height: 520px;
+    background: linear-gradient(180deg, transparent, rgba(159, 232, 255, 0.22) 28%, rgba(218, 252, 255, 0.42) 50%, rgba(159, 232, 255, 0.16) 72%, transparent);
+    filter: blur(0.3px);
+    z-index: 0;
+    opacity: 0.55;
+  }
+
+  .core-orbit {
+    position: absolute;
+    left: -270px;
+    top: -270px;
+    width: 540px;
+    height: 540px;
+    border: 1px solid rgba(159, 232, 255, 0.2);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .core-orbit .bead {
+    position: absolute;
+    left: 50%;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    margin-left: -4px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 20px var(--accent);
+  }
+
+  .principle {
+    position: absolute;
+    left: -114px;
+    top: -41px;
+    width: 228px;
+    height: 82px;
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 4;
+  }
+
+  .p-back {
+    position: absolute;
+    inset: 0;
+    transform: translateZ(-17px);
+    background: linear-gradient(145deg, rgba(19, 50, 60, 0.92), rgba(4, 9, 12, 0.98));
+    border: 1px solid rgba(159, 232, 255, 0.13);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  }
+
+  .p-face {
+    position: absolute;
+    inset: 0;
+    padding: 13px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+    background:
+      linear-gradient(155deg, rgba(24, 38, 46, 0.98), rgba(9, 16, 21, 0.99) 58%, rgba(5, 10, 14, 0.99));
+    border: 1px solid rgba(159, 232, 255, 0.22);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+  }
+
+  .p-face::before {
+    content: '';
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(159, 232, 255, 0.72), transparent);
+  }
+
+  .p-index {
+    flex: 0 0 auto;
+    color: var(--accent);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    opacity: 0.8;
+  }
+
+  .p-copy {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .p-copy b {
+    display: block;
+    font-size: 14px;
+    line-height: 1.25;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #ecf9fc;
+    font-weight: 500;
+  }
+
+  .p-copy small {
+    display: block;
+    margin-top: 4px;
+    font-size: 6.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(143, 165, 175, 0.68);
+  }
+
+  .p-mark {
+    position: absolute;
+    right: 11px;
+    top: 11px;
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid rgba(159, 232, 255, 0.55);
+    border-right: 1px solid rgba(159, 232, 255, 0.55);
+  }
+
+  .principle.warm .p-index { color: var(--warm); }
+  .principle.warm .p-mark { border-color: rgba(255, 155, 107, 0.5); }
+
+  .spoke {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 1px;
+    width: 390px;
+    transform-origin: left center;
+    background: linear-gradient(90deg, rgba(159, 232, 255, 0.28), rgba(159, 232, 255, 0.05) 68%, transparent);
+    z-index: 0;
+    opacity: 0.55;
+    will-change: transform;
+  }
+
+  .spoke .spark {
+    position: absolute;
+    right: 16%;
+    top: -2px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+    opacity: 0.6;
+  }
+
+  .ring-back {
+    position: absolute;
+    left: 50%;
+    top: 57%;
+    width: 1080px;
+    height: 1080px;
+    margin-left: -540px;
+    margin-top: -540px;
+    border: 1px solid rgba(159, 232, 255, 0.1);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    will-change: transform;
+    opacity: 0.6;
+    z-index: -4;
+    pointer-events: none;
+  }
+
+  .ring-back::before {
+    content: '';
+    position: absolute;
+    inset: 44px;
+    border: 1px dashed rgba(159, 232, 255, 0.08);
+    border-radius: 50%;
+  }
+
+  .core-glow-floor {
+    position: absolute;
+    left: 50%;
+    top: 57%;
+    width: 700px;
+    height: 140px;
+    margin-left: -350px;
+    background: radial-gradient(ellipse, rgba(43, 137, 157, 0.24), transparent 68%);
+    filter: blur(15px);
+    transform: translateZ(-220px);
+    z-index: -5;
+    pointer-events: none;
+  }
+
+  .giant-six {
+    position: absolute;
+    right: 4px;
+    top: 42px;
+    font-family: var(--display);
+    font-size: 300px;
+    line-height: 0.8;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(159, 232, 255, 0.055);
+    transform: translateZ(-300px) rotateY(-16deg);
+    z-index: -5;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .title-block {
+    position: absolute;
+    left: 36px;
+    top: 30px;
+    z-index: 21;
+    pointer-events: none;
+  }
+
+  .title-block .title {
+    margin-top: 12px;
+    font-family: var(--display);
+    font-size: 32px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: #effaff;
+  }
+
+  .title-block .sub {
+    margin-top: 9px;
+    font-size: 8.5px;
+    letter-spacing: 0.21em;
+    text-transform: uppercase;
+    color: rgba(143, 165, 175, 0.74);
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="bg"></div>
+  <div class="grid-floor" id="grid"></div>
+  <div class="horizon-glow"></div>
+
+  <div class="camera" id="camera">
+    <div class="giant-six">6</div>
+    <div class="ring-back" id="ringBack"></div>
+    <div class="core-glow-floor"></div>
+
+    <div class="spokes" id="spokes"></div>
+
+    <div class="core" id="core">
+      <div class="core-halo"></div>
+      <div class="core-ring a" id="coreRingA"><span class="bead"></span></div>
+      <div class="core-ring b" id="coreRingB"><span class="bead"></span></div>
+      <div class="core-ring c" id="coreRingC"><span class="bead"></span></div>
+      <div class="core-beam"></div>
+      <div class="core-sphere"></div>
+      <div class="core-orbit" id="coreOrbit"><span class="bead"></span></div>
+    </div>
+
+    <div id="principles"></div>
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <div class="scanline" id="scanline"></div>
+  <div class="frame"></div>
+
+  <div class="title-block">
+    <div class="kicker"><span class="dot" id="pulseDot"></span><b>Engineering principles</b><span>/ operating core</span></div>
+    <div class="title">HOW I BUILD</div>
+    <div class="sub">Six rules · one operating core</div>
+  </div>
+
+  <div class="hud">
+    <div class="top-right">OPERATING CORE<br><b>06 RULES / ACTIVE</b></div>
+    <div class="bottom-left"><b>CORE</b> <span>STABLE</span><em>/</em> PRINCIPLES / 2026</div>
+    <div class="bottom-right">SIGNAL <span id="signal">98.3%</span><br>BUILD / MEASURE / LEARN</div>
+  </div>
+</div>
+
+<script type="module">
+import { initHud, applyHud } from '/scripts/hud.mjs';
+initHud();
+
+const $ = selector => document.querySelector(selector);
+const TwoPi = Math.PI * 2;
+await document.fonts.ready;
+
+const principles = [
+  { index: '01', text: 'BUILD USEFUL THINGS', sub: 'UTILITY FIRST' },
+  { index: '02', text: 'PREFER MAINTAINABLE', sub: 'LONG-TERM CLARITY' },
+  { index: '03', text: "MEASURE, DON'T FABRICATE", sub: 'EVIDENCE OVER EGO' },
+  { index: '04', text: 'DOCUMENT DECISIONS', sub: 'CONTEXT SURVIVES' },
+  { index: '05', text: 'KEEP INTERFACES ACCESSIBLE', sub: 'DEFAULT TO PEOPLE' },
+  { index: '06', text: 'IMPROVE VIA FEEDBACK', sub: 'ITERATE IN PUBLIC' },
+];
+
+const baseAngles = [-90, -30, 30, 90, 150, 210];
+const principlesRoot = $('#principles');
+const principleEls = [];
+principles.forEach((p, i) => {
+  const el = document.createElement('article');
+  el.className = `principle${i === 2 || i === 5 ? ' warm' : ''}`;
+  el.innerHTML = `
+    <div class="p-back"></div>
+    <div class="p-face">
+      <span class="p-index">${p.index}</span>
+      <span class="p-copy"><b>${p.text}</b><small>${p.sub}</small></span>
+      <span class="p-mark"></span>
+    </div>
+  `;
+  principlesRoot.appendChild(el);
+  principleEls.push({ el, index: i, baseAngle: baseAngles[i], phase: i * 0.8 });
+});
+
+const spokesRoot = $('#spokes');
+const spokes = [];
+for (let i = 0; i < 6; i++) {
+  const s = document.createElement('div');
+  s.className = 'spoke';
+  s.innerHTML = '<span class="spark"></span>';
+  spokesRoot.appendChild(s);
+  spokes.push(s);
+}
+
+const particles = [];
+let seed = 20261023;
+function rand() {
+  seed = (seed * 1664525 + 1013904223) % 4294967296;
+  return seed / 4294967296;
+}
+for (let i = 0; i < 30; i++) {
+  const p = document.createElement('i');
+  p.className = 'particle';
+  p.style.left = `${4 + rand() * 92}%`;
+  p.style.top = `${10 + rand() * 76}%`;
+  p.style.width = `${0.7 + rand() * 1.8}px`;
+  p.style.height = p.style.width;
+  p.style.opacity = `${0.1 + rand() * 0.32}`;
+  p.dataset.phase = String(rand() * TwoPi);
+  p.dataset.speed = String(0.5 + rand() * 1.5);
+  $('#particles').appendChild(p);
+  particles.push(p);
+}
+
+const camera = $('#camera');
+const core = $('#core');
+const coreRingA = $('#coreRingA');
+const coreRingB = $('#coreRingB');
+const coreRingC = $('#coreRingC');
+const coreOrbit = $('#coreOrbit');
+const ringBack = $('#ringBack');
+const scanline = $('#scanline');
+const pulseDot = $('#pulseDot');
+const signalEl = $('#signal');
+const grid = $('#grid');
+
+const CX = 600;
+const CY = 294;
+const RX = 385;
+const RY = 136;
+
+function setFrame(t) {
+  const a = t * TwoPi;
+
+  camera.style.transform = `translate3d(${Math.sin(a + 0.3) * 18}px, ${Math.cos(a * 2 + 0.2) * 8}px, 0) rotateY(${Math.sin(a + 0.6) * 4.6}deg) rotateX(${Math.cos(a + 0.4) * 1.5}deg)`;
+  core.style.transform = `translate3d(0, ${Math.sin(a * 2) * 5}px, 0) rotateY(${Math.sin(a + 0.5) * 6}deg)`;
+
+  const positions = [];
+  principleEls.forEach(({ el, baseAngle, phase }, i) => {
+    const angle = (baseAngle + Math.sin(a + phase) * 7) * Math.PI / 180;
+    const x = CX + Math.cos(angle) * RX;
+    const y = CY + Math.sin(angle) * RY + Math.sin(a * 2 + phase) * 4;
+    const z = 30 + Math.cos(angle) * 110 + Math.sin(a + phase) * 10;
+    const ry = -Math.cos(angle) * 6;
+    const rx = Math.sin(angle) * 3.2;
+    el.style.transform = `translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg)`;
+    positions.push({ x, y, angle });
+  });
+
+  spokes.forEach((spoke, i) => {
+    const { angle } = positions[i];
+    const deg = angle * 180 / Math.PI;
+    spoke.style.transform = `translate3d(${CX}px, ${CY}px, -90px) rotate(${deg}deg)`;
+  });
+
+  coreRingA.style.transform = `rotateX(72deg) rotateZ(${a * 24}deg) translateZ(0px)`;
+  coreRingB.style.transform = `rotateY(68deg) rotateZ(${a * -18}deg) rotateX(16deg)`;
+  coreRingC.style.transform = `rotateX(60deg) rotateY(35deg) rotateZ(${a * 12 + 30}deg)`;
+  coreOrbit.style.transform = `rotateX(72deg) rotateZ(${a * -20}deg)`;
+  ringBack.style.transform = `rotateX(73deg) rotateZ(${a * 10}deg) translateZ(-220px)`;
+
+  particles.forEach((p, i) => {
+    const phase = Number(p.dataset.phase);
+    const speed = Number(p.dataset.speed);
+    const dx = Math.sin(a * speed + phase) * 16;
+    const dy = Math.cos(a * (speed * 0.8) + phase) * 11;
+    p.style.transform = `translate3d(${dx}px, ${dy}px, ${-180 + (i * 17) % 320}px)`;
+    p.style.opacity = String(0.08 + 0.26 * (0.5 + 0.5 * Math.sin(a * 2.5 + i)));
+  });
+
+  const beamP = 0.5 - 0.5 * Math.cos(a);
+  scanline.style.transform = `translateY(${beamP * 520}px)`;
+  scanline.style.opacity = String(0.07 + 0.3 * Math.sin(Math.PI * beamP));
+  pulseDot.style.opacity = String(0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a * 8)));
+  pulseDot.style.transform = `scale(${1 + 0.5 * Math.sin(a * 8)})`;
+  signalEl.textContent = `${(98.2 + Math.sin(a) * 0.8).toFixed(1)}%`;
+  grid.style.backgroundPosition = `0 ${t * 74}px, ${t * 74}px 0`;
+
+  applyHud(t);
+}
+
+window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

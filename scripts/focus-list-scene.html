@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200, initial-scale=1">
+<title>DikaOfc current focus stack</title>
+<style>
+  @font-face {
+    font-family: 'JBMono';
+    src: url('/scripts/fonts/JetBrainsMono.ttf') format('truetype');
+    font-weight: 100 800;
+  }
+  :root { --ink: #eaf1f5; --muted: #9ba8b2; --accent: #8edcf0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; width: 1200px; height: 420px; overflow: hidden; background: #07090c; }
+  #stage {
+    position: relative;
+    width: 1200px;
+    height: 420px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 62% 100% at 50% 42%, rgba(36, 91, 112, 0.25), transparent 68%),
+      #07090c;
+  }
+  canvas { position: absolute; inset: 0; width: 1200px; height: 420px; filter: saturate(1.08) contrast(1.05); }
+  .hud {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    font-family: 'JBMono', ui-monospace, monospace;
+    color: var(--ink);
+  }
+  .kicker {
+    position: absolute;
+    left: 44px;
+    top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .kicker strong { color: var(--ink); font-weight: 600; letter-spacing: 0.24em; }
+  .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(142, 220, 240, 0.9);
+    will-change: transform, opacity;
+  }
+  .headline {
+    position: absolute;
+    left: 44px;
+    top: 52px;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .site {
+    position: absolute;
+    right: 44px;
+    top: 34px;
+    text-align: right;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: var(--muted);
+    line-height: 1.9;
+    text-transform: uppercase;
+  }
+  .site b { color: var(--accent); font-weight: 500; }
+  .subs {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 58px;
+    height: 60px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+  .subs span {
+    position: absolute;
+    bottom: 0;
+    white-space: nowrap;
+    color: rgba(155, 168, 178, 0.9);
+    text-transform: uppercase;
+  }
+  .subs span b { color: var(--accent); font-weight: 500; }
+  .subs .s1 { left: 154px; }
+  .subs .s2 { left: 462px; }
+  .subs .s3 { left: 772px; }
+  .rule {
+    position: absolute;
+    left: 44px;
+    right: 44px;
+    bottom: 34px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(142, 220, 240, 0.5), rgba(142, 220, 240, 0.08) 70%, transparent);
+  }
+  .ticker {
+    position: absolute;
+    left: 44px;
+    right: 44px;
+    bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: rgba(155, 168, 178, 0.7);
+    text-transform: uppercase;
+  }
+  .ticker b { color: var(--accent); font-weight: 500; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "/node_modules/three/build/three.module.js",
+    "three/addons/": "/node_modules/three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="scene"></canvas>
+  <div class="hud">
+    <div class="kicker"><span class="dot" id="pulse"></span><strong>DikaOfc</strong><span>/ status feed</span></div>
+    <div class="headline">Current focus</div>
+    <div class="site">FEED / 04<br><b>LIVE</b> <span id="load">62%</span></div>
+    <div class="subs">
+      <span class="s1">ROUTING &amp; TERMINAL WORKFLOWS</span>
+      <span class="s2"><b>LOCAL-FIRST AI</b> · TERMUX</span>
+      <span class="s3">PERFORMANCE · DOCS · CRAFT</span>
+    </div>
+    <div class="rule"></div>
+    <div class="ticker">
+      <span>FOCUS STACK / THREE ACTIVE TRACKS</span>
+      <b id="active">TRACK 01</b>
+      <span>UPDATED 2026 · Q4</span>
+    </div>
+  </div>
+</div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "/node_modules/three/build/three.module.js",
+    "three/addons/": "/node_modules/three/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { TTFLoader } from 'three/addons/loaders/TTFLoader.js';
+import { Font } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { initHud, applyHud } from '/scripts/hud.mjs';
+initHud();
+
+const W = 1200;
+const H = 420;
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: true,
+  powerPreference: 'high-performance',
+  preserveDrawingBuffer: true,
+});
+renderer.setPixelRatio(1);
+renderer.setSize(W, H, false);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x07090c, 0.03);
+
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
+const CAM_Z = 11.2;
+camera.position.set(0, 0.25, CAM_Z);
+camera.lookAt(0, 0.1, 0);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.36;
+
+function makeGlowTexture() {
+  const c = document.createElement('canvas');
+  c.width = 128;
+  c.height = 128;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.28, 'rgba(255,255,255,0.72)');
+  g.addColorStop(0.62, 'rgba(255,255,255,0.16)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 128, 128);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+const glowTex = makeGlowTexture();
+
+// ---------- lights ----------
+scene.add(new THREE.HemisphereLight(0x9fc9d6, 0x07090c, 0.66));
+scene.add(new THREE.AmbientLight(0x7fa6b3, 0.2));
+const key = new THREE.DirectionalLight(0xd7f5ff, 3.0);
+key.position.set(-5, 8, 8);
+scene.add(key);
+const frontKey = new THREE.DirectionalLight(0xbfe4ee, 2.3);
+frontKey.position.set(1, 2, 10);
+scene.add(frontKey);
+const rimL = new THREE.PointLight(0x8edcf0, 32, 30, 2.0);
+rimL.position.set(-7.5, 2.4, -3);
+scene.add(rimL);
+const rimR = new THREE.PointLight(0x4db8d3, 25, 28, 2.0);
+rimR.position.set(7.8, 0.4, -3.6);
+scene.add(rimR);
+const warm = new THREE.PointLight(0xff9a6b, 13, 26, 2.0);
+warm.position.set(5.4, 3.6, -5);
+scene.add(warm);
+
+// ---------- materials ----------
+const faceMat = new THREE.MeshPhysicalMaterial({
+  color: 0x5d7783,
+  metalness: 0.9,
+  roughness: 0.2,
+  clearcoat: 0.6,
+  clearcoatRoughness: 0.16,
+  envMapIntensity: 1.4,
+});
+const sideMat = new THREE.MeshPhysicalMaterial({
+  color: 0xa8cdd8,
+  metalness: 1,
+  roughness: 0.08,
+  clearcoat: 0.55,
+  clearcoatRoughness: 0.1,
+  envMapIntensity: 1.55,
+});
+const chromeMat = new THREE.MeshPhysicalMaterial({
+  color: 0xd9e9ef,
+  metalness: 1,
+  roughness: 0.06,
+  envMapIntensity: 1.7,
+});
+const glassMat = new THREE.MeshPhysicalMaterial({
+  color: 0x10151b,
+  metalness: 0.7,
+  roughness: 0.24,
+  clearcoat: 1,
+  clearcoatRoughness: 0.12,
+  envMapIntensity: 1.1,
+  transparent: true,
+  opacity: 0.86,
+});
+const edgeMat = new THREE.MeshBasicMaterial({ color: 0x8edcf0, toneMapped: false, transparent: true, opacity: 0.75 });
+const glowMat = new THREE.MeshBasicMaterial({ color: 0x8edcf0, toneMapped: false });
+
+// ---------- focus chips ----------
+const CHIP_W = 2.6;
+const CHIP_H = 1.9;
+const CHIP_D = 0.16;
+
+// number plaques
+const ttf = await new TTFLoader().loadAsync('/scripts/fonts/ArchivoBlack-Regular.ttf');
+const font = new Font(ttf);
+function textMesh(char, size, mat, side) {
+  const opts = { font, size, depth: size * 0.32, curveSegments: 8, bevelEnabled: true, bevelThickness: size * 0.03, bevelSize: size * 0.022, bevelSegments: 3 };
+  const geo = new TextGeometry(char, opts);
+  geo.computeBoundingBox();
+  const bb = geo.boundingBox;
+  return new THREE.Mesh(geo, [mat, side]);
+}
+function buildWord(text, size, depth) {
+  const opts = { font, size, depth, curveSegments: 8, bevelEnabled: true, bevelThickness: size * 0.04, bevelSize: size * 0.028, bevelSegments: 3 };
+  const widths = [];
+  let total = 0;
+  const gap = size * 0.06;
+  for (const ch of text) {
+    const geo = new TextGeometry(ch, opts);
+    geo.computeBoundingBox();
+    const bb = geo.boundingBox;
+    const w = bb.max.x - bb.min.x;
+    geo.translate(-(bb.min.x + bb.max.x) / 2, -(bb.min.y + bb.max.y) / 2, -depth / 2);
+    widths.push(w);
+    total += w + gap;
+  }
+  total -= gap;
+  const group = new THREE.Group();
+  const letters = [];
+  let cursor = -total / 2;
+  [...text].forEach((ch, i) => {
+    const mesh = new THREE.Mesh(new TextGeometry(ch, opts), [faceMat, sideMat]);
+    mesh.position.set(cursor + widths[i] / 2, 0, 0);
+    mesh.userData.phase = (i / text.length) * Math.PI * 2;
+    group.add(mesh);
+    letters.push(mesh);
+    cursor += widths[i] + gap;
+  });
+  return { group, letters, width: total };
+}
+
+const CHIP_X = [-3.55, 0, 3.55];
+const CHIP_Y = 0.05;
+const chipRoots = [];
+const chipTitles = [];
+
+const titles = ['AI', 'TERMUX', 'CRAFT'];
+titles.forEach((title, i) => {
+  const root = new THREE.Group();
+  root.position.set(CHIP_X[i], CHIP_Y, 0);
+  scene.add(root);
+  chipRoots.push(root);
+
+  // glass slab
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(CHIP_W, CHIP_H, CHIP_D), glassMat);
+  root.add(slab);
+
+  // chrome edge frame strips
+  const t = 0.05;
+  const strips = [
+    [CHIP_W, t, 0, CHIP_H / 2],
+    [CHIP_W, t, 0, -CHIP_H / 2],
+    [t, CHIP_H, -CHIP_W / 2, 0],
+    [t, CHIP_H, CHIP_W / 2, 0],
+  ];
+  strips.forEach(([w, h, x, y]) => {
+    const edge = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.05), edgeMat.clone());
+    edge.position.set(x, y, 0);
+    root.add(edge);
+  });
+
+  // floating number plaque above the chip
+  const plaque = new THREE.Group();
+  const digits = String(i + 1).padStart(2, '0');
+  [...digits].forEach((d, di) => {
+    const m = textMesh(d, 0.2, faceMat, sideMat);
+    m.position.x = (di - 0.5) * 0.26;
+    plaque.add(m);
+  });
+  plaque.position.set(0, CHIP_H + 0.55, 0.05);
+  root.add(plaque);
+
+  // title word on the slab face
+  const word = buildWord(title, 0.42, 0.18);
+  word.group.position.set(0, 0.28, CHIP_D / 2 + 0.05);
+  root.add(word.group);
+  chipTitles.push(word);
+
+  // three tick bars under the title
+  for (let b = 0; b < 3; b++) {
+    const bar = new THREE.Mesh(
+      new THREE.BoxGeometry(CHIP_W - 0.7, 0.02, 0.02),
+      new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.16 + b * 0.05, toneMapped: false, depthWrite: false })
+    );
+    bar.position.set(0, 0.02 - b * 0.2, CHIP_D / 2 + 0.02);
+    root.add(bar);
+  }
+});
+
+// ---------- scanning beam ----------
+const beam = new THREE.Mesh(
+  new THREE.PlaneGeometry(0.85, 4.4),
+  new THREE.MeshBasicMaterial({
+    map: glowTex,
+    color: 0x9fe8ff,
+    transparent: true,
+    opacity: 0.3,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: false,
+  })
+);
+beam.position.z = 1.6;
+scene.add(beam);
+
+// floor glow sprites under chips
+const glows = CHIP_X.map(x => {
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+    map: glowTex,
+    color: 0x2a6578,
+    transparent: true,
+    opacity: 0.22,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  }));
+  sprite.position.set(x, -1.55, -0.4);
+  sprite.scale.set(4.4, 1.2, 1);
+  scene.add(sprite);
+  return sprite;
+});
+
+// ---------- atmosphere ----------
+const dustGeo = new THREE.BufferGeometry();
+const dustCount = 130;
+const dustPos = new Float32Array(dustCount * 3);
+for (let i = 0; i < dustCount; i++) {
+  dustPos[i * 3] = (Math.random() - 0.5) * 24;
+  dustPos[i * 3 + 1] = (Math.random() - 0.35) * 8;
+  dustPos[i * 3 + 2] = (Math.random() - 0.5) * 10 - 2;
+}
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dust = new THREE.Points(
+  dustGeo,
+  new THREE.PointsMaterial({
+    map: glowTex,
+    color: 0x9fe8ff,
+    size: 0.068,
+    transparent: true,
+    opacity: 0.44,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true,
+  })
+);
+scene.add(dust);
+
+// ---------- frame API ----------
+const pulseEl = document.getElementById('pulse');
+const activeEl = document.getElementById('active');
+const loadEl = document.getElementById('load');
+const TwoPi = Math.PI * 2;
+
+function setFrame(t) {
+  const a = t * TwoPi;
+
+  camera.position.x = Math.sin(a) * 1.25;
+  camera.position.y = 0.25 + Math.cos(a) * 0.28;
+  camera.position.z = CAM_Z + Math.sin(a + 1.0) * 0.7;
+  camera.lookAt(Math.sin(a) * 0.2, 0.12, 0);
+
+  // which chip is lit; beam sweeps across all three every loop
+  const beamX = (t * 3 % 1) * 11.4 - 5.7;
+  beam.position.x = beamX;
+
+  let active = 0, best = 99;
+  chipRoots.forEach((root, i) => {
+    const dist = Math.abs(beamX - CHIP_X[i]);
+    const lit = Math.max(0, 1 - dist / 2.2);
+    const bob = Math.sin(a + i * 1.15);
+    root.rotation.y = Math.sin(a + i * 1.05) * 0.5;
+    root.rotation.x = Math.cos(a + i * 1.3) * 0.05;
+    root.position.y = CHIP_Y + bob * 0.14;
+    root.children.forEach(child => {
+      if (child.material && child.material.opacity !== undefined && child.material.isMeshBasicMaterial) {
+        child.material.opacity = Math.min(0.95, 0.4 + lit * 0.55);
+      }
+    });
+    glows[i].material.opacity = 0.14 + lit * 0.3;
+    glows[i].scale.set(4.4 + lit * 0.8, 1.2 + lit * 0.2, 1);
+    if (dist < best) { best = dist; active = i; }
+    if (lit > 0.4) chipTitles[i].letters.forEach(m => { m.rotation.x = Math.sin(a * 2 + m.userData.phase) * 0.2; });
+  });
+
+  chipTitles.forEach((word, i) => {
+    word.group.position.z = CHIP_D / 2 + 0.05 + Math.sin(a * 2 + i) * 0.04;
+    word.letters.forEach(m => {
+      m.position.y = Math.sin(a + m.userData.phase + i) * 0.03;
+    });
+  });
+
+  camera.rotation.z += Math.sin(a + 0.4) * 0.012;
+
+  rimL.position.x = -7.5 + Math.sin(a) * 1.1;
+  rimR.intensity = 23 + Math.sin(a + 1.6) * 7;
+
+  dust.rotation.y = Math.sin(a) * 0.15;
+  dust.position.y = Math.sin(a * 2) * 0.09;
+
+  pulseEl.style.opacity = String(0.55 + 0.45 * (0.5 + 0.5 * Math.sin(a * 6)));
+  pulseEl.style.transform = `scale(${1 + 0.35 * Math.sin(a * 6)})`;
+  activeEl.textContent = `TRACK 0${active + 1}`;
+  loadEl.textContent = `${Math.round(58 + Math.sin(a * 2) * 10)}%`;
+
+  applyHud(t);
+
+  renderer.render(scene, camera);
+}
+
+window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

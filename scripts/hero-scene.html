@@ -27,9 +27,9 @@
     height: 100vh;
     overflow: hidden;
     background:
-      radial-gradient(ellipse 72% 110% at 58% 50%, rgba(36, 91, 112, 0.24), transparent 63%),
-      radial-gradient(ellipse 42% 62% at 17% 43%, rgba(142, 220, 240, 0.075), transparent 68%),
-      radial-gradient(ellipse 50% 70% at 86% 18%, rgba(36, 91, 112, 0.10), transparent 70%),
+      radial-gradient(ellipse 72% 110% at 58% 50%, rgba(36, 91, 112, 0.26), transparent 63%),
+      radial-gradient(ellipse 42% 62% at 14% 40%, rgba(142, 220, 240, 0.09), transparent 68%),
+      radial-gradient(ellipse 50% 70% at 88% 14%, rgba(36, 91, 112, 0.12), transparent 70%),
       #07090c;
   }
   #stage::after {
@@ -39,7 +39,7 @@
     pointer-events: none;
     background:
       linear-gradient(90deg, rgba(7,9,12,0.55) 0%, transparent 18%, transparent 82%, rgba(7,9,12,0.45) 100%),
-      linear-gradient(180deg, rgba(7,9,12,0.18) 0%, transparent 28%, transparent 72%, rgba(7,9,12,0.55) 100%);
+      linear-gradient(180deg, rgba(7,9,12,0.20) 0%, transparent 26%, transparent 70%, rgba(7,9,12,0.58) 100%);
     z-index: 3;
   }
   canvas {
@@ -48,7 +48,7 @@
     width: 100%;
     height: 100%;
     z-index: 2;
-    filter: saturate(1.06) contrast(1.03);
+    filter: saturate(1.1) contrast(1.05);
   }
   .frame {
     position: absolute;
@@ -75,8 +75,8 @@
     height: 1px;
     z-index: 4;
     pointer-events: none;
-    background: linear-gradient(90deg, transparent, rgba(142, 220, 240, 0.38), transparent);
-    opacity: 0.55;
+    background: linear-gradient(90deg, transparent, rgba(142, 220, 240, 0.42), transparent);
+    opacity: 0.6;
     will-change: transform;
   }
   .hud {
@@ -248,7 +248,7 @@
     <div class="caption">Independent developer</div>
     <div class="subcaption">Software · Web · Developer tools</div>
     <div class="footer-left">Kendal · Indonesia</div>
-    <div class="telemetry">ORBIT <span id="orbit">000.0</span>°<em>/</em>PHASE <span id="phase">000</span>°</div>
+    <div class="telemetry">SPIN <span id="spin">000</span>°<em>/</em>ORBIT <span id="orbit">00.0</span><em>/</em>SIGNAL <span id="signal">00.0</span>%</div>
     <div class="footer-right">2026 <span>/</span> DikaCode <span>·</span> ObitoGlory</div>
     <div class="vertical">Digital identity / 01</div>
   </div>
@@ -259,6 +259,8 @@ import { TTFLoader } from 'three/addons/loaders/TTFLoader.js';
 import { Font } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { initHud, applyHud } from '/scripts/hud.mjs';
+initHud();
 
 const DPR = 1;
 const params = new URLSearchParams(location.search);
@@ -280,23 +282,23 @@ renderer.setPixelRatio(DPR);
 renderer.setSize(W, H, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.18;
+renderer.toneMappingExposure = 1.22;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x07090c, 0.025);
+scene.fog = new THREE.FogExp2(0x07090c, 0.022);
 
-const CAM_Z = IS_AVATAR ? 13.2 : IS_OG ? 18.4 : 15.0;
-const CAM_Y = IS_AVATAR ? 0.05 : 0.32;
-const camera = new THREE.PerspectiveCamera(32, W / H, 0.1, 140);
+const CAM_Z = IS_AVATAR ? 13.4 : IS_OG ? 18.6 : 15.2;
+const CAM_Y = IS_AVATAR ? 0.05 : 0.3;
+const camera = new THREE.PerspectiveCamera(34, W / H, 0.1, 160);
 camera.position.set(0, CAM_Y, CAM_Z);
 camera.lookAt(0.1, 0.05, 0);
 
 const pmrem = new THREE.PMREMGenerator(renderer);
 const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
 scene.environment = envRT.texture;
-scene.environmentIntensity = 0.32;
+scene.environmentIntensity = 0.38;
 
 function makeGlowTexture() {
   const c = document.createElement('canvas');
@@ -317,9 +319,9 @@ function makeGlowTexture() {
 const glowTex = makeGlowTexture();
 
 // ---------- lighting ----------
-scene.add(new THREE.HemisphereLight(0x9fc9d6, 0x07090c, 0.78));
-scene.add(new THREE.AmbientLight(0x7fa6b3, 0.2));
-const key = new THREE.DirectionalLight(0xd7f5ff, 3.1);
+scene.add(new THREE.HemisphereLight(0x9fc9d6, 0x07090c, 0.72));
+scene.add(new THREE.AmbientLight(0x7fa6b3, 0.22));
+const key = new THREE.DirectionalLight(0xd7f5ff, 3.2);
 key.position.set(-7, 9, 8);
 key.castShadow = true;
 key.shadow.mapSize.set(1024, 1024);
@@ -333,27 +335,27 @@ key.shadow.bias = -0.0005;
 key.shadow.normalBias = 0.03;
 scene.add(key);
 
-const frontKey = new THREE.DirectionalLight(0xbfe4ee, 3.2);
+const frontKey = new THREE.DirectionalLight(0xbfe4ee, 2.6);
 frontKey.position.set(2, 3, 10);
 scene.add(frontKey);
 
-const rim = new THREE.PointLight(0x8edcf0, 38, 34, 2.0);
+const rim = new THREE.PointLight(0x8edcf0, 42, 36, 2.0);
 rim.position.set(-8.4, 3.6, -3.2);
 scene.add(rim);
 
-const rim2 = new THREE.PointLight(0x4db8d3, 26, 30, 2.0);
+const rim2 = new THREE.PointLight(0x4db8d3, 30, 32, 2.0);
 rim2.position.set(9.2, 0.8, -3.4);
 scene.add(rim2);
 
-const warmRim = new THREE.PointLight(0xff9a6b, 15, 30, 2.0);
+const warmRim = new THREE.PointLight(0xff9a6b, 17, 32, 2.0);
 warmRim.position.set(6.6, 4.6, -5.2);
 scene.add(warmRim);
 
-const fill = new THREE.PointLight(0x245b70, 22, 30, 2.0);
+const fill = new THREE.PointLight(0x245b70, 24, 30, 2.0);
 fill.position.set(4, -3.4, 7);
 scene.add(fill);
 
-const sweep = new THREE.SpotLight(0xa8ecff, 32, 38, 0.5, 0.86, 1.5);
+const sweep = new THREE.SpotLight(0xa8ecff, 34, 40, 0.5, 0.84, 1.5);
 sweep.position.set(1.5, 4.6, 8.5);
 sweep.target.position.set(2.2, 0.1, 0);
 scene.add(sweep);
@@ -373,7 +375,7 @@ scene.add(floor);
 const grid = new THREE.GridHelper(44, 44, 0x2c5a68, 0x12232b);
 grid.position.y = FLOOR_Y - 0.012;
 grid.material.transparent = true;
-grid.material.opacity = 0.28;
+grid.material.opacity = 0.26;
 grid.material.depthWrite = false;
 scene.add(grid);
 
@@ -381,7 +383,7 @@ const floorGlow = new THREE.Sprite(new THREE.SpriteMaterial({
   map: glowTex,
   color: 0x2a6578,
   transparent: true,
-  opacity: 0.12,
+  opacity: 0.13,
   blending: THREE.AdditiveBlending,
   depthWrite: false,
 }));
@@ -391,20 +393,20 @@ scene.add(floorGlow);
 
 // ---------- materials ----------
 const faceMat = new THREE.MeshPhysicalMaterial({
-  color: 0x536b78,
-  metalness: 0.82,
-  roughness: 0.26,
-  clearcoat: 0.55,
-  clearcoatRoughness: 0.18,
-  envMapIntensity: 1.3,
+  color: 0x5d7783,
+  metalness: 0.9,
+  roughness: 0.2,
+  clearcoat: 0.6,
+  clearcoatRoughness: 0.16,
+  envMapIntensity: 1.45,
 });
 const sideMat = new THREE.MeshPhysicalMaterial({
-  color: 0x9fc4cf,
-  metalness: 0.97,
-  roughness: 0.12,
-  clearcoat: 0.5,
-  clearcoatRoughness: 0.12,
-  envMapIntensity: 1.5,
+  color: 0xa8cdd8,
+  metalness: 1.0,
+  roughness: 0.08,
+  clearcoat: 0.55,
+  clearcoatRoughness: 0.1,
+  envMapIntensity: 1.6,
 });
 const darkMat = new THREE.MeshPhysicalMaterial({
   color: 0x0c1318,
@@ -412,7 +414,7 @@ const darkMat = new THREE.MeshPhysicalMaterial({
   roughness: 0.3,
   envMapIntensity: 0.65,
   transparent: true,
-  opacity: 0.65,
+  opacity: 0.6,
 });
 const glowMat = new THREE.MeshBasicMaterial({
   color: 0x8edcf0,
@@ -426,17 +428,17 @@ const LETTERS = 'DIKAOFC';
 const letterOpts = {
   font,
   size: 1,
-  depth: 0.38,
+  depth: 0.42,
   curveSegments: 10,
   bevelEnabled: true,
-  bevelThickness: 0.035,
-  bevelSize: 0.026,
+  bevelThickness: 0.04,
+  bevelSize: 0.03,
   bevelOffset: 0,
   bevelSegments: 4,
 };
 const letterData = [];
 let totalLetterWidth = 0;
-const letterGap = 0.045;
+const letterGap = 0.05;
 for (const ch of LETTERS) {
   const geo = new TextGeometry(ch, letterOpts);
   geo.computeBoundingBox();
@@ -455,7 +457,7 @@ letterData.forEach(({ geo, w }, i) => {
   const mesh = new THREE.Mesh(geo, [faceMat, sideMat]);
   mesh.position.set(cursor + w / 2, 0, i % 2 ? 0.07 : -0.07);
   mesh.userData.base = mesh.position.clone();
-  mesh.userData.phase = i * 0.54;
+  mesh.userData.phase = (i / LETTERS.length) * Math.PI * 2;
   mesh.castShadow = false;
   mesh.receiveShadow = true;
   wordGroup.add(mesh);
@@ -491,10 +493,10 @@ hole.lineTo(dStemInner, dInnerR);
 outerShape.holes.push(hole);
 
 const dGeo = new THREE.ExtrudeGeometry(outerShape, {
-  depth: 0.7,
+  depth: 0.78,
   bevelEnabled: true,
-  bevelThickness: 0.08,
-  bevelSize: 0.065,
+  bevelThickness: 0.09,
+  bevelSize: 0.07,
   bevelSegments: 5,
   curveSegments: 48,
 });
@@ -505,8 +507,8 @@ dGeo.translate(-dCenter.x, -dCenter.y, -dCenter.z);
 
 const dVisual = new THREE.Group();
 const dEcho = new THREE.Mesh(dGeo, darkMat);
-dEcho.position.z = -0.46;
-dEcho.scale.setScalar(1.035);
+dEcho.position.z = -0.5;
+dEcho.scale.setScalar(1.04);
 dVisual.add(dEcho);
 
 const dMesh = new THREE.Mesh(dGeo, [faceMat, sideMat]);
@@ -514,27 +516,28 @@ dMesh.castShadow = true;
 dMesh.receiveShadow = true;
 dVisual.add(dMesh);
 
+// glowing spine tube that rides the inner edge of the D (in D-local space)
 const innerCurve = new THREE.EllipseCurve(dArcX, 0, dInnerR, dInnerR, Math.PI / 2, -Math.PI / 2, true);
-const innerPts = innerCurve.getPoints(60).map(p => new THREE.Vector3(p.x - dCenter.x, p.y - dCenter.y, 0.43));
+const innerPts = innerCurve.getPoints(60).map(p => new THREE.Vector3(p.x - dCenter.x, p.y - dCenter.y, 0.47));
 const innerTube = new THREE.Mesh(
-  new THREE.TubeGeometry(new THREE.CatmullRomCurve3(innerPts), 60, 0.014, 6, false),
-  new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.9, toneMapped: false })
+  new THREE.TubeGeometry(new THREE.CatmullRomCurve3(innerPts), 60, 0.015, 6, false),
+  new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.92, toneMapped: false })
 );
 dVisual.add(innerTube);
 
 const dHoleGlow = new THREE.Mesh(new THREE.SphereGeometry(0.08, 24, 16), glowMat);
-dHoleGlow.position.set(dArcX - dCenter.x, -dCenter.y, 0.47);
+dHoleGlow.position.set(dArcX - dCenter.x, -dCenter.y, 0.52);
 dVisual.add(dHoleGlow);
 
 const arcCurve = new THREE.EllipseCurve(0, 0, 2.42, 2.42, -Math.PI * 0.78, Math.PI * 0.74, false, 0);
-const arcPts = arcCurve.getPoints(80).map(p => new THREE.Vector3(p.x, p.y, -0.65));
+const arcPts = arcCurve.getPoints(80).map(p => new THREE.Vector3(p.x, p.y, -0.68));
 const arcGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(arcPts), 80, 0.012, 8, false);
 const arc = new THREE.Mesh(arcGeo, new THREE.MeshBasicMaterial({ color: 0x4f7785, transparent: true, opacity: 0.55, toneMapped: false }));
 arc.rotation.z = 0.22;
 dVisual.add(arc);
 
-const dHoleLight = new THREE.PointLight(0x8edcf0, 1.8, 3.6, 2);
-dHoleLight.position.set(dArcX - dCenter.x, -dCenter.y, 0.62);
+const dHoleLight = new THREE.PointLight(0x8edcf0, 1.9, 3.6, 2);
+dHoleLight.position.set(dArcX - dCenter.x, -dCenter.y, 0.66);
 
 const dGroup = new THREE.Group();
 dGroup.add(dVisual);
@@ -542,46 +545,95 @@ dGroup.add(dHoleLight);
 const D_BASE_X = IS_AVATAR ? 0 : -7.0;
 const D_BASE_Y = 0.14;
 dGroup.position.set(D_BASE_X, D_BASE_Y, IS_AVATAR ? 0 : 0.35);
-dGroup.rotation.set(0.06, IS_AVATAR ? -0.16 : -0.22, -0.04);
+dGroup.rotation.set(0.06, -0.22, -0.04);
 dGroup.scale.setScalar(IS_AVATAR ? 1.65 : 0.9);
 scene.add(dGroup);
 
-// orbital rings around the D, independent of the D's own rotation
+// orbital rings around the D, independent of the D's own spin
 const orbitRoot = new THREE.Group();
 orbitRoot.position.copy(dGroup.position);
 orbitRoot.scale.copy(dGroup.scale);
 scene.add(orbitRoot);
 
 const orbit1 = new THREE.Group();
-orbit1.rotation.set(1.15, 0.25, 0.1);
+orbit1.rotation.set(1.12, 0.25, 0.1);
 orbitRoot.add(orbit1);
 const ring1 = new THREE.Mesh(
-  new THREE.TorusGeometry(2.45, 0.012, 8, 180),
-  new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.34, toneMapped: false, depthWrite: false })
+  new THREE.TorusGeometry(2.48, 0.013, 8, 200),
+  new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.36, toneMapped: false, depthWrite: false })
 );
 orbit1.add(ring1);
-const bead1 = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 12), glowMat);
+const bead1 = new THREE.Mesh(new THREE.SphereGeometry(0.055, 16, 12), glowMat);
 orbit1.add(bead1);
+const bead1b = new THREE.Mesh(new THREE.SphereGeometry(0.032, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffb08a, toneMapped: false }));
+orbit1.add(bead1b);
 
 const orbit2 = new THREE.Group();
-orbit2.rotation.set(-0.92, -0.34, 0.42);
+orbit2.rotation.set(-0.94, -0.34, 0.42);
 orbitRoot.add(orbit2);
 const ring2 = new THREE.Mesh(
-  new THREE.TorusGeometry(2.7, 0.008, 8, 180),
-  new THREE.MeshBasicMaterial({ color: 0x4f7785, transparent: true, opacity: 0.24, toneMapped: false, depthWrite: false })
+  new THREE.TorusGeometry(2.72, 0.009, 8, 200),
+  new THREE.MeshBasicMaterial({ color: 0x4f7785, transparent: true, opacity: 0.26, toneMapped: false, depthWrite: false })
 );
 orbit2.add(ring2);
-const bead2 = new THREE.Mesh(new THREE.SphereGeometry(0.035, 16, 12), new THREE.MeshBasicMaterial({ color: 0x4f7785, transparent: true, opacity: 0.8, toneMapped: false }));
+const bead2 = new THREE.Mesh(new THREE.SphereGeometry(0.036, 16, 12), new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.85, toneMapped: false }));
 orbit2.add(bead2);
+
+// ---------- orbiting console ring around the wordmark ----------
+const wordHalo = new THREE.Group();
+wordHalo.position.set(2.4, 0.16, -0.6);
+wordHalo.rotation.x = 0.14;
+scene.add(wordHalo);
+const haloSegs = [];
+for (let i = 0; i < 3; i++) {
+  const segCurve = new THREE.EllipseCurve(0, 0, 3.4, 3.4, 0, Math.PI * 0.62, false, 0);
+  const segPts = segCurve.getPoints(50);
+  const segGeo = new THREE.BufferGeometry().setFromPoints(segPts.map(p => new THREE.Vector3(p.x, p.y, 0)));
+  const seg = new THREE.Line(segGeo, new THREE.LineBasicMaterial({
+    color: i === 1 ? 0xffb08a : 0x8edcf0,
+    transparent: true,
+    opacity: 0.5,
+    toneMapped: false,
+    depthWrite: false,
+  }));
+  seg.userData.baseRot = (i / 3) * Math.PI * 2;
+  wordHalo.add(seg);
+  haloSegs.push(seg);
+}
 
 if (IS_AVATAR) {
   wordGroup.visible = false;
   orbit1.visible = false;
   orbit2.visible = false;
+  wordHalo.visible = false;
   grid.visible = false;
   floorGlow.visible = false;
   arc.visible = false;
 }
+
+// ---------- floating chrome debris ----------
+const debrisGeo = new THREE.OctahedronGeometry(0.14, 0);
+const debrisMat = new THREE.MeshPhysicalMaterial({
+  color: 0xa8cdd8,
+  metalness: 1,
+  roughness: 0.12,
+  envMapIntensity: 1.5,
+});
+const DEBRIS_COUNT = 26;
+const debris = new THREE.InstancedMesh(debrisGeo, debrisMat, DEBRIS_COUNT);
+const debrisData = [];
+{
+  for (let i = 0; i < DEBRIS_COUNT; i++) {
+    debrisData.push({
+      x: (Math.random() - 0.5) * 26,
+      y: (Math.random() - 0.3) * 8.5,
+      z: -6 - Math.random() * 8,
+      s: 0.5 + Math.random() * 1.4,
+      p: Math.random() * Math.PI * 2,
+    });
+  }
+}
+scene.add(debris);
 
 // ---------- background structure ----------
 const bg = new THREE.Group();
@@ -626,29 +678,34 @@ const glowD = new THREE.Sprite(new THREE.SpriteMaterial({
   map: glowTex,
   color: 0x8edcf0,
   transparent: true,
-  opacity: 0.14,
+  opacity: 0.15,
   blending: THREE.AdditiveBlending,
   depthWrite: false,
 }));
 glowD.position.set(-5.4, 0.2, -1.2);
-glowD.scale.set(6.5, 6.5, 1);
+glowD.scale.set(7, 7, 1);
 scene.add(glowD);
 
+// dust: three-dimensional drift that flies toward the camera every loop
+const DUST_SPAN = 18;
 const dustGeo = new THREE.BufferGeometry();
-const dustCount = 160;
+const dustCount = 190;
 const dustPos = new Float32Array(dustCount * 3);
+const dustBaseZ = new Float32Array(dustCount);
 for (let i = 0; i < dustCount; i++) {
   dustPos[i * 3] = (Math.random() - 0.5) * 28;
   dustPos[i * 3 + 1] = (Math.random() - 0.3) * 9;
-  dustPos[i * 3 + 2] = (Math.random() - 0.5) * 14 - 2;
+  const z = DUST_SPAN / 2 - Math.random() * DUST_SPAN;
+  dustPos[i * 3 + 2] = z;
+  dustBaseZ[i] = z;
 }
 dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
 const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({
   map: glowTex,
   color: 0x9fe8ff,
-  size: 0.07,
+  size: 0.075,
   transparent: true,
-  opacity: 0.48,
+  opacity: 0.5,
   depthWrite: false,
   blending: THREE.AdditiveBlending,
   sizeAttenuation: true,
@@ -656,16 +713,16 @@ const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({
 scene.add(dust);
 
 const bokeh = [];
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 7; i++) {
   const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
     map: glowTex,
-    color: 0x8edcf0,
+    color: i % 4 === 0 ? 0xffb08a : 0x8edcf0,
     transparent: true,
-    opacity: 0.065,
+    opacity: 0.07,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   }));
-  const s = 0.35 + Math.random() * 1.0;
+  const s = 0.4 + Math.random() * 1.1;
   sprite.scale.set(s, s, 1);
   sprite.position.set((Math.random() - 0.5) * 20, (Math.random() - 0.4) * 7, -2 - Math.random() * 7);
   sprite.userData.baseX = sprite.position.x;
@@ -675,7 +732,7 @@ for (let i = 0; i < 6; i++) {
   bokeh.push(sprite);
 }
 
-// ---------- floor reflection (cheap mirrored clone) ----------
+// ---------- floor reflection (cheap mirrored clones) ----------
 function cloneAsReflection(source, color, opacity) {
   const clone = source.clone(true);
   clone.traverse(obj => {
@@ -697,77 +754,130 @@ const reflectionRoot = new THREE.Group();
 reflectionRoot.position.y = FLOOR_Y * 2;
 reflectionRoot.scale.y = -1;
 scene.add(reflectionRoot);
-const dReflection = cloneAsReflection(dVisual, 0x38606e, 0.08);
+const dReflection = cloneAsReflection(dVisual, 0x38606e, 0.09);
 reflectionRoot.add(dReflection);
+const wordReflection = cloneAsReflection(wordGroup, 0x38606e, 0.055);
+reflectionRoot.add(wordReflection);
+
 if (IS_AVATAR) {
   reflectionRoot.visible = false;
 }
 
 // ---------- frame API ----------
 const scanEl = document.querySelector('.scanline');
+const spinEl = document.getElementById('spin');
 const orbitEl = document.getElementById('orbit');
-const phaseEl = document.getElementById('phase');
+const signalEl = document.getElementById('signal');
 const pulseEl = document.querySelector('.kicker .pulse');
-const clock = new THREE.Clock();
+const debrisDummy = new THREE.Object3D();
+const TwoPi = Math.PI * 2;
 
 function setFrame(t) {
-  const a = t * Math.PI * 2;
-  const orbit = Math.sin(a);
-  const orbitAngle = orbit * (IS_AVATAR ? 2 : 18);
+  const a = t * TwoPi;
 
-  camera.position.x = orbit * (IS_AVATAR ? 0.08 : 1.5);
-  camera.position.y = CAM_Y + Math.cos(a) * (IS_AVATAR ? 0.03 : 0.34);
-  camera.position.z = CAM_Z + Math.sin(a + 0.95) * (IS_AVATAR ? 0.04 : 0.85);
-  camera.lookAt(0.1 + orbit * (IS_AVATAR ? 0.02 : 0.22), 0.05, 0);
+  // camera: wide orbit + dolly breathing + subtle roll
+  camera.position.x = Math.sin(a) * 2.1;
+  camera.position.y = CAM_Y + Math.cos(a) * 0.36;
+  camera.position.z = CAM_Z + Math.sin(a + 0.95) * 0.95;
+  camera.lookAt(0.1 + Math.sin(a) * 0.24, 0.05, 0);
+  camera.rotation.z += Math.sin(a + 0.5) * 0.016;
 
-  dGroup.rotation.y = (IS_AVATAR ? -0.16 : -0.22) + Math.sin(a) * (IS_AVATAR ? 0.12 : 0.3);
+  // the D performs a full 360° spin every loop — real 3D motion
+  dGroup.rotation.y = -0.22 + a;
   dGroup.rotation.x = 0.06 + Math.cos(a) * 0.05;
   dGroup.rotation.z = -0.04 + Math.sin(a + 0.6) * 0.03;
-  dGroup.position.y = D_BASE_Y + Math.sin(a + 0.4) * (IS_AVATAR ? 0.03 : 0.1);
+  dGroup.position.y = D_BASE_Y + Math.sin(a + 0.4) * 0.1;
 
-  wordGroup.rotation.y = -0.02 + Math.sin(a + 0.85) * 0.05;
-  wordGroup.rotation.x = Math.cos(a + 0.85) * 0.015;
-  wordGroup.position.y = 0.16 + Math.cos(a + 0.85) * 0.05;
+  wordGroup.rotation.y = -0.02 + Math.sin(a + 0.85) * 0.075;
+  wordGroup.rotation.x = Math.cos(a + 0.85) * 0.02;
+  wordGroup.position.y = 0.16 + Math.cos(a + 0.85) * 0.06;
 
   letters.forEach((letter, i) => {
     const base = letter.userData.base;
-    const phase = letter.userData.phase;
-    letter.position.y = base.y + Math.sin(a + phase) * 0.06;
-    letter.position.z = base.z + Math.cos(a + phase) * 0.11;
-    letter.rotation.y = Math.sin(a + phase + 0.8) * 0.045;
+    const p = letter.userData.phase;
+    letter.position.y = base.y + Math.sin(a + p) * 0.09;
+    letter.position.z = base.z + Math.cos(a + p) * 0.16;
+    letter.rotation.y = Math.sin(a + p + 0.8) * 0.06;
+    letter.rotation.x = Math.sin(a + p + 1.4) * 0.16;
   });
 
-  orbit1.rotation.z = 0.1 + a * 0.12;
-  orbit2.rotation.z = 0.42 - a * 0.09;
-  bead1.position.set(Math.cos(a) * 2.45, Math.sin(a) * 2.45, 0);
-  bead2.position.set(Math.cos(-a + Math.PI) * 2.7, Math.sin(-a + Math.PI) * 2.7, 0);
+  orbit1.rotation.z = 0.1 + a * 0.25;
+  orbit2.rotation.z = 0.42 - a * 0.18;
+  bead1.position.set(Math.cos(a) * 2.48, Math.sin(a) * 2.48, 0);
+  bead1b.position.set(Math.cos(-a * 1.6 + Math.PI / 3) * 2.48, Math.sin(-a * 1.6 + Math.PI / 3) * 2.48, 0);
+  bead2.position.set(Math.cos(-a * 0.8 + Math.PI) * 2.72, Math.sin(-a * 0.8 + Math.PI) * 2.72, 0);
 
-  rim.position.x = -8.4 + Math.sin(a) * 1.1;
-  rim.position.y = 3.6 + Math.cos(a) * 0.5;
-  rim2.position.y = 0.8 + Math.sin(a + 1.8) * 0.45;
-  sweep.position.x = 1.8 + Math.sin(a + 0.2) * 8.2;
+  haloSegs.forEach((seg, i) => {
+    seg.rotation.z = seg.userData.baseRot + a * (i % 2 ? -0.5 : 0.35);
+    seg.material.opacity = 0.3 + 0.25 * (0.5 + 0.5 * Math.sin(a * 2 + i * 2.1));
+  });
+
+  for (let i = 0; i < DEBRIS_COUNT; i++) {
+    const d = debrisData[i];
+    debrisDummy.position.set(
+      d.x + Math.sin(a + d.p) * 0.6,
+      d.y + Math.cos(a * 1.4 + d.p) * 0.4,
+      d.z
+    );
+    debrisDummy.rotation.set(a * 0.7 + d.p, a * 1.1 + d.p, d.p);
+    debrisDummy.scale.setScalar(d.s);
+    debrisDummy.updateMatrix();
+    debris.setMatrixAt(i, debrisDummy.matrix);
+  }
+  debris.instanceMatrix.needsUpdate = true;
+
+  rim.position.x = -8.4 + Math.sin(a) * 1.2;
+  rim.position.y = 3.6 + Math.cos(a) * 0.6;
+  rim.intensity = 42 + Math.sin(a * 2) * 9;
+  rim2.position.y = 0.8 + Math.sin(a + 1.8) * 0.5;
+  warmRim.intensity = 15 + (0.5 + 0.5 * Math.sin(a + Math.PI)) * 14;
+  sweep.position.x = 1.8 + Math.sin(a + 0.2) * 8.6;
   sweep.target.position.set(2.4, 0.1, 0);
-  dHoleGlow.scale.setScalar(0.9 + Math.sin(a * 2) * 0.18);
-  dHoleLight.intensity = 1.5 + (0.5 + 0.5 * Math.sin(a * 2)) * 0.9;
+  dHoleGlow.scale.setScalar(0.9 + Math.sin(a * 2) * 0.2);
+  dHoleLight.intensity = 1.6 + (0.5 + 0.5 * Math.sin(a * 2)) * 1.0;
 
-  dust.rotation.y = Math.sin(a) * 0.16;
-  dust.rotation.x = Math.cos(a) * 0.03;
-  dust.position.y = Math.sin(a * 2) * 0.08;
+  // dust drifts toward the camera, wrapping every loop
+  const dustArr = dustGeo.attributes.position.array;
+  for (let i = 0; i < dustCount; i++) {
+    let z = dustBaseZ[i] + t * DUST_SPAN;
+    if (z > DUST_SPAN / 2) z -= DUST_SPAN;
+    dustArr[i * 3 + 2] = z;
+  }
+  dustGeo.attributes.position.needsUpdate = true;
+  dust.rotation.y = Math.sin(a) * 0.05;
+  dust.rotation.x = Math.cos(a) * 0.012;
+
   bokeh.forEach((sprite, i) => {
     const p = sprite.userData.phase;
-    sprite.position.x = sprite.userData.baseX + Math.sin(a + p) * 0.55;
-    sprite.position.y = sprite.userData.baseY + Math.cos(a * 1.3 + p) * 0.3;
+    sprite.position.x = sprite.userData.baseX + Math.sin(a + p) * 0.6;
+    sprite.position.y = sprite.userData.baseY + Math.cos(a * 1.3 + p) * 0.35;
   });
 
+  // reflections follow their sources (reflectionRoot already mirrors Y)
   dReflection.position.copy(dGroup.position);
   dReflection.rotation.copy(dGroup.rotation);
   dReflection.scale.copy(dGroup.scale);
+  wordReflection.position.copy(wordGroup.position);
+  wordReflection.rotation.copy(wordGroup.rotation);
+  wordReflection.scale.copy(wordGroup.scale);
+  letters.forEach((letter, i) => {
+    const r = wordReflection.children[i];
+    r.position.copy(letter.position);
+    r.rotation.copy(letter.rotation);
+  });
 
-  scanEl.style.transform = `translateY(${t * 500}px)`;
+  grid.position.z = (t * 2) % 2;
+  floorGlow.material.opacity = 0.11 + 0.04 * (0.5 + 0.5 * Math.sin(a * 2));
+
+  const beamP = 0.5 - 0.5 * Math.cos(a);
+  scanEl.style.transform = `translateY(${beamP * 500}px)`;
   pulseEl.style.opacity = String(0.55 + 0.45 * (0.5 + 0.5 * Math.sin(a * 6)));
   pulseEl.style.transform = `scale(${1 + 0.35 * Math.sin(a * 6)})`;
-  if (orbitEl) orbitEl.textContent = orbitAngle.toFixed(1).padStart(5, '0');
-  if (phaseEl) phaseEl.textContent = String(Math.round(t * 360)).padStart(3, '0');
+  if (spinEl) spinEl.textContent = String(Math.round(t * 360)).padStart(3, '0');
+  if (orbitEl) orbitEl.textContent = (0.5 + 0.5 * Math.sin(a)).toFixed(2);
+  if (signalEl) signalEl.textContent = (97.8 + Math.sin(a * 2) * 1.2).toFixed(1);
+
+  applyHud(t);
 
   renderer.render(scene, camera);
 }

@@ -1,62 +1,50 @@
 # Link and identity audit
 
-Checked on 2026-10-20 with `npm run check:links` (HTTP GET, redirects followed) plus manual inspection of the ObitoGlory routes and structured data.
+Checked on 2026-10-20. External URLs were verified with HTTP GET (redirects followed); README asset paths were checked against the six-scene WebP inventory.
 
-## README assets
+## README animations
 
-| Path                            | Status |
-| ------------------------------- | ------ |
-| `assets/dikaofc-hero.gif`       | OK     |
-| `assets/dikaofc-hero.png`       | OK     |
-| `assets/dikaofc-identity.gif`   | OK     |
-| `assets/dikaofc-identity.png`   | OK     |
-| `assets/dikaofc-focus.gif`      | OK     |
-| `assets/dikaofc-focus.png`      | OK     |
-| `assets/dikaofc-contact.gif`    | OK     |
+| Path                              | Dimensions | Frames | Status     |
+| --------------------------------- | ---------- | -----: | ---------- |
+| `assets/dikaofc-hero.webp`        | 1200 × 450 |    144 | Referenced |
+| `assets/dikaofc-identity.webp`    | 1200 × 620 |    120 | Referenced |
+| `assets/dikaofc-focus.webp`       | 1200 × 520 |    120 | Referenced |
+| `assets/dikaofc-now.webp`         | 1200 × 480 |    120 | Referenced |
+| `assets/dikaofc-principles.webp`  | 1200 × 520 |    144 | Referenced |
+| `assets/dikaofc-contact.webp`     | 1200 × 340 |    120 | Referenced |
+
+## Static assets
+
+| Path                            | Dimensions  | Role                    |
+| ------------------------------- | ----------- | ----------------------- |
+| `assets/dikaofc-hero.png`       | 1200 × 450  | Hero fallback           |
+| `assets/dikaofc-identity.png`   | 1200 × 620  | Identity fallback       |
+| `assets/dikaofc-focus.png`      | 1200 × 520  | Focus fallback          |
+| `assets/dikaofc-now.png`        | 1200 × 480  | Now fallback            |
+| `assets/dikaofc-principles.png` | 1200 × 520  | Principles fallback     |
+| `assets/dikaofc-contact.png`    | 1200 × 340  | Contact fallback        |
+| `assets/dikaofc-og.png`         | 1200 × 630  | Open Graph preview      |
+| `assets/dikaofc-avatar.png`     | 1024 × 1024 | Optional GitHub avatar  |
+
+The six PNG fallbacks share the basenames of the WebP loops and are not linked from the README. All fourteen files are emitted by `npm run render:assets`; they must be present in `assets/` before publishing. At the time of this audit the new WebP/PNG set had not yet been rendered, so those paths are the only ones that would 404 until that run completes.
 
 ## External links used in the README
 
-| URL                                                   | Status | Note                                        |
-| ----------------------------------------------------- | ------ | ------------------------------------------- |
-| `https://www.obitoglory.tech/`                        | 200    | Portfolio and services                      |
-| `https://www.obitoglory.tech/proyek`                  | 200    | Project index                               |
-| `https://www.obitoglory.tech/tentang`                 | 200    | About                                       |
-| `https://www.obitoglory.tech/kontak`                  | 200    | Contact                                     |
-| `https://dikaglorya.github.io/journal/`               | 200    | Archive technical journal                   |
-| `https://github.com/dikaglorya`                       | 200    | The only official GitHub account            |
-| `https://t.me/dikaacode`                              | 200    | Telegram contact                            |
+| URL                                     | Status | Note                             |
+| --------------------------------------- | ------ | -------------------------------- |
+| `https://www.obitoglory.tech/`          | 200    | Portfolio and services           |
+| `https://www.obitoglory.tech/proyek`    | 200    | Project index                    |
+| `https://dikaglorya.github.io/journal/` | 200    | Technical journal                |
+| `https://www.obitoglory.tech/tentang`   | 200    | About                            |
+| `https://www.obitoglory.tech/kontak`    | 200    | Contact                          |
+| `https://github.com/dikaglorya`         | 200    | The only official GitHub account |
 
-## Verified but no longer linked
+No broken external links were found.
 
-The project case studies below were checked during the audit. They were removed from the README when the Selected work section was removed; the project index above remains the supported entry point.
-
-| URL                                                   | Status | Note                                        |
-| ----------------------------------------------------- | ------ | ------------------------------------------- |
-| `https://www.obitoglory.tech/proyek/dikaroute`        | 200    | DikaRoute case study                        |
-| `https://www.obitoglory.tech/proyek/obitobuff`        | 200    | ObitoBuff CLI case study                    |
-| `https://www.obitoglory.tech/proyek/pentesterbot`     | 200    | PentesterBot case study                     |
-| `https://www.obitoglory.tech/proyek/telegrambot-ai`   | 200    | TelegramBot AI case study                   |
-| `https://www.obitoglory.tech/proyek/remoteuniversal`  | 200    | RemoteUniversalDevice case study            |
-| `https://www.obitoglory.tech/proyek/agentbuff`        | 200    | AgentBuff case study                        |
-| `https://www.obitoglory.tech/proyek/freebuff-patch`   | 200    | Freebuff Patch case study                   |
-
-## Route changes found during inspection
-
-- `obitoglory.tech` now uses Indonesian routes: `/proyek`, `/tentang`, `/kontak`, `/layanan`, `/harga`, `/faq`. The English paths suggested in the original brief (`/projects/`, `/about/`, `/contact/`) return 404 on that domain, so the README uses the real routes.
-- The new website has no `/journal` route. The only verified journal is the archive site `https://dikaglorya.github.io/journal/`; the README labels it as technical notes on the archive site.
-- The old GitHub Pages case studies (`https://dikaglorya.github.io/projects/...`) still return 200. The current ObitoGlory project pages remain available; the README no longer includes the Selected work section.
-
-## Identity consistency findings (outside this repository)
+## Identity and retired references
 
 - The only official GitHub account is **https://github.com/dikaglorya**.
-- The official GitHub profile currently has the display name `ObitoGlory` and the bio `im dikacode / obitoglory`, while the site's contact/schema links point to other accounts. This contradicts the goal of making DikaOfc the dominant identity. Recommended manual fix in GitHub settings: display name **DikaOfc**, bio starting with DikaOfc.
-- `https://github.com/dikaofc` returns **404**, but the ObitoGlory structured data (`sameAs`) and several site links still point to it. This should be corrected on the website.
-- `https://github.com/dikacode` exists but is **not** the owner's account, and it appears to use the owner's photo. It is not linked from this README. If it is impersonating the owner, it can be reported to GitHub through the normal impersonation report flow.
-- Recommended website-side changes (the website repository was not modified here): update `sameAs` values, contact links, and footer links to `https://github.com/dikaglorya`; remove `dikaofc` and `dikacode`; add a reciprocal link from the website to this profile; keep only aliases the owner actually uses.
-- The official account has two public repositories (`dikaglorya.github.io` and `dikaglorya`); the product tools themselves are not published there, and the README wording reflects that.
-
-## What is not claimed
-
-- No claims about Google rankings or search improvements were made or measured. Profile content helps visitors identify its owner; ranking depends on many signals outside the README.
-- No fabricated visitor counts, contribution milestones, star counts, or popularity metrics are present.
-- Project diagrams are labelled as illustrative schematics, not product screenshots.
+- **DikaOfc** is the public identity, **DikaCode** is the developer identity and brand, and **ObitoGlory** is the website and portfolio brand.
+- There are **no references to a dikacode GitHub account** anywhere in the README.
+- There are **no GIF, button GIF, intro, current, or retired panel asset references** in the README. The page uses only the six animated WebP loops above.
+- The website uses Indonesian routes (`/proyek`, `/tentang`, `/kontak`); the English paths are not used. The journal is the GitHub Pages archive at `https://dikaglorya.github.io/journal/`.

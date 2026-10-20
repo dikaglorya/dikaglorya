@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=420, initial-scale=1">
+<title>DikaOfc nav orbiter button</title>
+<style>
+  @font-face {
+    font-family: 'JBMono';
+    src: url('/scripts/fonts/JetBrainsMono.ttf') format('truetype');
+    font-weight: 100 800;
+  }
+  :root { --ink: #eaf1f5; --muted: #9ba8b2; --accent: #8edcf0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; width: 420px; height: 110px; overflow: hidden; background: #07090c; }
+  #stage {
+    position: relative;
+    width: 420px;
+    height: 110px;
+    overflow: hidden;
+    background: radial-gradient(ellipse 80% 120% at 50% 50%, rgba(36, 91, 112, 0.28), #07090c 78%);
+  }
+  canvas { position: absolute; inset: 0; width: 420px; height: 110px; filter: saturate(1.1) contrast(1.05); }
+  .hud {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    font-family: 'JBMono', ui-monospace, monospace;
+    color: var(--ink);
+  }
+  .dot {
+    position: absolute;
+    left: 22px;
+    top: 23px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(142, 220, 240, 0.95);
+    will-change: transform, opacity;
+  }
+  .idx {
+    position: absolute;
+    right: 18px;
+    top: 17px;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: rgba(142, 220, 240, 0.85);
+  }
+  .framebar {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 12px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(142, 220, 240, 0.65), rgba(142, 220, 240, 0.08) 70%, transparent);
+  }
+  .runner {
+    position: absolute;
+    left: 14px;
+    bottom: 11.5px;
+    width: 46px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(142, 220, 240, 0), rgba(234, 241, 245, 0.9));
+    will-change: transform;
+    filter: drop-shadow(0 0 4px rgba(142, 220, 240, 0.8));
+  }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "/node_modules/three/build/three.module.js",
+    "three/addons/": "/node_modules/three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="scene"></canvas>
+  <div class="hud">
+    <span class="dot" id="pulse"></span>
+    <span class="idx" id="idx">01<span style="color:rgba(155,168,178,0.4)">/04</span></span>
+    <div class="framebar"></div>
+    <div class="runner" id="runner"></div>
+  </div>
+</div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "/node_modules/three/build/three.module.js",
+    "three/addons/": "/node_modules/three/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { TTFLoader } from 'three/addons/loaders/TTFLoader.js';
+import { Font } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { initHud, applyHud } from '/scripts/hud.mjs';
+initHud();
+
+const params = new URLSearchParams(location.search);
+const TEXT = (params.get('text') || 'PORTFOLIO').toUpperCase().slice(0, 12);
+document.getElementById('idx').innerHTML =
+  `${params.get('idx') || '01'}<span style="color:rgba(155,168,178,0.4)">/${params.get('total') || '04'}</span>`;
+
+const W = 420;
+const H = 110;
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: true,
+  powerPreference: 'high-performance',
+  preserveDrawingBuffer: true,
+});
+renderer.setPixelRatio(1);
+renderer.setSize(W, H, false);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.25;
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 60);
+const CAM_Z = 7.6;
+camera.position.set(0, 0.05, CAM_Z);
+camera.lookAt(0, 0, 0);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.5;
+
+// ---------- lights ----------
+scene.add(new THREE.HemisphereLight(0x9fc9d6, 0x07090c, 0.7));
+const key = new THREE.DirectionalLight(0xd7f5ff, 3.2);
+key.position.set(-3, 5, 6);
+scene.add(key);
+const sheenLight = new THREE.PointLight(0xa8ecff, 26, 20, 2.0);
+sheenLight.position.set(-6, 1, 4);
+scene.add(sheenLight);
+const rimL = new THREE.PointLight(0x8edcf0, 22, 18, 2.0);
+rimL.position.set(-5, 2, -2.5);
+scene.add(rimL);
+const rimR = new THREE.PointLight(0x4db8d3, 18, 18, 2.0);
+rimR.position.set(5, 0, -2.5);
+scene.add(rimR);
+
+// ---------- materials ----------
+const faceMat = new THREE.MeshPhysicalMaterial({
+  color: 0x5d7783,
+  metalness: 0.92,
+  roughness: 0.18,
+  clearcoat: 0.65,
+  clearcoatRoughness: 0.14,
+  envMapIntensity: 1.5,
+});
+const sideMat = new THREE.MeshPhysicalMaterial({
+  color: 0xb8d8e2,
+  metalness: 1,
+  roughness: 0.07,
+  clearcoat: 0.6,
+  clearcoatRoughness: 0.09,
+  envMapIntensity: 1.65,
+});
+const glowMat = new THREE.MeshBasicMaterial({ color: 0x8edcf0, toneMapped: false });
+
+// ---------- word ----------
+const ttf = await new TTFLoader().loadAsync('/scripts/fonts/ArchivoBlack-Regular.ttf');
+const font = new Font(ttf);
+const opts = {
+  font,
+  size: 0.42,
+  depth: 0.18,
+  curveSegments: 8,
+  bevelEnabled: true,
+  bevelThickness: 0.02,
+  bevelSize: 0.015,
+  bevelSegments: 3,
+};
+const widths = [];
+let total = 0;
+const gap = 0.035;
+for (const ch of TEXT) {
+  const geo = new TextGeometry(ch, opts);
+  geo.computeBoundingBox();
+  const bb = geo.boundingBox;
+  const w = bb.max.x - bb.min.x;
+  geo.translate(-(bb.min.x + bb.max.x) / 2, -(bb.min.y + bb.max.y) / 2, -0.09);
+  widths.push(w);
+  total += w + gap;
+}
+total -= gap;
+
+const wordGroup = new THREE.Group();
+const letters = [];
+let cursor = -total / 2;
+[...TEXT].forEach((ch, i) => {
+  const mesh = new THREE.Mesh(new TextGeometry(ch, opts), [faceMat, sideMat]);
+  mesh.position.set(cursor + widths[i] / 2, 0, i % 2 ? 0.04 : -0.04);
+  mesh.userData.phase = (i / TEXT.length) * Math.PI * 2;
+  wordGroup.add(mesh);
+  letters.push(mesh);
+  cursor += widths[i] + gap;
+});
+const fit = 3.15 / total;
+wordGroup.scale.setScalar(Math.min(1.15, fit));
+wordGroup.position.set(0, -0.02, 0);
+scene.add(wordGroup);
+
+// orbit ring behind the word
+const orbit = new THREE.Group();
+orbit.rotation.set(1.35, 0.25, 0.05);
+scene.add(orbit);
+const ring = new THREE.Mesh(
+  new THREE.TorusGeometry(1.75, 0.008, 8, 140),
+  new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.4, toneMapped: false, depthWrite: false })
+);
+orbit.add(ring);
+const bead = new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 8), glowMat);
+orbit.add(bead);
+const beadB = new THREE.Mesh(new THREE.SphereGeometry(0.022, 12, 8), new THREE.MeshBasicMaterial({ color: 0xffb08a, toneMapped: false }));
+orbit.add(beadB);
+
+// ---------- frame API ----------
+const pulseEl = document.getElementById('pulse');
+const runnerEl = document.getElementById('runner');
+const TwoPi = Math.PI * 2;
+
+function setFrame(t) {
+  const a = t * TwoPi;
+
+  camera.position.x = Math.sin(a) * 0.5;
+  camera.position.y = 0.05 + Math.cos(a) * 0.16;
+  camera.position.z = CAM_Z + Math.sin(a + 0.9) * 0.38;
+  camera.lookAt(0, -0.01, 0);
+
+  wordGroup.rotation.y = Math.sin(a + 0.85) * 0.3;
+  wordGroup.rotation.x = Math.cos(a + 0.85) * 0.035;
+  letters.forEach((m, i) => {
+    m.position.y = Math.sin(a + m.userData.phase + 0.7) * 0.045;
+    m.rotation.x = Math.sin(a + m.userData.phase + 1.3) * 0.22;
+  });
+
+  orbit.rotation.z = a * 0.5;
+  bead.position.set(Math.cos(a) * 1.75, Math.sin(a) * 1.75, 0);
+  beadB.position.set(Math.cos(-a * 1.7 + 1.4) * 1.75, Math.sin(-a * 1.7 + 1.4) * 1.75, 0);
+
+  sheenLight.position.x = Math.sin(a) * 7;
+  rimL.intensity = 20 + Math.sin(a * 2) * 5;
+
+  pulseEl.style.opacity = String(0.55 + 0.45 * (0.5 + 0.5 * Math.sin(a * 6)));
+  pulseEl.style.transform = `scale(${1 + 0.35 * Math.sin(a * 6)})`;
+  runnerEl.style.transform = `translateX(${t * 346}px)`;
+
+  applyHud(t);
+
+  renderer.render(scene, camera);
+}
+
+window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

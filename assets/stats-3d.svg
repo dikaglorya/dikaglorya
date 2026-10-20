@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="405" viewBox="0 0 1200 405" role="img" aria-labelledby="title desc">
+  <title id="title">Animated language stats</title>
+  <desc id="desc">Isometric bar chart with illustrative language percentages and animated glowing bars.</desc>
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d1117"/><stop offset="1" stop-color="#0a0f1f"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#00f5ff"/><stop offset=".48" stop-color="#7c3aed"/><stop offset="1" stop-color="#ff2bd6"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#00f5ff" stop-opacity="0"/><stop offset=".5" stop-color="#00f5ff"/><stop offset="1" stop-color="#ff2bd6" stop-opacity="0"/></linearGradient>
+    <radialGradient id="spot"><stop stop-color="#00f5ff" stop-opacity=".2"/><stop offset="1" stop-color="#00f5ff" stop-opacity="0"/></radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="soft" x="-40%" y="-50%" width="180%" height="200%"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="shadow" x="-30%" y="-40%" width="160%" height="190%"><feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/><feOffset dy="10" result="offset"/><feComponentTransfer><feFuncA type="linear" slope=".38"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+  text { font-family: 'Segoe UI', Ubuntu, Arial, sans-serif; }
+  .mono { font-family: 'Courier New', monospace; }
+  .glow { filter: url(#glow); }
+  .float { animation: float 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .pulse { animation: pulse 3s ease-in-out infinite; }
+  .shadow-pulse { animation: shadowPulse 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .drift { animation: drift 18s linear infinite; }
+  .shimmer { animation: shimmer 4s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  @keyframes pulse { 0%,100% { opacity: .52; } 50% { opacity: 1; } }
+  @keyframes shadowPulse { 0%,100% { transform: scaleX(1); opacity: .28; } 50% { transform: scaleX(.72); opacity: .12; } }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-60px); } }
+  @keyframes shimmer { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    text[opacity="0"] { opacity: 1 !important; }
+    .role-cycle:not(:first-child) { display: none; }
+    animate, animateTransform, animateMotion { display: none; }
+  }
+</style>
+  </defs>
+  <rect width="1200" height="405" rx="20" fill="url(#backdrop)"/>
+  <ellipse cx="595" cy="299" rx="480" ry="45" fill="#7c3aed" opacity=".08" filter="url(#soft)"/>
+    <path d="M111 285L600 226L1089 285L600 346Z" fill="#121d30" stroke="#24556f" stroke-opacity=".6"/>
+    <path d="M111 285L600 346V365L111 304Z" fill="#101827"/><path d="M600 346L1089 285V304L600 365Z" fill="#0a0f1f"/>
+    <g>
+      <path d="M194 172v112l22 13v-112Z" fill="#a3ff12" opacity=".64"><animate attributeName="d" values="M194 284v0l22 13v0Z;M194 172v112l22 13v-112Z;M194 172v112l22 13v-112Z;M194 284v0l22 13v0Z" keyTimes="0;.24;.78;1" dur="6s" begin="0s" repeatCount="indefinite"/></path>
+      <path d="M216 185l42 -12v112l-42 12Z" fill="#a3ff12" opacity=".84"><animate attributeName="d" values="M216 297l42 -12v0l-42 12Z;M216 185l42 -12v112l-42 12Z;M216 185l42 -12v112l-42 12Z;M216 297l42 -12v0l-42 12Z" keyTimes="0;.24;.78;1" dur="6s" begin="0s" repeatCount="indefinite"/></path>
+      <path d="M194 172l42 -13l22 12l-42 13Z" fill="#a3ff12" class="glow"><animate attributeName="d" values="M194 284l42 -13l22 12l-42 13Z;M194 172l42 -13l22 12l-42 13Z;M194 172l42 -13l22 12l-42 13Z;M194 284l42 -13l22 12l-42 13Z" keyTimes="0;.24;.78;1" dur="6s" begin="0s" repeatCount="indefinite"/></path>
+      <path d="M187 298h78" stroke="#000000" stroke-width="8" opacity=".2" filter="url(#soft)"/>
+      <text x="229" y="270" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="700" class="mono">72<animate attributeName="y" values="270;154;154;270" keyTimes="0;.24;.78;1" dur="6s" begin="0s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;1;.72;1" dur="3.5s" begin="0s" repeatCount="indefinite"/></text>
+      <text x="229" y="326" text-anchor="middle" fill="#8b9bb4" font-size="12" class="mono">JS</text>
+    </g><g>
+      <path d="M332 130v154l22 13v-154Z" fill="#00f5ff" opacity=".64"><animate attributeName="d" values="M332 284v0l22 13v0Z;M332 130v154l22 13v-154Z;M332 130v154l22 13v-154Z;M332 284v0l22 13v0Z" keyTimes="0;.24;.78;1" dur="6s" begin="-0.32s" repeatCount="indefinite"/></path>
+      <path d="M354 143l42 -12v154l-42 12Z" fill="#00f5ff" opacity=".84"><animate attributeName="d" values="M354 297l42 -12v0l-42 12Z;M354 143l42 -12v154l-42 12Z;M354 143l42 -12v154l-42 12Z;M354 297l42 -12v0l-42 12Z" keyTimes="0;.24;.78;1" dur="6s" begin="-0.32s" repeatCount="indefinite"/></path>
+      <path d="M332 130l42 -13l22 12l-42 13Z" fill="#00f5ff" class="glow"><animate attributeName="d" values="M332 284l42 -13l22 12l-42 13Z;M332 130l42 -13l22 12l-42 13Z;M332 130l42 -13l22 12l-42 13Z;M332 284l42 -13l22 12l-42 13Z" keyTimes="0;.24;.78;1" dur="6s" begin="-0.32s" repeatCount="indefinite"/></path>
+      <path d="M325 298h78" stroke="#000000" stroke-width="8" opacity=".2" filter="url(#soft)"/>
+      <text x="367" y="270" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="700" class="mono">84<animate attributeName="y" values="270;112;112;270" keyTimes="0;.24;.78;1" dur="6s" begin="-0.32s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;1;.72;1" dur="3.5s" begin="0.3s" repeatCount="indefinite"/></text>
+      <text x="367" y="326" text-anchor="middle" fill="#8b9bb4" font-size="12" class="mono">TS</text>
+    </g><g>
+      <path d="M470 192v92l22 13v-92Z" fill="#3b82f6" opacity=".64"><animate attributeName="d" values="M470 284v0l22 13v0Z;M470 192v92l22 13v-92Z;M470 192v92l22 13v-92Z;M470 284v0l22 13v0Z" keyTimes="0;.24;.78;1" dur="6s" begin="-0.64s" repeatCount="indefinite"/></path>
+      <path d="M492 205l42 -12v92l-42 12Z" fill="#3b82f6" opacity=".84"><animate attributeName="d" values="M492 297l42 -12v0l-42 12Z;M492 205l42 -12v92l-42 12Z;M492 205l42 -12v92l-42 12Z;M492 297l42 -12v0l-42 12Z" keyTimes="0;.24;.78;1" dur="6s" begin="-0.64s" repeatCount="indefinite"/></path>
+      <path d="M470 192l42 -13l22 12l-42 13Z" fill="#3b82f6" class="glow"><animate attributeName="d" values="M470 284l42 -13l22 12l-42 13Z;M470 192l42 -13l22 12l-42 13Z;M470 192l42 -13l22 12l-42 13Z;M470 284l42 -13l22 12l-42 13Z" keyTimes="0;.24;.78;1" dur="6s" begin="-0.64s" repeatCount="indefinite"/></path>
+      <path d="M463 298h78" stroke="#000000" stroke-width="8" opacity=".2" filter="url(#soft)"/>
+      <text x="505" y="270" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="700" class="mono">58<animate attributeName="y" values="270;174;174;270" keyTimes="0;.24;.78;1" dur="6s" begin="-0.64s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;1;.72;1" dur="3.5s" begin="0.6s" repeatCount="indefinite"/></text>
+      <text x="505" y="326" text-anchor="middle" fill="#8b9bb4" font-size="12" class="mono">PY</text>
+    </g><g>
+      <path d="M608 152v132l22 13v-132Z" fill="#ff2bd6" opacity=".64"><animate attributeName="d" values="M608 284v0l22 13v0Z;M608 152v132l22 13v-132Z;M608 152v132l22 13v-132Z;M608 284v0l22 13v0Z" keyTimes="0;.24;.78;1" dur="6s" begin="-0.96s" repeatCount="indefinite"/></path>
+      <path d="M630 165l42 -12v132l-42 12Z" fill="#ff2bd6" opacity=".84"><animate attributeName="d" values="M630 297l42 -12v0l-42 12Z;M630 165l42 -12v132l-42 12Z;M630 165l42 -12v132l-42 12Z;M630 297l42 -12v0l-42 12Z" keyTimes="0;.24;.78;1" dur="6s" begin="-0.96s" repeatCount="indefinite"/></path>
+      <path d="M608 152l42 -13l22 12l-42 13Z" fill="#ff2bd6" class="glow"><animate attributeName="d" values="M608 284l42 -13l22 12l-42 13Z;M608 152l42 -13l22 12l-42 13Z;M608 152l42 -13l22 12l-42 13Z;M608 284l42 -13l22 12l-42 13Z" keyTimes="0;.24;.78;1" dur="6s" begin="-0.96s" repeatCount="indefinite"/></path>
+      <path d="M601 298h78" stroke="#000000" stroke-width="8" opacity=".2" filter="url(#soft)"/>
+      <text x="643" y="270" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="700" class="mono">66<animate attributeName="y" values="270;134;134;270" keyTimes="0;.24;.78;1" dur="6s" begin="-0.96s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;1;.72;1" dur="3.5s" begin="0.8999999999999999s" repeatCount="indefinite"/></text>
+      <text x="643" y="326" text-anchor="middle" fill="#8b9bb4" font-size="12" class="mono">HTML</text>
+    </g><g>
+      <path d="M746 180v104l22 13v-104Z" fill="#7c3aed" opacity=".64"><animate attributeName="d" values="M746 284v0l22 13v0Z;M746 180v104l22 13v-104Z;M746 180v104l22 13v-104Z;M746 284v0l22 13v0Z" keyTimes="0;.24;.78;1" dur="6s" begin="-1.28s" repeatCount="indefinite"/></path>
+      <path d="M768 193l42 -12v104l-42 12Z" fill="#7c3aed" opacity=".84"><animate attributeName="d" values="M768 297l42 -12v0l-42 12Z;M768 193l42 -12v104l-42 12Z;M768 193l42 -12v104l-42 12Z;M768 297l42 -12v0l-42 12Z" keyTimes="0;.24;.78;1" dur="6s" begin="-1.28s" repeatCount="indefinite"/></path>
+      <path d="M746 180l42 -13l22 12l-42 13Z" fill="#7c3aed" class="glow"><animate attributeName="d" values="M746 284l42 -13l22 12l-42 13Z;M746 180l42 -13l22 12l-42 13Z;M746 180l42 -13l22 12l-42 13Z;M746 284l42 -13l22 12l-42 13Z" keyTimes="0;.24;.78;1" dur="6s" begin="-1.28s" repeatCount="indefinite"/></path>
+      <path d="M739 298h78" stroke="#000000" stroke-width="8" opacity=".2" filter="url(#soft)"/>
+      <text x="781" y="270" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="700" class="mono">61<animate attributeName="y" values="270;162;162;270" keyTimes="0;.24;.78;1" dur="6s" begin="-1.28s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;1;.72;1" dur="3.5s" begin="1.2s" repeatCount="indefinite"/></text>
+      <text x="781" y="326" text-anchor="middle" fill="#8b9bb4" font-size="12" class="mono">CSS</text>
+    </g><g>
+      <path d="M884 208v76l22 13v-76Z" fill="#ff5b7f" opacity=".64"><animate attributeName="d" values="M884 284v0l22 13v0Z;M884 208v76l22 13v-76Z;M884 208v76l22 13v-76Z;M884 284v0l22 13v0Z" keyTimes="0;.24;.78;1" dur="6s" begin="-1.6s" repeatCount="indefinite"/></path>
+      <path d="M906 221l42 -12v76l-42 12Z" fill="#ff5b7f" opacity=".84"><animate attributeName="d" values="M906 297l42 -12v0l-42 12Z;M906 221l42 -12v76l-42 12Z;M906 221l42 -12v76l-42 12Z;M906 297l42 -12v0l-42 12Z" keyTimes="0;.24;.78;1" dur="6s" begin="-1.6s" repeatCount="indefinite"/></path>
+      <path d="M884 208l42 -13l22 12l-42 13Z" fill="#ff5b7f" class="glow"><animate attributeName="d" values="M884 284l42 -13l22 12l-42 13Z;M884 208l42 -13l22 12l-42 13Z;M884 208l42 -13l22 12l-42 13Z;M884 284l42 -13l22 12l-42 13Z" keyTimes="0;.24;.78;1" dur="6s" begin="-1.6s" repeatCount="indefinite"/></path>
+      <path d="M877 298h78" stroke="#000000" stroke-width="8" opacity=".2" filter="url(#soft)"/>
+      <text x="919" y="270" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="700" class="mono">42<animate attributeName="y" values="270;190;190;270" keyTimes="0;.24;.78;1" dur="6s" begin="-1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".35;1;.72;1" dur="3.5s" begin="1.5s" repeatCount="indefinite"/></text>
+      <text x="919" y="326" text-anchor="middle" fill="#8b9bb4" font-size="12" class="mono">SQL</text>
+    </g>
+    <text x="600" y="45" text-anchor="middle" fill="#e6edf3" font-size="20" font-weight="700">Code, in motion</text>
+    <text x="600" y="66" text-anchor="middle" fill="#8b9bb4" font-size="12" class="mono">LANGUAGE SNAPSHOT / ILLUSTRATIVE VALUES</text>
+    <path d="M142 377H1058" stroke="url(#beam)" opacity=".72"/>
+</svg>

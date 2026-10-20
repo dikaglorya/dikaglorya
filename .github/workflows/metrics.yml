@@ -1,0 +1,33 @@
+# Extras stat block (lowlighter/metrics) -> pushed to the `output` branch as metrics.svg.
+name: Metrics
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  metrics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Generate metrics
+        uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          user: dikaglorya
+          output_action: commit
+          output_branch: output
+          output_directory: .
+          output_file: metrics.svg
+          base: header, activity, community, repositories, metadata
+          config_theme: dark
+          config_padding: 8%, 10% + 8%
+          plugin_followup: yes
+          plugin_licenses: no

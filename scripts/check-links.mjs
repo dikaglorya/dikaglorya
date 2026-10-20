@@ -15,7 +15,7 @@ for (const match of readme.matchAll(/(?:href|src)="(https?:\/\/[^"]+)"/g)) {
 }
 
 const localAssets = new Set();
-for (const match of readme.matchAll(/(?:src|href)="((?!https?:|mailto:|#)[^"]+)"/g)) {
+for (const match of readme.matchAll(/(?:src|srcset|href)="((?!https?:|mailto:|#)[^"]+)"/g)) {
   localAssets.add(match[1]);
 }
 

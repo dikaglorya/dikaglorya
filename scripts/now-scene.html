@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200, initial-scale=1">
+<title>DikaOfc current focus</title>
+<link rel="stylesheet" href="/scripts/panel.css">
+<style>
+  .now-word {
+    position: absolute;
+    left: 50%;
+    top: 47%;
+    transform: translate(-50%, -50%) translateZ(-240px) rotateY(-10deg);
+    font-family: var(--display);
+    font-size: 430px;
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(159, 232, 255, 0.065);
+    z-index: -5;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  #missions {
+    position: absolute;
+    left: 50%;
+    top: 57%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .mission {
+    position: absolute;
+    left: -165px;
+    top: -156px;
+    width: 330px;
+    height: 312px;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .m-back {
+    position: absolute;
+    inset: -1px;
+    transform: translateZ(-22px);
+    background: linear-gradient(145deg, rgba(16, 45, 55, 0.9), rgba(4, 9, 12, 0.98));
+    border: 1px solid rgba(159, 232, 255, 0.15);
+    box-shadow: 0 34px 70px rgba(0, 0, 0, 0.55);
+  }
+
+  .m-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background:
+      linear-gradient(160deg, rgba(25, 39, 47, 0.98), rgba(10, 18, 23, 0.99) 52%, rgba(5, 10, 14, 0.99));
+    border: 1px solid rgba(159, 232, 255, 0.22);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.35),
+      0 30px 70px rgba(0, 0, 0, 0.44);
+  }
+
+  .m-face::before {
+    content: '';
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(159, 232, 255, 0.8), transparent);
+  }
+
+  .m-face::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(155deg, transparent 40%, rgba(41, 124, 146, 0.08) 100%);
+    pointer-events: none;
+  }
+
+  .m-content {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    padding: 17px 20px 14px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .m-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .m-index {
+    font-family: var(--display);
+    font-size: 40px;
+    line-height: 0.86;
+    letter-spacing: -0.04em;
+    color: rgba(238, 251, 255, 0.94);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 7px;
+    border: 1px solid rgba(159, 232, 255, 0.22);
+    font-size: 6.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(159, 232, 255, 0.04);
+  }
+
+  .status i {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .m-label {
+    margin-top: 13px;
+    font-family: var(--display);
+    font-size: 30px;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    color: #f1fbff;
+    text-transform: uppercase;
+  }
+
+  .m-kicker {
+    margin-top: 7px;
+    font-size: 8.5px;
+    letter-spacing: 0.21em;
+    text-transform: uppercase;
+    color: var(--accent);
+    line-height: 1.6;
+  }
+
+  .m-rule {
+    height: 1px;
+    margin: 12px 0 11px;
+    background: linear-gradient(90deg, rgba(159, 232, 255, 0.44), rgba(159, 232, 255, 0.06) 68%, transparent);
+  }
+
+  .m-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+  }
+
+  .m-items li {
+    position: relative;
+    padding-left: 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.22;
+    letter-spacing: 0.035em;
+    color: rgba(218, 238, 244, 0.86);
+  }
+
+  .m-items li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.43em;
+    width: 5px;
+    height: 5px;
+    border: 1px solid rgba(159, 232, 255, 0.66);
+    transform: rotate(45deg);
+  }
+
+  .m-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid rgba(159, 232, 255, 0.1);
+    font-size: 7px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(143, 165, 175, 0.68);
+  }
+
+  .m-bottom b { color: var(--accent); font-weight: 500; }
+
+  .radar {
+    position: absolute;
+    right: 18px;
+    bottom: 54px;
+    width: 72px;
+    height: 72px;
+    border: 1px solid rgba(159, 232, 255, 0.16);
+    border-radius: 50%;
+    opacity: 0.46;
+    z-index: 1;
+    will-change: transform;
+  }
+
+  .radar::before,
+  .radar::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(159, 232, 255, 0.12);
+  }
+
+  .radar::before { inset: 11px; }
+  .radar::after { inset: 24px; }
+
+  .radar .sweep {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1px;
+    height: 38px;
+    background: linear-gradient(0deg, transparent, var(--accent));
+    transform-origin: 0 0;
+    box-shadow: 0 0 8px rgba(159, 232, 255, 0.7);
+  }
+
+  .radar .blip {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .mission.warm .m-kicker,
+  .mission.warm .m-bottom b { color: var(--warm); }
+  .mission.warm .m-items li::before { border-color: rgba(255, 155, 107, 0.7); }
+  .mission.warm .status { color: var(--warm); border-color: rgba(255, 155, 107, 0.25); background: rgba(255, 155, 107, 0.045); }
+  .mission.warm .status i { background: var(--warm); box-shadow: 0 0 8px var(--warm); }
+  .mission.warm .radar .sweep { background: linear-gradient(0deg, transparent, var(--warm)); box-shadow: 0 0 8px rgba(255, 155, 107, 0.7); }
+  .mission.warm .radar .blip { background: var(--warm); box-shadow: 0 0 8px var(--warm); }
+  .mission.warm .m-face::before { background: linear-gradient(90deg, transparent, rgba(255, 155, 107, 0.7), transparent); }
+
+  .m-scan {
+    position: absolute;
+    left: -20%;
+    top: 0;
+    width: 32%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(210, 250, 255, 0.07), transparent);
+    transform: skewX(-9deg);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .spine {
+    position: absolute;
+    left: 50%;
+    top: 16%;
+    bottom: 12%;
+    width: 1px;
+    margin-left: -0.5px;
+    background: linear-gradient(180deg, transparent, rgba(159, 232, 255, 0.18), transparent);
+    transform: translateZ(-180px);
+    z-index: -3;
+  }
+
+  .spine-node {
+    position: absolute;
+    left: 50%;
+    width: 7px;
+    height: 7px;
+    margin-left: -3.5px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 14px var(--accent);
+    will-change: top, opacity;
+  }
+
+  .now-halo {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    width: 900px;
+    height: 420px;
+    margin-left: -450px;
+    margin-top: -210px;
+    background: radial-gradient(ellipse, rgba(39, 127, 149, 0.24), transparent 68%);
+    filter: blur(20px);
+    transform: translateZ(-250px);
+    z-index: -4;
+    pointer-events: none;
+  }
+
+  .orbit-front {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 960px;
+    height: 960px;
+    margin-left: -480px;
+    margin-top: -480px;
+    border: 1px solid rgba(159, 232, 255, 0.3);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    will-change: transform;
+    opacity: 0.72;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .orbit-front .bead {
+    position: absolute;
+    left: 50%;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 14px var(--accent);
+  }
+
+  .shard {
+    position: absolute;
+    width: 18px;
+    height: 34px;
+    border: 1px solid rgba(159, 232, 255, 0.22);
+    background: linear-gradient(145deg, rgba(61, 139, 159, 0.18), rgba(7, 21, 27, 0.05));
+    box-shadow: 0 0 18px rgba(46, 130, 151, 0.12);
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 2;
+  }
+
+  .shard.warm { border-color: rgba(255, 155, 107, 0.2); background: linear-gradient(145deg, rgba(187, 95, 62, 0.14), rgba(27, 11, 7, 0.04)); }
+
+  .pillar {
+    position: absolute;
+    top: 4%;
+    width: 1px;
+    height: 62%;
+    background: linear-gradient(180deg, transparent, rgba(159, 232, 255, 0.16) 38%, rgba(159, 232, 255, 0.04) 72%, transparent);
+    transform: translateZ(-280px);
+    z-index: -2;
+    opacity: 0.7;
+  }
+
+  .title-block {
+    position: absolute;
+    left: 36px;
+    top: 72px;
+    z-index: 21;
+    pointer-events: none;
+  }
+
+  .title-block .title {
+    margin-top: 12px;
+    font-family: var(--display);
+    font-size: 34px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: #effaff;
+  }
+
+  .title-block .sub {
+    margin-top: 9px;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(143, 165, 175, 0.76);
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="bg"></div>
+  <div class="grid-floor" id="grid"></div>
+  <div class="horizon-glow"></div>
+
+  <div class="camera" id="camera">
+    <div class="now-word">NOW</div>
+    <div class="now-halo"></div>
+    <div class="spine" id="spine"></div>
+    <div class="pillar" style="left: 16%"></div>
+    <div class="pillar" style="left: 50%; height: 72%"></div>
+    <div class="pillar" style="left: 84%"></div>
+
+    <div class="orbit-front" id="orbitFront"><span class="bead"></span></div>
+
+    <div class="shard" id="shardA"></div>
+    <div class="shard warm" id="shardB"></div>
+    <div class="shard" id="shardC"></div>
+
+    <div id="missions"></div>
+
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <div class="scanline" id="scanline"></div>
+  <div class="frame"></div>
+
+  <div class="title-block">
+    <div class="kicker"><span class="dot" id="pulseDot"></span><b>Current focus</b><span>/ now / in motion</span></div>
+  </div>
+
+  <div class="hud">
+    <div class="top-right">Q1 / 2026<br><b>ACTIVE THREADS / 03</b></div>
+    <div class="bottom-left"><b>FOCUS</b> <span>LOCKED</span><em>/</em> BUILD · TEST · SHIP</div>
+    <div class="bottom-right">SIGNAL <span id="signal">98.1%</span><br>NOW / IN MOTION</div>
+  </div>
+</div>
+
+<script type="module">
+import { initHud, applyHud } from '/scripts/hud.mjs';
+const $ = selector => document.querySelector(selector);
+const TwoPi = Math.PI * 2;
+await document.fonts.ready;
+initHud();
+
+const missions = [
+  {
+    index: '01',
+    label: 'AI ROUTING',
+    kicker: 'TERMINAL WORKFLOWS / AUTOMATION',
+    items: ['Model routing', 'Terminal-first flows', 'Small automation loops'],
+    foot: ['THREAD', 'ACTIVE'],
+    x: -390,
+    y: 8,
+    z: -80,
+    ry: 23,
+    rx: 2,
+    warm: false,
+  },
+  {
+    index: '02',
+    label: 'LOCAL-FIRST AI',
+    kicker: 'ANDROID / TERMUX / LOCAL MODELS',
+    items: ['Local model tooling', 'Android + Termux', 'Fast feedback'],
+    foot: ['THREAD', 'ACTIVE'],
+    x: 0,
+    y: 0,
+    z: 136,
+    ry: 0,
+    rx: 0,
+    warm: true,
+  },
+  {
+    index: '03',
+    label: 'SHIP QUALITY',
+    kicker: 'PERFORMANCE / DOCS / MAINTAINABLE',
+    items: ['Measured performance', 'Decisions documented', 'Maintainable systems'],
+    foot: ['THREAD', 'ACTIVE'],
+    x: 390,
+    y: 10,
+    z: -42,
+    ry: -23,
+    rx: 2,
+    warm: false,
+  },
+];
+
+const root = $('#missions');
+const els = [];
+missions.forEach((m, i) => {
+  const el = document.createElement('article');
+  el.className = `mission${m.warm ? ' warm' : ''}`;
+  el.innerHTML = `
+    <div class="m-back"></div>
+    <div class="m-face">
+      <div class="m-content">
+        <div class="m-top">
+          <span class="m-index">${m.index}</span>
+          <span class="status"><i></i>LIVE</span>
+        </div>
+        <div class="m-label">${m.label}</div>
+        <div class="m-kicker">${m.kicker}</div>
+        <div class="m-rule"></div>
+        <ul class="m-items">${m.items.map(item => `<li>${item}</li>`).join('')}</ul>
+        <div class="m-bottom"><span><b>${m.foot[0]}</b> / ${m.foot[1]}</span><span>0${i + 1}</span></div>
+      </div>
+      <div class="radar"><span class="sweep"></span><span class="blip" style="left: 58%; top: 30%"></span><span class="blip" style="left: 30%; top: 62%"></span></div>
+      <div class="m-scan"></div>
+    </div>
+  `;
+  root.appendChild(el);
+  els.push({
+    el,
+    base: m,
+    phase: i * 1.1,
+    radar: el.querySelector('.radar'),
+    sweep: el.querySelector('.sweep'),
+    scan: el.querySelector('.m-scan'),
+  });
+});
+
+const particles = [];
+let seed = 20261022;
+function rand() {
+  seed = (seed * 1664525 + 1013904223) % 4294967296;
+  return seed / 4294967296;
+}
+for (let i = 0; i < 24; i++) {
+  const p = document.createElement('i');
+  p.className = 'particle';
+  p.style.left = `${4 + rand() * 92}%`;
+  p.style.top = `${12 + rand() * 72}%`;
+  p.style.width = `${0.7 + rand() * 1.8}px`;
+  p.style.height = p.style.width;
+  p.style.opacity = `${0.1 + rand() * 0.32}`;
+  p.dataset.phase = String(rand() * TwoPi);
+  p.dataset.speed = String(0.5 + rand() * 1.5);
+  $('#particles').appendChild(p);
+  particles.push(p);
+}
+
+const camera = $('#camera');
+const orbitFront = $('#orbitFront');
+const scanline = $('#scanline');
+const pulseDot = $('#pulseDot');
+const signalEl = $('#signal');
+const grid = $('#grid');
+const spine = $('#spine');
+const shardA = $('#shardA');
+const shardB = $('#shardB');
+const shardC = $('#shardC');
+
+const spineNodes = [];
+for (let i = 0; i < 3; i++) {
+  const n = document.createElement('span');
+  n.className = 'spine-node';
+  n.style.opacity = '0.8';
+  spine.appendChild(n);
+  spineNodes.push(n);
+}
+
+function setFrame(t) {
+  const a = t * TwoPi;
+
+  camera.style.transform = `translate3d(${Math.sin(a + 0.3) * 20}px, ${Math.cos(a * 2 + 0.25) * 9}px, 0) rotateY(${Math.sin(a + 0.7) * 5.5}deg) rotateX(${Math.cos(a + 0.4) * 1.8}deg)`;
+  root.style.transform = `translateZ(${Math.sin(a + 0.8) * 12}px)`;
+
+  els.forEach(({ el, base, phase, radar, sweep, scan }, i) => {
+    const float = Math.sin(a * 2 + phase) * 8;
+    const depth = Math.sin(a + phase) * 12;
+    const sway = Math.sin(a + phase * 0.7) * 1.8;
+    el.style.transform = `translate3d(${base.x + Math.sin(a + phase) * 5}px, ${base.y + float}px, ${base.z + depth}px) rotateY(${base.ry + sway}deg) rotateX(${base.rx + Math.cos(a + phase) * 1.4}deg)`;
+    radar.style.transform = `rotate(${a * 28 + i * 40}deg)`;
+    sweep.style.transform = `rotate(${a * 120 + i * 30}deg)`;
+    const p = 0.5 - 0.5 * Math.cos(a + i * 0.9);
+    scan.style.transform = `translate3d(${-80 + p * 460}px, 0, 0) skewX(-9deg)`;
+    scan.style.opacity = String(0.1 + 0.46 * Math.sin(Math.PI * p));
+  });
+
+  orbitFront.style.transform = `rotateX(70deg) rotateZ(${a * 14 + 20}deg) translateZ(-170px)`;
+
+  const nodePositions = [0.18, 0.5, 0.82];
+  spineNodes.forEach((n, i) => {
+    n.style.top = `${nodePositions[i] * 100}%`;
+    n.style.opacity = String(0.35 + 0.65 * (0.5 + 0.5 * Math.sin(a * 2 + i * 1.4)));
+    n.style.transform = `translate3d(0, 0, ${Math.sin(a + i) * 8}px)`;
+  });
+
+  shardA.style.transform = `translate3d(${-520 + Math.sin(a + 0.3) * 28}px, ${-110 + Math.cos(a * 2) * 18}px, ${-80 + Math.sin(a) * 24}px) rotateX(${a * 34}deg) rotateY(${a * 22}deg) rotateZ(${a * 12}deg)`;
+  shardB.style.transform = `translate3d(${510 + Math.cos(a + 0.7) * 26}px, ${80 + Math.sin(a * 2 + 0.5) * 20}px, ${-140 + Math.cos(a + 0.4) * 30}px) rotateX(${-a * 28}deg) rotateY(${a * 31}deg) rotateZ(${a * 16}deg)`;
+  shardC.style.transform = `translate3d(${410 + Math.sin(a + 1.2) * 20}px, ${-170 + Math.cos(a * 1.5) * 14}px, ${-20 + Math.sin(a + 0.2) * 20}px) rotateX(${a * 22}deg) rotateY(${-a * 26}deg) rotateZ(${a * 9}deg)`;
+
+  particles.forEach((p, i) => {
+    const phase = Number(p.dataset.phase);
+    const speed = Number(p.dataset.speed);
+    const dx = Math.sin(a * speed + phase) * 15;
+    const dy = Math.cos(a * (speed * 0.8) + phase) * 11;
+    p.style.transform = `translate3d(${dx}px, ${dy}px, ${-200 + (i * 19) % 320}px)`;
+    p.style.opacity = String(0.08 + 0.26 * (0.5 + 0.5 * Math.sin(a * 2.5 + i)));
+  });
+
+  const beamP = 0.5 - 0.5 * Math.cos(a);
+  scanline.style.transform = `translateY(${beamP * 480}px)`;
+  scanline.style.opacity = String(0.07 + 0.32 * Math.sin(Math.PI * beamP));
+  pulseDot.style.opacity = String(0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a * 8)));
+  pulseDot.style.transform = `scale(${1 + 0.5 * Math.sin(a * 8)})`;
+  signalEl.textContent = `${(98.0 + Math.sin(a) * 0.8).toFixed(1)}%`;
+  grid.style.backgroundPosition = `0 ${t * 74}px, ${t * 74}px 0`;
+
+  applyHud(t);
+}
+
+window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

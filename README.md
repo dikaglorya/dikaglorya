@@ -1,101 +1,93 @@
-<!--
-  Primary identity: DikaOfc
-  Supporting identities: DikaCode (developer identity), ObitoGlory (website / portfolio brand)
-  Asset pipeline and source notes: docs/ASSET-GUIDE.md
--->
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/hero-dark.svg">
+    <img src="assets/hero-light.svg" alt="Animated neon wireframe crystal and orbiting lights above a perspective grid, introducing Dika Glorya" width="100%">
+  </picture>
+</div>
 
-<p align="center">
-  <a href="https://www.obitoglory.tech/" title="ObitoGlory — DikaOfc's website">
-    <img
-      src="assets/dikaofc-hero.gif"
-      alt="DikaOfc — an animated metallic 3D D monogram with orbiting rings beside a floating, extruded DIKAOFC wordmark, viewed by a moving camera in an ice-blue studio"
-      width="100%"
-    />
-  </a>
-</p>
+<div align="center">
+  <p>Full-stack developer building useful software, open-source tools, and thoughtful digital experiences.</p>
+  <a href="https://github.com/dikaglorya"><img src="https://komarev.com/ghpvc/?username=dikaglorya&style=flat-square&color=00f5ff" alt="Profile views"></a>
+</div>
 
-<p align="center"><sub><a href="assets/dikaofc-hero.png">View static hero poster</a></sub></p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/divider.svg">
+  <img src="assets/divider-light.svg" alt="Animated glowing energy wave divider" width="100%">
+</picture>
 
-<h1 align="center">DikaOfc</h1>
+## About
 
-<p align="center">
-  <strong>Independent developer</strong> · DikaCode · ObitoGlory
-</p>
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/about-3d.svg">
+    <img src="assets/about-3d-light.svg" alt="Floating 3D terminal with animated code and a short introduction to Dika" width="100%">
+  </picture>
+</div>
 
-<p align="center">
-  <a href="https://www.obitoglory.tech/">Portfolio</a> ·
-  <a href="https://www.obitoglory.tech/proyek">Projects</a> ·
-  <a href="https://dikaglorya.github.io/journal/">Journal</a> ·
-  <a href="https://www.obitoglory.tech/tentang">About</a> ·
-  <a href="https://www.obitoglory.tech/kontak">Contact</a>
-</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/divider.svg">
+  <img src="assets/divider-light.svg" alt="Animated glowing energy wave divider" width="100%">
+</picture>
 
----
+## Skills
 
-I build software, web experiences, and practical developer tools from Kendal, Central Java, Indonesia.
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/skills-3d.svg">
+    <img src="assets/skills-3d-light.svg" alt="Hovering isometric tiles for JavaScript, TypeScript, Python, React, Node.js, Docker, Git, SQL, and Linux" width="100%">
+  </picture>
+</div>
 
-DikaOfc is my public identity. I also work as **DikaCode**, while **ObitoGlory** is my website and portfolio brand. Older links may use **DikaGlory** or **DikaGlorya**. This GitHub profile — **dikaglorya** — is the only GitHub account I publish from.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/divider.svg">
+  <img src="assets/divider-light.svg" alt="Animated glowing energy wave divider" width="100%">
+</picture>
 
-<p align="center">
-  <a href="assets/dikaofc-identity.png" title="Open the full-size static identity panel">
-    <img
-      src="assets/dikaofc-identity.gif"
-      alt="Animated DikaOfc identity panel with an intentionally obscured portrait, a moving scan bar, and the DikaCode and ObitoGlory identities"
-      width="100%"
-      loading="lazy"
-    />
-  </a>
-</p>
+## GitHub Stats
 
-<p align="center"><sub><a href="assets/dikaofc-identity.png">View static identity panel</a></sub></p>
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/stats-3d.svg">
+    <img src="assets/stats-3d-light.svg" alt="Animated isometric 3D language chart for Dika Glorya" width="100%">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-stats.vercel.app/api?username=dikaglorya&show_icons=true&theme=tokyonight&hide_border=true">
+    <img src="https://github-readme-stats.vercel.app/api?username=dikaglorya&show_icons=true&theme=default&hide_border=true" alt="GitHub stats for Dika Glorya">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-streak-stats.herokuapp.com/?user=dikaglorya&theme=tokyonight&hide_border=true">
+    <img src="https://github-readme-streak-stats.herokuapp.com/?user=dikaglorya&theme=default&hide_border=true" alt="GitHub contribution streak for Dika Glorya">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-stats.vercel.app/api/top-langs/?username=dikaglorya&layout=compact&theme=tokyonight&hide_border=true">
+    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=dikaglorya&layout=compact&theme=default&hide_border=true" alt="Most-used programming languages">
+  </picture>
+</div>
 
-## Technical focus
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/dikaglorya/dikaglorya/output/github-contribution-grid-snake-dark.svg">
+    <img src="https://raw.githubusercontent.com/dikaglorya/dikaglorya/output/github-contribution-grid-snake.svg" alt="Animated GitHub contribution snake" width="100%">
+  </picture>
+</div>
 
-<p align="center">
-  <a href="assets/dikaofc-focus.png" title="Open the static capability map">
-    <img
-      src="assets/dikaofc-focus.gif"
-      alt="Animated capability map with five panels: Languages (TypeScript, JavaScript, Python, Kotlin), Web (React, Vite, Node.js), Systems (Linux, Termux, Android, shell tooling), AI (OpenAI-compatible APIs, local model tooling, coding agents), and Automation (Telegram Bot API, Telethon, workflow automation)"
-      width="100%"
-      loading="lazy"
-    />
-  </a>
-</p>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/divider.svg">
+  <img src="assets/divider-light.svg" alt="Animated glowing energy wave divider" width="100%">
+</picture>
 
-<p align="center"><sub>Languages · Web · Systems · AI · Automation — a map of what I work with, not a claim of equal depth in every item.</sub></p>
+## Connect
 
-## Current focus
+<div align="center">
+  <a href="https://github.com/dikaglorya"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
+  <a href="https://www.linkedin.com/in/dikaglorya/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
+  <a href="mailto:hello@example.com"><img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
+  <a href="https://www.obitoglory.tech"><img src="https://img.shields.io/badge/Portfolio-8250DF?style=for-the-badge&logo=firefoxbrowser&logoColor=white" alt="Portfolio"></a>
+</div>
 
-- Building practical tools around AI routing, terminal workflows, and automation.
-- Exploring local-first AI tooling and Android / Termux.
-- Improving performance, documentation, and maintainability in the tools I build.
-
-## Engineering principles
-
-- Build useful things.
-- Prefer maintainable solutions.
-- Measure rather than fabricate performance claims.
-- Document important decisions.
-- Keep interfaces accessible.
-- Improve through feedback.
-
-## Contact
-
-<p align="center">
-  <a href="https://www.obitoglory.tech/kontak" title="Contact DikaOfc">
-    <img
-      src="assets/dikaofc-contact.gif"
-      alt="Animated contact gate with the message Let's build something useful, open to selected projects and collaboration"
-      width="100%"
-      loading="lazy"
-    />
-  </a>
-</p>
-
-Open to selected projects and collaboration. Explore the [portfolio and case studies](https://www.obitoglory.tech/proyek), or reach me directly on [Telegram](https://t.me/dikaacode). This is my only GitHub profile: [@dikaglorya](https://github.com/dikaglorya).
-
----
-
-<p align="center">
-  <sub>Building useful software, one project at a time.</sub>
-</p>
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/footer-dark.svg">
+    <img src="assets/footer-light.svg" alt="Parallax mountain layers and a Thanks for visiting message" width="100%">
+  </picture>
+</div>

@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">Dika Glorya technology stack</title>
+  <desc id="desc">Nine colorful isometric tiles for JavaScript, TypeScript, Python, React, Node.js, Docker, Git, SQL, and Linux hover over a ground plane.</desc>
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#eef2ff"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0969da"/><stop offset=".48" stop-color="#8250df"/><stop offset="1" stop-color="#d1242f"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#0969da" stop-opacity="0"/><stop offset=".5" stop-color="#0969da"/><stop offset="1" stop-color="#d1242f" stop-opacity="0"/></linearGradient>
+    <radialGradient id="spot"><stop stop-color="#0969da" stop-opacity=".2"/><stop offset="1" stop-color="#0969da" stop-opacity="0"/></radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="soft" x="-40%" y="-50%" width="180%" height="200%"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="shadow" x="-30%" y="-40%" width="160%" height="190%"><feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/><feOffset dy="10" result="offset"/><feComponentTransfer><feFuncA type="linear" slope=".38"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+  text { font-family: 'Segoe UI', Ubuntu, Arial, sans-serif; }
+  .mono { font-family: 'Courier New', monospace; }
+  .glow { filter: url(#glow); }
+  .float { animation: float 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .pulse { animation: pulse 3s ease-in-out infinite; }
+  .shadow-pulse { animation: shadowPulse 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .drift { animation: drift 18s linear infinite; }
+  .shimmer { animation: shimmer 4s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  @keyframes pulse { 0%,100% { opacity: .52; } 50% { opacity: 1; } }
+  @keyframes shadowPulse { 0%,100% { transform: scaleX(1); opacity: .28; } 50% { transform: scaleX(.72); opacity: .12; } }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-60px); } }
+  @keyframes shimmer { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    text[opacity="0"] { opacity: 1 !important; }
+    .role-cycle:not(:first-child) { display: none; }
+    animate, animateTransform, animateMotion { display: none; }
+  }
+</style>
+  </defs>
+  <rect width="1200" height="420" rx="20" fill="url(#backdrop)"/>
+  <path d="M110 271L600 150L1090 271L600 398Z" fill="#0969da" opacity=".035"/>
+    <path d="M100 278L600 153L1100 278" fill="none" stroke="#8ba6d9" opacity=".48" stroke-dasharray="3 8"/>
+    <g transform="translate(140 24)">
+      <g class="float" style="animation-delay:0s">
+        <ellipse cx="76" cy="77" rx="73" ry="14" fill="#4b5c7a" opacity=".28" filter="url(#soft)" class="shadow-pulse" style="animation-delay:0s"/>
+        <path d="M0 20L76 0L152 20L76 40Z" fill="#188038" opacity=".95"/>
+        <path d="M0 20L76 40V83L0 63Z" fill="#e8edff" stroke="#188038" stroke-opacity=".62"/>
+        <path d="M76 40L152 20V63L76 83Z" fill="#f8faff" stroke="#188038" stroke-opacity=".72"/>
+        <path d="M8 24L76 7L143 24" fill="none" stroke="#ffffff" stroke-opacity=".42"/>
+        <text x="76" y="60" text-anchor="middle" fill="#188038" font-size="17" font-weight="800" class="mono">JS</text>
+        <text x="76" y="99" text-anchor="middle" fill="#1f2328" font-size="12" font-weight="600">JavaScript</text>
+      </g>
+    </g><g transform="translate(460 24)">
+      <g class="float" style="animation-delay:-0.42s">
+        <ellipse cx="76" cy="77" rx="73" ry="14" fill="#4b5c7a" opacity=".28" filter="url(#soft)" class="shadow-pulse" style="animation-delay:-0.42s"/>
+        <path d="M0 20L76 0L152 20L76 40Z" fill="#0969da" opacity=".95"/>
+        <path d="M0 20L76 40V83L0 63Z" fill="#e8edff" stroke="#0969da" stroke-opacity=".62"/>
+        <path d="M76 40L152 20V63L76 83Z" fill="#f8faff" stroke="#0969da" stroke-opacity=".72"/>
+        <path d="M8 24L76 7L143 24" fill="none" stroke="#ffffff" stroke-opacity=".42"/>
+        <text x="76" y="60" text-anchor="middle" fill="#0969da" font-size="17" font-weight="800" class="mono">TS</text>
+        <text x="76" y="99" text-anchor="middle" fill="#1f2328" font-size="12" font-weight="600">TypeScript</text>
+      </g>
+    </g><g transform="translate(780 24)">
+      <g class="float" style="animation-delay:-0.84s">
+        <ellipse cx="76" cy="77" rx="73" ry="14" fill="#4b5c7a" opacity=".28" filter="url(#soft)" class="shadow-pulse" style="animation-delay:-0.84s"/>
+        <path d="M0 20L76 0L152 20L76 40Z" fill="#0969da" opacity=".95"/>
+        <path d="M0 20L76 40V83L0 63Z" fill="#e8edff" stroke="#0969da" stroke-opacity=".62"/>
+        <path d="M76 40L152 20V63L76 83Z" fill="#f8faff" stroke="#0969da" stroke-opacity=".72"/>
+        <path d="M8 24L76 7L143 24" fill="none" stroke="#ffffff" stroke-opacity=".42"/>
+        <text x="76" y="60" text-anchor="middle" fill="#0969da" font-size="17" font-weight="800" class="mono">PY</text>
+        <text x="76" y="99" text-anchor="middle" fill="#1f2328" font-size="12" font-weight="600">Python</text>
+      </g>
+    </g><g transform="translate(140 150)">
+      <g class="float" style="animation-delay:-1.26s">
+        <ellipse cx="76" cy="77" rx="73" ry="14" fill="#4b5c7a" opacity=".28" filter="url(#soft)" class="shadow-pulse" style="animation-delay:-1.26s"/>
+        <path d="M0 20L76 0L152 20L76 40Z" fill="#0969da" opacity=".95"/>
+        <path d="M0 20L76 40V83L0 63Z" fill="#e8edff" stroke="#0969da" stroke-opacity=".62"/>
+        <path d="M76 40L152 20V63L76 83Z" fill="#f8faff" stroke="#0969da" stroke-opacity=".72"/>
+        <path d="M8 24L76 7L143 24" fill="none" stroke="#ffffff" stroke-opacity=".42"/>
+        <text x="76" y="60" text-anchor="middle" fill="#0969da" font-size="17" font-weight="800" class="mono">RE</text>
+        <text x="76" y="99" text-anchor="middle" fill="#1f2328" font-size="12" font-weight="600">React</text>
+      </g>
+    </g><g transform="translate(460 150)">
+      <g class="float" style="animation-delay:-1.68s">
+        <ellipse cx="76" cy="77" rx="73" ry="14" fill="#4b5c7a" opacity=".28" filter="url(#soft)" class="shadow-pulse" style="animation-delay:-1.68s"/>
+        <path d="M0 20L76 0L152 20L76 40Z" fill="#188038" opacity=".95"/>
+        <path d="M0 20L76 40V83L0 63Z" fill="#e8edff" stroke="#188038" stroke-opacity=".62"/>
+        <path d="M76 40L152 20V63L76 83Z" fill="#f8faff" stroke="#188038" stroke-opacity=".72"/>
+        <path d="M8 24L76 7L143 24" fill="none" stroke="#ffffff" stroke-opacity=".42"/>
+        <text x="76" y="60" text-anchor="middle" fill="#188038" font-size="17" font-weight="800" class="mono">ND</text>
+        <text x="76" y="99" text-anchor="middle" fill="#1f2328" font-size="12" font-weight="600">Node.js</text>
+      </g>
+    </g><g transform="translate(780 150)">
+      <g class="float" style="animation-delay:0s">
+        <ellipse cx="76" cy="77" rx="73" ry="14" fill="#4b5c7a" opacity=".28" filter="url(#soft)" class="shadow-pulse" style="animation-delay:0s"/>
+        <path d="M0 20L76 0L152 20L76 40Z" fill="#0969da" opacity=".95"/>
+        <path d="M0 20L76 40V83L0 63Z" fill="#e8edff" stroke="#0969da" stroke-opacity=".62"/>
+        <path d="M76 40L152 20V63L76 83Z" fill="#f8faff" stroke="#0969da" stroke-opacity=".72"/>
+        <path d="M8 24L76 7L143 24" fill="none" stroke="#ffffff" stroke-opacity=".42"/>
+        <text x="76" y="60" text-anchor="middle" fill="#0969da" font-size="17" font-weight="800" class="mono">DK</text>
+        <text x="76" y="99" text-anchor="middle" fill="#1f2328" font-size="12" font-weight="600">Docker</text>
+      </g>
+    </g><g transform="translate(140 276)">
+      <g class="float" style="animation-delay:-0.42s">
+        <ellipse cx="76" cy="77" rx="73" ry="14" fill="#4b5c7a" opacity=".28" filter="url(#soft)" class="shadow-pulse" style="animation-delay:-0.42s"/>
+        <path d="M0 20L76 0L152 20L76 40Z" fill="#cf222e" opacity=".95"/>
+        <path d="M0 20L76 40V83L0 63Z" fill="#e8edff" stroke="#cf222e" stroke-opacity=".62"/>
+        <path d="M76 40L152 20V63L76 83Z" fill="#f8faff" stroke="#cf222e" stroke-opacity=".72"/>
+        <path d="M8 24L76 7L143 24" fill="none" stroke="#ffffff" stroke-opacity=".42"/>
+        <text x="76" y="60" text-anchor="middle" fill="#cf222e" font-size="17" font-weight="800" class="mono">GT</text>
+        <text x="76" y="99" text-anchor="middle" fill="#1f2328" font-size="12" font-weight="600">Git</text>
+      </g>
+    </g><g transform="translate(460 276)">
+      <g class="float" style="animation-delay:-0.84s">
+        <ellipse cx="76" cy="77" rx="73" ry="14" fill="#4b5c7a" opacity=".28" filter="url(#soft)" class="shadow-pulse" style="animation-delay:-0.84s"/>
+        <path d="M0 20L76 0L152 20L76 40Z" fill="#8250df" opacity=".95"/>
+        <path d="M0 20L76 40V83L0 63Z" fill="#e8edff" stroke="#8250df" stroke-opacity=".62"/>
+        <path d="M76 40L152 20V63L76 83Z" fill="#f8faff" stroke="#8250df" stroke-opacity=".72"/>
+        <path d="M8 24L76 7L143 24" fill="none" stroke="#ffffff" stroke-opacity=".42"/>
+        <text x="76" y="60" text-anchor="middle" fill="#8250df" font-size="17" font-weight="800" class="mono">DB</text>
+        <text x="76" y="99" text-anchor="middle" fill="#1f2328" font-size="12" font-weight="600">SQL</text>
+      </g>
+    </g><g transform="translate(780 276)">
+      <g class="float" style="animation-delay:-1.26s">
+        <ellipse cx="76" cy="77" rx="73" ry="14" fill="#4b5c7a" opacity=".28" filter="url(#soft)" class="shadow-pulse" style="animation-delay:-1.26s"/>
+        <path d="M0 20L76 0L152 20L76 40Z" fill="#d1242f" opacity=".95"/>
+        <path d="M0 20L76 40V83L0 63Z" fill="#e8edff" stroke="#d1242f" stroke-opacity=".62"/>
+        <path d="M76 40L152 20V63L76 83Z" fill="#f8faff" stroke="#d1242f" stroke-opacity=".72"/>
+        <path d="M8 24L76 7L143 24" fill="none" stroke="#ffffff" stroke-opacity=".42"/>
+        <text x="76" y="60" text-anchor="middle" fill="#d1242f" font-size="17" font-weight="800" class="mono">LX</text>
+        <text x="76" y="99" text-anchor="middle" fill="#1f2328" font-size="12" font-weight="600">Linux</text>
+      </g>
+    </g>
+    <text x="66" y="38" fill="#596579" font-size="11" class="mono" letter-spacing="2">STACK / 09 MODULES</text>
+</svg>

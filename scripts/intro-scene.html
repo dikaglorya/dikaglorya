@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200, initial-scale=1">
+<title>DikaOfc manifesto strip</title>
+<style>
+  @font-face {
+    font-family: 'JBMono';
+    src: url('/scripts/fonts/JetBrainsMono.ttf') format('truetype');
+    font-weight: 100 800;
+  }
+  :root { --ink: #eaf1f5; --muted: #9ba8b2; --accent: #8edcf0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; width: 1200px; height: 360px; overflow: hidden; background: #07090c; }
+  #stage {
+    position: relative;
+    width: 1200px;
+    height: 360px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 60% 100% at 50% 40%, rgba(36, 91, 112, 0.24), transparent 68%),
+      #07090c;
+  }
+  canvas { position: absolute; inset: 0; width: 1200px; height: 360px; filter: saturate(1.08) contrast(1.04); }
+  .hud {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    font-family: 'JBMono', ui-monospace, monospace;
+    color: var(--ink);
+  }
+  .kicker {
+    position: absolute;
+    left: 40px;
+    top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .kicker strong { color: var(--ink); font-weight: 600; }
+  .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(142, 220, 240, 0.9);
+    will-change: transform, opacity;
+  }
+  .site {
+    position: absolute;
+    right: 40px;
+    top: 30px;
+    text-align: right;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .site b { color: var(--accent); font-weight: 500; }
+  .ticker {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 22px;
+    text-align: center;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: rgba(155, 168, 178, 0.8);
+    text-transform: uppercase;
+  }
+  .ticker b { color: var(--accent); font-weight: 500; }
+  .ticker em { font-style: normal; color: rgba(155, 168, 178, 0.35); margin: 0 0.6em; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "/node_modules/three/build/three.module.js",
+    "three/addons/": "/node_modules/three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="scene"></canvas>
+  <div class="hud">
+    <div class="kicker"><span class="dot" id="pulse"></span><strong>DikaOfc</strong><span>/ manifesto strip</span></div>
+    <div class="site">MANIFESTO / 03<br><b>DikaCode · ObitoGlory</b></div>
+    <div class="ticker">BUILT FROM <b>KENDAL · CENTRAL JAVA · INDONESIA</b><em>/</em>SINCE 2021<em>/</em>OPEN TO SELECTED PROJECTS</div>
+  </div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { TTFLoader } from 'three/addons/loaders/TTFLoader.js';
+import { Font } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { initHud, applyHud } from '/scripts/hud.mjs';
+initHud();
+
+const W = 1200;
+const H = 360;
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: true,
+  powerPreference: 'high-performance',
+  preserveDrawingBuffer: true,
+});
+renderer.setPixelRatio(1);
+renderer.setSize(W, H, false);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x07090c, 0.03);
+
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 100);
+const CAM_Z = 10.8;
+camera.position.set(0, 0.1, CAM_Z);
+camera.lookAt(0, 0.1, 0);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.36;
+
+function makeGlowTexture() {
+  const c = document.createElement('canvas');
+  c.width = 128;
+  c.height = 128;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.28, 'rgba(255,255,255,0.72)');
+  g.addColorStop(0.62, 'rgba(255,255,255,0.16)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 128, 128);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+const glowTex = makeGlowTexture();
+
+// ---------- lights ----------
+scene.add(new THREE.HemisphereLight(0x9fc9d6, 0x07090c, 0.68));
+scene.add(new THREE.AmbientLight(0x7fa6b3, 0.2));
+const key = new THREE.DirectionalLight(0xd7f5ff, 3.1);
+key.position.set(-5, 8, 8);
+scene.add(key);
+const frontKey = new THREE.DirectionalLight(0xbfe4ee, 2.2);
+frontKey.position.set(1, 2, 10);
+scene.add(frontKey);
+const rimL = new THREE.PointLight(0x8edcf0, 34, 30, 2.0);
+rimL.position.set(-7.5, 2.6, -3);
+scene.add(rimL);
+const rimR = new THREE.PointLight(0x4db8d3, 26, 28, 2.0);
+rimR.position.set(7.8, 0.6, -3.6);
+scene.add(rimR);
+const warm = new THREE.PointLight(0xff9a6b, 13, 26, 2.0);
+warm.position.set(5.4, 3.8, -5);
+scene.add(warm);
+
+// ---------- materials ----------
+const faceMat = new THREE.MeshPhysicalMaterial({
+  color: 0x5d7783,
+  metalness: 0.9,
+  roughness: 0.2,
+  clearcoat: 0.6,
+  clearcoatRoughness: 0.16,
+  envMapIntensity: 1.4,
+});
+const sideMat = new THREE.MeshPhysicalMaterial({
+  color: 0xa8cdd8,
+  metalness: 1,
+  roughness: 0.08,
+  clearcoat: 0.55,
+  clearcoatRoughness: 0.1,
+  envMapIntensity: 1.55,
+});
+const chromeMat = new THREE.MeshPhysicalMaterial({
+  color: 0xd9e9ef,
+  metalness: 1,
+  roughness: 0.06,
+  envMapIntensity: 1.7,
+});
+const glowMat = new THREE.MeshBasicMaterial({ color: 0x8edcf0, toneMapped: false });
+
+// ---------- core reactor ----------
+const core = new THREE.Group();
+const coreOuter = new THREE.Mesh(new THREE.IcosahedronGeometry(0.72, 0), chromeMat);
+core.add(coreOuter);
+const coreWire = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(0.95, 1),
+  new THREE.MeshBasicMaterial({ color: 0x8edcf0, wireframe: true, transparent: true, opacity: 0.2, toneMapped: false, depthWrite: false })
+);
+core.add(coreWire);
+const coreGlow = new THREE.Sprite(new THREE.SpriteMaterial({
+  map: glowTex,
+  color: 0x8edcf0,
+  transparent: true,
+  opacity: 0.4,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+}));
+coreGlow.scale.set(3, 3, 1);
+core.add(coreGlow);
+const coreLight = new THREE.PointLight(0x8edcf0, 9, 12, 2);
+coreLight.position.set(0, 0.9, -1.4);
+scene.add(coreLight);
+core.position.set(0, 0.9, -1.6);
+scene.add(core);
+
+// reactor orbit ring
+const coreOrbit = new THREE.Group();
+coreOrbit.rotation.x = 1.2;
+coreOrbit.position.copy(core.position);
+scene.add(coreOrbit);
+const coreRing = new THREE.Mesh(
+  new THREE.TorusGeometry(1.5, 0.01, 8, 160),
+  new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.4, toneMapped: false, depthWrite: false })
+);
+coreOrbit.add(coreRing);
+const coreBead = new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 12), glowMat);
+coreOrbit.add(coreBead);
+
+// ---------- staircase words ----------
+const ttf = await new TTFLoader().loadAsync('/scripts/fonts/ArchivoBlack-Regular.ttf');
+const font = new Font(ttf);
+
+function buildWord(text, size, depth) {
+  const opts = { font, size, depth, curveSegments: 8, bevelEnabled: true, bevelThickness: size * 0.04, bevelSize: size * 0.028, bevelSegments: 3 };
+  const widths = [];
+  let total = 0;
+  const gap = size * 0.05;
+  for (const ch of text) {
+    const geo = new TextGeometry(ch, opts);
+    geo.computeBoundingBox();
+    const bb = geo.boundingBox;
+    const w = bb.max.x - bb.min.x;
+    geo.translate(-(bb.min.x + bb.max.x) / 2, -(bb.min.y + bb.max.y) / 2, -depth / 2);
+    widths.push(w);
+    total += w + gap;
+  }
+  total -= gap;
+  const group = new THREE.Group();
+  const letters = [];
+  let cursor = -total / 2;
+  [...text].forEach((ch, i) => {
+    const mesh = new THREE.Mesh(new TextGeometry(ch, opts), [faceMat, sideMat]);
+    mesh.position.set(cursor + widths[i] / 2, 0, (i % 2 ? 0.05 : -0.05));
+    mesh.userData.phase = (i / text.length) * Math.PI * 2;
+    group.add(mesh);
+    letters.push(mesh);
+    cursor += widths[i] + gap;
+  });
+  return { group, letters, width: total };
+}
+
+const spec = [
+  { text: 'SOFTWARE', size: 0.52, depth: 0.2, x: -3.5, y: 0, tilt: 0.1 },
+  { text: 'WEB', size: 0.72, depth: 0.3, x: 0, y: 0.35, tilt: 0 },
+  { text: 'TOOLS', size: 0.52, depth: 0.2, x: 3.5, y: 0.06, tilt: -0.1 },
+];
+const words = spec.map(s => {
+  const word = buildWord(s.text, s.size, s.depth);
+  word.group.position.set(s.x, s.y, 0.4);
+  word.group.rotation.y = s.tilt;
+  scene.add(word.group);
+  return { ...s, ...word };
+});
+
+// glow dashes connecting the staircase words
+const dashes = [];
+for (let i = 0; i < 5; i++) {
+  const dash = new THREE.Mesh(
+    new THREE.BoxGeometry(0.16, 0.016, 0.016),
+    new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.4, toneMapped: false, depthWrite: false })
+  );
+  dash.position.set(-1.75 + i * 0.84, 0.16, 0.4);
+  dash.userData.phase = i;
+  scene.add(dash);
+  dashes.push(dash);
+}
+
+// ---------- atmosphere ----------
+const dustGeo = new THREE.BufferGeometry();
+const dustCount = 130;
+const dustPos = new Float32Array(dustCount * 3);
+for (let i = 0; i < dustCount; i++) {
+  dustPos[i * 3] = (Math.random() - 0.5) * 22;
+  dustPos[i * 3 + 1] = (Math.random() - 0.35) * 7;
+  dustPos[i * 3 + 2] = (Math.random() - 0.5) * 9 - 1;
+}
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dust = new THREE.Points(
+  dustGeo,
+  new THREE.PointsMaterial({
+    map: glowTex,
+    color: 0x9fe8ff,
+    size: 0.07,
+    transparent: true,
+    opacity: 0.46,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true,
+  })
+);
+scene.add(dust);
+
+// ---------- frame API ----------
+const pulseEl = document.getElementById('pulse');
+const TwoPi = Math.PI * 2;
+
+function setFrame(t) {
+  const a = t * TwoPi;
+
+  camera.position.x = Math.sin(a) * 1.1;
+  camera.position.y = 0.1 + Math.cos(a) * 0.24;
+  camera.position.z = CAM_Z + Math.sin(a + 1.0) * 0.7;
+  camera.lookAt(0, 0.14, 0);
+
+  core.rotation.y = a * 0.8;
+  core.rotation.x = Math.cos(a) * 0.15;
+  core.position.y = 0.9 + Math.sin(a + 0.3) * 0.07;
+  coreWire.rotation.y = -a * 0.5;
+  coreWire.rotation.z = a * 0.3;
+  coreOrbit.rotation.z = a * 0.6;
+  coreBead.position.set(Math.cos(a * 2.2) * 1.5, Math.sin(a * 2.2) * 1.5, 0);
+  coreLight.intensity = 8 + Math.sin(a * 3) * 3;
+
+  words.forEach((word, wi) => {
+    word.group.position.y = [0, 0.35, 0.06][wi] + Math.sin(a + wi * 1.3) * 0.05;
+    word.group.rotation.y = [0.1, 0, -0.1][wi] + Math.cos(a + wi) * 0.05;
+    word.letters.forEach(m => {
+      m.position.y = Math.sin(a + m.userData.phase + wi * 1.5) * 0.05;
+      m.position.z = (m.userData.phase % 2 ? 0.05 : -0.05) + Math.cos(a + m.userData.phase) * 0.1;
+      m.rotation.x = Math.sin(a + m.userData.phase + 1.2) * 0.15;
+    });
+  });
+
+  dashes.forEach((dash, i) => {
+    const p = ((t * 1.6 + i / 5) % 1);
+    dash.position.x = -1.75 + p * 3.5;
+    dash.material.opacity = 0.1 + 0.5 * Math.sin(Math.PI * p);
+  });
+
+  rimL.position.x = -7.5 + Math.sin(a) * 1.1;
+  rimR.intensity = 24 + Math.sin(a + 1.6) * 7;
+
+  dust.rotation.y = Math.sin(a) * 0.15;
+  dust.position.y = Math.sin(a * 2) * 0.09;
+
+  pulseEl.style.opacity = String(0.55 + 0.45 * (0.5 + 0.5 * Math.sin(a * 6)));
+  pulseEl.style.transform = `scale(${1 + 0.35 * Math.sin(a * 6)})`;
+
+  applyHud(t);
+
+  renderer.render(scene, camera);
+}
+
+window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

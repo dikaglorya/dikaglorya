@@ -42,42 +42,104 @@ function drawBackground(a) {
   ctx.fillStyle = '#07090c';
   ctx.fillRect(0, 0, W, H);
 
+  // breathing ambient glow
   const glow = ctx.createRadialGradient(980, 130, 10, 980, 130, 520);
-  glow.addColorStop(0, 'rgba(36, 91, 112, 0.26)');
+  const breathe = 0.5 + 0.5 * Math.sin(a * 2);
+  glow.addColorStop(0, `rgba(36, 91, 112, ${0.2 + breathe * 0.1})`);
   glow.addColorStop(0.5, 'rgba(24, 58, 72, 0.10)');
   glow.addColorStop(1, 'rgba(7, 9, 12, 0)');
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, H);
 
-  ctx.strokeStyle = 'rgba(155, 168, 178, 0.04)';
+  // far layer (parallax: slow)
+  const driftSlow = (a / (Math.PI * 2)) * 12;
+  ctx.strokeStyle = 'rgba(155, 168, 178, 0.02)';
   ctx.lineWidth = 1;
+  for (let x = -30 + driftSlow; x < W + 30; x += 30) {
+    ctx.beginPath();
+    ctx.moveTo(x + 0.5, 0);
+    ctx.lineTo(x + 0.5, H);
+    ctx.stroke();
+  }
+
+  // near layer (fast drift, both axes = depth cue)
   const drift = (a / (Math.PI * 2)) * 30;
+  const ydrift = (a / (Math.PI * 2)) * 30;
+  ctx.strokeStyle = 'rgba(155, 168, 178, 0.045)';
   for (let x = -30 + drift; x < W + 30; x += 30) {
     ctx.beginPath();
     ctx.moveTo(x + 0.5, 0);
     ctx.lineTo(x + 0.5, H);
     ctx.stroke();
   }
-  for (let y = 0; y < H; y += 30) {
+  for (let y = -30 + ydrift; y < H + 30; y += 30) {
     ctx.beginPath();
     ctx.moveTo(0, y + 0.5);
     ctx.lineTo(W, y + 0.5);
     ctx.stroke();
   }
 
-  const beam = ctx.createLinearGradient(820, 0, 1160, 0);
-  beam.addColorStop(0, 'rgba(142, 220, 240, 0)');
-  beam.addColorStop(0.5, 'rgba(142, 220, 240, 0.08)');
-  beam.addColorStop(1, 'rgba(142, 220, 240, 0)');
-  ctx.fillStyle = beam;
+  // travelling horizontal light beams (receding corridor feel)
+  for (let k = 0; k < 3; k++) {
+    const p = ((a / (Math.PI * 2)) + k / 3) % 1;
+    const by = p * H;
+    const beam = ctx.createLinearGradient(0, by - 26, 0, by + 26);
+    beam.addColorStop(0, 'rgba(142, 220, 240, 0)');
+    beam.addColorStop(0.5, `rgba(142, 220, 240, ${0.05 + 0.04 * Math.sin(Math.PI * p)})`);
+    beam.addColorStop(1, 'rgba(142, 220, 240, 0)');
+    ctx.fillStyle = beam;
+    ctx.fillRect(0, by - 26, W, 52);
+  }
+
+  // drifting glyph field (everything moves — no still frame in this strip)
+  const glyphs = ['+', '×', '/', '·', 'Λ', '§', '0', '1'];
+  ctx.font = '10px JBMono';
+  for (let i = 0; i < 14; i++) {
+    const speed = 0.5 + (i % 3) * 0.28;
+    const gx = (i * 97 + (a / (Math.PI * 2)) * 210 * speed) % (W + 40) - 20;
+    const gy = (i * 53 + (a / (Math.PI * 2)) * 120 * (0.4 + speed)) % (H + 60) - 30;
+    const alpha = 0.05 + 0.11 * (0.5 + 0.5 * Math.sin(a * 3 + i * 1.9));
+    ctx.fillStyle = i % 5 === 0 ? `rgba(255, 176, 138, ${alpha.toFixed(3)})` : `rgba(142, 220, 240, ${alpha.toFixed(3)})`;
+    ctx.textAlign = 'center';
+    ctx.fillText(glyphs[i % glyphs.length], gx, gy);
+    ctx.textAlign = 'left';
+  }
+
+  const beamR = ctx.createLinearGradient(820, 0, 1160, 0);
+  beamR.addColorStop(0, 'rgba(142, 220, 240, 0)');
+  beamR.addColorStop(0.5 + 0.2 * Math.sin(a), `rgba(142, 220, 240, ${0.06 + 0.05 * (0.5 + 0.5 * Math.sin(a * 1.6))})`);
+  beamR.addColorStop(1, 'rgba(142, 220, 240, 0)');
+  ctx.fillStyle = beamR;
   ctx.fillRect(820, 100, 340, 60);
 }
 
+// deterministic glitch flag per char
+function glitchChar(i, seg) {
+  return ((Math.imul(i + 1, 2654435761) ^ Math.imul(seg + 7, 40503)) >>> 0) % 26 < 2;
+}
+
 function drawText(a) {
+  const seg = Math.floor(a * 48 / (Math.PI * 4)); // glitch windows per loop
+
+  // ---- kicker: per-char shimmer + bob ----
   ctx.textAlign = 'left';
   ctx.font = '600 11px JBMono';
-  ctx.fillStyle = ACCENT;
-  ctx.fillText('OPEN CHANNEL / 2026', 70, 54);
+  const kicker = 'OPEN CHANNEL / 2026';
+  let kx = 70;
+  for (let i = 0; i < kicker.length; i++) {
+    const bob = Math.sin(a * 2 + i * 0.42) * 0.9;
+    ctx.globalAlpha = 0.66 + 0.34 * (0.5 + 0.5 * Math.sin(a * 3.2 + i * 0.42));
+    if (glitchChar(i, seg)) {
+      ctx.fillStyle = 'rgba(255, 150, 110, 0.85)';
+      ctx.fillText(kicker[i], kx + 1.2, 54 + bob);
+      ctx.fillStyle = 'rgba(110, 220, 255, 0.85)';
+      ctx.fillText(kicker[i], kx - 1.2, 54 + bob);
+    }
+    ctx.fillStyle = ACCENT;
+    ctx.fillText(kicker[i], kx, 54 + bob);
+    kx += ctx.measureText(kicker[i]).width;
+  }
+  ctx.globalAlpha = 1;
 
   const pulse = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(a * 4));
   ctx.fillStyle = ACCENT;
@@ -87,37 +149,104 @@ function drawText(a) {
   ctx.fill();
   ctx.globalAlpha = 1;
 
+  // ---- headline: per-letter float + glitch burst + traveling chrome highlight ----
+  const lines = [
+    { text: "LET'S BUILD", y: 112 },
+    { text: 'SOMETHING USEFUL.', y: 156 },
+  ];
   ctx.font = '400 44px ArchivoBlack';
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-  ctx.fillText("LET'S BUILD", 72, 114);
-  ctx.fillText('SOMETHING USEFUL.', 72, 158);
+  // one seamless chrome sheen pass per loop (no jump, no rectangles)
+  const sweep = a / (Math.PI * 2);
+  const sweepX = 40 + sweep * 610;
+  for (const line of lines) {
+    // shadow layer (also floats — keeps depth)
+    let sx = 72;
+    for (let i = 0; i < line.text.length; i++) {
+      const bob = Math.sin(a * 2 + i * 0.34) * 2.6;
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+      ctx.fillText(line.text[i], sx, line.y + 2 + bob);
+      sx += ctx.measureText(line.text[i]).width;
+    }
+    // face layer with per-letter glow + glitch
+    let fx = 70;
+    for (let i = 0; i < line.text.length; i++) {
+      const bob = Math.sin(a * 2 + i * 0.34) * 2.6;
+      const glow = 0.10 + 0.12 * (0.5 + 0.5 * Math.sin(a * 3 + i * 0.42));
+      if (glitchChar(i, seg)) {
+        ctx.fillStyle = 'rgba(255, 150, 110, 0.8)';
+        ctx.fillText(line.text[i], fx + 1.8, line.y + bob);
+        ctx.fillStyle = 'rgba(110, 220, 255, 0.8)';
+        ctx.fillText(line.text[i], fx - 1.8, line.y + bob);
+      }
+      ctx.fillStyle = INK;
+      ctx.fillText(line.text[i], fx, line.y + bob);
+      ctx.globalAlpha = glow;
+      ctx.fillStyle = ACCENT;
+      ctx.fillText(line.text[i], fx, line.y + bob);
+      ctx.globalAlpha = 1;
+      const w = ctx.measureText(line.text[i]).width;
+      // per-letter chrome highlight riding the sweep
+      const dd = Math.abs(fx + w / 2 - sweepX);
+      if (dd < 120) {
+        const f = 1 - dd / 120;
+        ctx.globalAlpha = 0.5 * f;
+        ctx.fillStyle = 'rgba(243, 253, 255, 0.95)';
+        ctx.fillText(line.text[i], fx, line.y + bob);
+        ctx.globalAlpha = 1;
+      }
+      fx += w;
+    }
+  }
 
-  ctx.fillStyle = INK;
-  ctx.fillText("LET'S BUILD", 70, 112);
-  ctx.fillText('SOMETHING USEFUL.', 70, 156);
-
-  // moving sheen across the display type
-  const sweep = ((a / (Math.PI * 2)) * 1.4) % 1;
-  const sx = 40 + sweep * 700;
+  // ---- subtitle: infinite marquee ----
+  const sub = 'Open to selected projects and collaboration.  ✦  ObitoGlory.tech  ✦  DikaCode build journal  ✦  ';
   ctx.save();
   ctx.beginPath();
-  ctx.rect(60, 72, 720, 100);
+  ctx.rect(64, 180, 660, 24);
   ctx.clip();
-  const sheen = ctx.createLinearGradient(sx - 90, 0, sx + 90, 0);
-  sheen.addColorStop(0, 'rgba(255, 255, 255, 0)');
-  sheen.addColorStop(0.5, 'rgba(234, 241, 245, 0.10)');
-  sheen.addColorStop(1, 'rgba(255, 255, 255, 0)');
-  ctx.fillStyle = sheen;
-  ctx.fillRect(sx - 90, 72, 180, 100);
+  ctx.font = '13px JBMono';
+  const subW = ctx.measureText(sub).width;
+  const gap2 = 46;
+  const cycle = subW + gap2;
+  const marq = -((a / (Math.PI * 2)) * 220) % cycle;
+  for (let rep = 0; rep < 3; rep++) {
+    let mx2 = 70 + marq + rep * cycle;
+    if (mx2 - subW > 730 || mx2 < -subW) continue;
+    let ci = 0;
+    for (let i = 0; i < sub.length; i++) {
+      const alpha = 0.5 + 0.5 * (0.5 + 0.5 * Math.sin(a * 3 - (mx2 - 70) * 0.02));
+      ctx.fillStyle = `rgba(147, 166, 176, ${(0.35 + 0.55 * alpha).toFixed(3)})`;
+      if (sub[i] === '✦') ctx.fillStyle = `rgba(255, 176, 138, ${(0.5 + 0.4 * alpha).toFixed(3)})`;
+      ctx.fillText(sub[i], mx2, 194);
+      mx2 += ctx.measureText(sub[i]).width;
+      ci++;
+    }
+  }
   ctx.restore();
 
-  ctx.font = '13px JBMono';
-  ctx.fillStyle = MUTED;
-  ctx.fillText('Open to selected projects and collaboration.', 70, 194);
-
+  // ---- bottom channels: counter-scrolling marquee with per-char light ----
+  const chan = 'PORTFOLIO · PROJECTS · CONTACT · JOURNAL · TELEGRAM · ';
   ctx.font = '10px JBMono';
-  ctx.fillStyle = 'rgba(147, 166, 176, 0.72)';
-  ctx.fillText('PORTFOLIO · PROJECTS · CONTACT', 70, 226);
+  const chanW = ctx.measureText(chan).width;
+  const chanCycle = chanW + 60;
+  const chanMarq = ((a / (Math.PI * 2)) * 160) % chanCycle;
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(64, 214, 660, 18);
+  ctx.clip();
+  for (let rep = 0; rep < 3; rep++) {
+    let cx2 = 70 - chanMarq + rep * chanCycle;
+    if (cx2 - chanW > 730 || cx2 < -chanW) continue;
+    for (let i = 0; i < chan.length; i++) {
+      const alpha = 0.5 + 0.5 * (0.5 + 0.5 * Math.sin(a * 4 + (cx2 - 70) * 0.03));
+      ctx.fillStyle = i % 2 === 0
+        ? `rgba(142, 220, 240, ${(0.4 + 0.5 * alpha).toFixed(3)})`
+        : `rgba(147, 166, 176, ${(0.28 + 0.5 * alpha).toFixed(3)})`;
+      ctx.fillText(chan[i], cx2, 226);
+      cx2 += ctx.measureText(chan[i]).width;
+    }
+  }
+  ctx.restore();
 
   const rule = ctx.createLinearGradient(70, 0, 760, 0);
   rule.addColorStop(0, 'rgba(142, 220, 240, 0.42)');
@@ -248,21 +377,47 @@ function drawPortal(a) {
     ctx.fill();
   }
 
+  // orbiting console label ring — text rides the ring tangentially
+  const labels = ['SIGNAL', 'GATE / 01', 'OPEN 2026', 'OBITO.TECH', 'DIKACODE', 'CONTACT'];
+  ctx.font = '600 8px JBMono';
+  labels.forEach((label, k) => {
+    const ang = a * (k % 2 ? -0.55 : 0.85) + (k / labels.length) * Math.PI * 2;
+    const radius = 108;
+    const lx = Math.cos(ang) * radius;
+    const ly = Math.sin(ang) * radius;
+    ctx.save();
+    ctx.translate(lx, ly);
+    ctx.rotate(ang + Math.PI / 2);
+    const la = 0.3 + 0.42 * (0.5 + 0.5 * Math.sin(a * 2.6 + k * 1.4));
+    ctx.fillStyle = `rgba(142, 220, 240, ${la.toFixed(3)})`;
+    if (k === 3 && Math.sin(a * 2.6 + k * 1.4) > 0.4) ctx.fillStyle = `rgba(255, 176, 138, ${la.toFixed(3)})`;
+    ctx.textAlign = 'center';
+    ctx.fillText(label, 0, 0);
+    ctx.textAlign = 'left';
+    ctx.restore();
+  });
+
   ctx.restore();
 
-  // floating shards around the rim
+  // floating shards around the rim — wired with 3D-ish depth wobble
   ctx.save();
   ctx.translate(cx, cy);
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 9; i++) {
     const ang = a * (0.5 + i * 0.08) + i * 1.9;
-    const radius = 116 + (i % 2) * 12;
+    const depth = 0.55 + 0.45 * (0.5 + 0.5 * Math.sin(a * 1.9 + i * 2.2));
+    const radius = (108 + (i % 3) * 11) * depth;
     const x = Math.cos(ang) * radius;
     const y = Math.sin(ang) * radius * 0.7;
+    const s = 2 + depth * 3;
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(ang + a);
     ctx.fillStyle = i === 2 ? 'rgba(255, 176, 138, 0.34)' : 'rgba(142, 220, 240, 0.26)';
-    ctx.fillRect(-2, -2, 4, 4);
+    ctx.fillRect(-s / 2, -s / 2, s, s);
+    // glow halo
+    ctx.globalAlpha = 0.35 * (0.5 + 0.5 * Math.sin(a * 3 + i));
+    ctx.fillRect(-s / 2 - 2.5, -s / 2 - 2.5, s + 5, s + 5);
+    ctx.globalAlpha = 1;
     ctx.restore();
   }
   ctx.restore();
@@ -280,12 +435,19 @@ function drawPortal(a) {
 }
 
 function drawFooter(a) {
-  ctx.textAlign = 'right';
   ctx.font = '10px JBMono';
-  ctx.fillStyle = 'rgba(147, 166, 176, 0.68)';
-  const signal = 97.8 + Math.sin(a) * 0.8;
-  ctx.fillText(`GATE / 01 · SIGNAL ${signal.toFixed(1)}%`, 1130, 238);
   ctx.textAlign = 'left';
+  const signal = 97.8 + Math.sin(a) * 0.8;
+  const text = `GATE / 01 · SIGNAL ${signal.toFixed(1)}%`;
+  const total = ctx.measureText(text).width;
+  let x = 1130 - total;
+  for (let i = 0; i < text.length; i++) {
+    // right-to-left travelling light on the footer too
+    const wave = 0.5 + 0.5 * Math.sin(a * 3.2 - i * 0.35);
+    ctx.fillStyle = `rgba(147, 166, 176, ${(0.4 + 0.34 * wave).toFixed(3)})`;
+    ctx.fillText(text[i], x, 238);
+    x += ctx.measureText(text[i]).width;
+  }
 }
 
 function setFrame(t) {

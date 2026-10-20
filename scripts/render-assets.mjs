@@ -9,345 +9,388 @@ import { chromium } from 'playwright';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 const assetsDir = path.join(root, 'assets');
-const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dikaofc-render-'));
-const framesDir = path.join(tmpDir, 'frames');
-const panelFramesDir = path.join(tmpDir, 'panel-frames');
-const focusFramesDir = path.join(tmpDir, 'focus-frames');
-const ctaFramesDir = path.join(tmpDir, 'cta-frames');
-for (const dir of [framesDir, panelFramesDir, focusFramesDir, ctaFramesDir]) {
-  fs.mkdirSync(dir, { recursive: true });
-}
-fs.mkdirSync(assetsDir, { recursive: true });
 
-const HERO_W = 1440;
-const HERO_H = 540;
-const HERO_FRAMES = 90;
-const FPS = 15;
-const PANEL_FRAMES = 48;
-const PANEL_FPS = 12;
-const FOCUS_W = 1200;
-const FOCUS_H = 440;
-const FOCUS_FRAMES = 72;
-const FOCUS_FPS = 15;
-const CTA_W = 1200;
-const CTA_H = 260;
-const CTA_FRAMES = 48;
-const CTA_FPS = 12;
+const FPS = 24;
+// 1000 / 24 = 41.67ms. img2webp accepts integer milliseconds, so use 42ms.
+const FRAME_DELAY_MS = 42;
+const STILL_FRAME = 0.18;
+
+const SCENES = [
+  {
+    key: 'hero',
+    label: '3D hero',
+    url: '/scripts/hero-scene.html?layout=hero',
+    width: 1200,
+    height: 450,
+    frames: 144,
+    quality: 86,
+    webp: 'dikaofc-hero.webp',
+    still: 'dikaofc-hero.png',
+    settleMs: 250,
+  },
+  {
+    key: 'identity',
+    label: 'identity panel',
+    url: '/scripts/identity-scene.html',
+    width: 1200,
+    height: 620,
+    frames: 120,
+    quality: 88,
+    webp: 'dikaofc-identity.webp',
+    still: 'dikaofc-identity.png',
+  },
+  {
+    key: 'focus',
+    label: 'capability map',
+    url: '/scripts/focus-scene.html',
+    width: 1200,
+    height: 520,
+    frames: 120,
+    quality: 88,
+    webp: 'dikaofc-focus.webp',
+    still: 'dikaofc-focus.png',
+  },
+  {
+    key: 'now',
+    label: 'now panel',
+    url: '/scripts/now-scene.html',
+    width: 1200,
+    height: 480,
+    frames: 120,
+    quality: 88,
+    webp: 'dikaofc-now.webp',
+    still: 'dikaofc-now.png',
+  },
+  {
+    key: 'principles',
+    label: 'principles wall',
+    url: '/scripts/principles-scene.html',
+    width: 1200,
+    height: 520,
+    frames: 144,
+    quality: 88,
+    webp: 'dikaofc-principles.webp',
+    still: 'dikaofc-principles.png',
+  },
+  {
+    key: 'contact',
+    label: 'contact gate',
+    url: '/scripts/contact-scene.html',
+    width: 1200,
+    height: 340,
+    frames: 120,
+    quality: 88,
+    webp: 'dikaofc-contact.webp',
+    still: 'dikaofc-contact.png',
+  },
+];
+
+const STATIC_STILLS = [
+  {
+    key: 'og',
+    label: 'Open Graph still',
+    url: '/scripts/hero-scene.html?layout=og',
+    width: 1200,
+    height: 630,
+    frame: 0.25,
+    file: 'dikaofc-og.png',
+    settleMs: 250,
+  },
+  {
+    key: 'avatar',
+    label: 'avatar still',
+    url: '/scripts/hero-scene.html?layout=avatar',
+    width: 1024,
+    height: 1024,
+    frame: 0.2,
+    file: 'dikaofc-avatar.png',
+    settleMs: 250,
+  },
+];
+
 const SKIP_HERO = process.env.SKIP_HERO === '1';
+const ONLY = (process.env.ONLY || '')
+  .split(',')
+  .map(name => name.trim().toLowerCase())
+  .filter(Boolean);
+const only = new Set(ONLY);
+const wanted = key => only.size === 0 || only.has(key);
 
 const mime = {
   '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
-  '.ttf': 'font/ttf',
-  '.svg': 'image/svg+xml',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
   '.png': 'image/png',
-  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
   '.webp': 'image/webp',
+  '.ttf': 'font/ttf',
+  '.woff2': 'font/woff2',
 };
 
+const written = [];
+let browser;
+let server;
+let base;
+let tmpDir;
+let hasWebpinfo = false;
+
 function fail(message) {
-  console.error(`\n${message}\n`);
-  process.exit(1);
+  throw new Error(message);
 }
 
 function hasCommand(command, versionFlag = '-version') {
   return spawnSync(command, [versionFlag], { stdio: 'ignore' }).status === 0;
 }
 
-if (!fs.existsSync(path.join(root, 'node_modules', 'three'))) {
-  fail('Missing dependencies. Run: npm install');
-}
-if (!hasCommand('ffmpeg')) {
-  fail('ffmpeg is required to encode the hero GIF. Install it, then run again.');
-}
-if (!hasCommand('gifsicle', '--version')) {
-  fail('gifsicle is required to optimize the hero GIF. Install it, then run again.');
+function megabytes(bytes) {
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
-const server = http.createServer((req, res) => {
-  const requested = decodeURIComponent((req.url || '/').split('?')[0]);
-  const file = path.join(root, requested === '/' ? '/README.md' : requested);
-  if (!file.startsWith(root)) {
-    res.writeHead(403);
-    res.end('Forbidden');
+function record(file) {
+  const { size } = fs.statSync(file);
+  written.push({ file: path.relative(root, file), size });
+  return size;
+}
+
+function startServer() {
+  return new Promise((resolve, reject) => {
+    const httpServer = http.createServer((req, res) => {
+      let requested;
+      try {
+        requested = decodeURIComponent((req.url || '/').split('?')[0]);
+      } catch {
+        res.writeHead(400);
+        res.end('Bad request');
+        return;
+      }
+
+      const file = path.resolve(root, `.${requested}`);
+      if (file !== root && !file.startsWith(`${root}${path.sep}`)) {
+        res.writeHead(403);
+        res.end('Forbidden');
+        return;
+      }
+
+      fs.readFile(file, (error, data) => {
+        if (error) {
+          res.writeHead(404);
+          res.end('Not found');
+          return;
+        }
+        res.writeHead(200, {
+          'Content-Type': mime[path.extname(file).toLowerCase()] || 'application/octet-stream',
+          'Cache-Control': 'no-store',
+        });
+        res.end(data);
+      });
+    });
+
+    httpServer.once('error', reject);
+    httpServer.listen(0, '127.0.0.1', () => {
+      const { port } = httpServer.address();
+      resolve({ httpServer, port });
+    });
+  });
+}
+
+async function openPage({ url, width, height, key, settleMs = 0 }) {
+  const page = await browser.newPage({
+    viewport: { width, height },
+    deviceScaleFactor: 1,
+  });
+  page.on('pageerror', error => console.error(`[${key}] ${error.message}`));
+
+  await page.goto(`${base}${url}`, { waitUntil: 'networkidle', timeout: 120_000 });
+  await page.waitForFunction(() => window.__ready === true, undefined, { timeout: 120_000 });
+  await page.evaluate(() => document.fonts.ready);
+  if (settleMs > 0) await page.waitForTimeout(settleMs);
+  return page;
+}
+
+function frameFiles(scene, frameDir) {
+  return Array.from({ length: scene.frames }, (_, i) =>
+    path.join(frameDir, `frame-${String(i).padStart(3, '0')}.png`),
+  );
+}
+
+function encodeWebp(scene, frameDir) {
+  const output = path.join(assetsDir, scene.webp);
+  const args = [
+    '-loop', '0',
+    '-lossy',
+    '-q', String(scene.quality),
+    '-m', '6',
+    '-d', String(FRAME_DELAY_MS),
+    ...frameFiles(scene, frameDir),
+    '-o', output,
+  ];
+
+  const result = spawnSync('img2webp', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    const detail = (result.stderr || result.stdout || '').trim();
+    throw new Error(`img2webp failed for ${scene.key}${detail ? `: ${detail}` : ''}`);
+  }
+  return output;
+}
+
+function describeWebp(file, hasWebpinfo) {
+  if (!hasWebpinfo) return '';
+  const result = spawnSync('webpinfo', [file], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+  if (result.status !== 0) return '';
+
+  const text = `${result.stdout || ''}\n${result.stderr || ''}`;
+  const frameCount = (text.match(/^\s*Chunk ANMF\b/gm) || []).length;
+  const canvas = text.match(/Canvas size\s+(\d+)\s*x\s+(\d+)/i);
+  const animation = text.match(/^\s*Animation:\s*\d+\s*$/m);
+  const parts = [];
+  if (frameCount > 0) parts.push(`${frameCount} frames`);
+  if (canvas) parts.push(`${canvas[1]}x${canvas[2]}`);
+  if (animation) parts.push(animation[0].trim().replace(/\s+/g, ' '));
+  return parts.join(' · ');
+}
+
+async function renderScene(scene) {
+  const frameDir = path.join(tmpDir, scene.key);
+  fs.mkdirSync(frameDir, { recursive: true });
+
+  console.log(
+    `\nRendering ${scene.label} — ${scene.width}x${scene.height}, ${scene.frames} frames @ ${FPS} fps…`,
+  );
+
+  const page = await openPage(scene);
+  try {
+    for (let i = 0; i < scene.frames; i++) {
+      // t = i / frames, never 1: the last frame is frames-1, keeping the loop seamless.
+      await page.evaluate(t => window.__setFrame(t), i / scene.frames);
+      await page.screenshot({
+        path: path.join(frameDir, `frame-${String(i).padStart(3, '0')}.png`),
+      });
+      if (i === 0 || (i + 1) % 24 === 0 || i === scene.frames - 1) {
+        console.log(`  frames ${i + 1}/${scene.frames}`);
+      }
+    }
+
+    const stillPath = path.join(assetsDir, scene.still);
+    await page.evaluate(t => window.__setFrame(t), STILL_FRAME);
+    await page.screenshot({ path: stillPath });
+    const stillSize = record(stillPath);
+    console.log(`  still  assets/${scene.still} — ${megabytes(stillSize)}`);
+  } finally {
+    await page.close();
+  }
+
+  console.log(`Encoding assets/${scene.webp} (quality ${scene.quality})…`);
+  const webpPath = encodeWebp(scene, frameDir);
+  const webpSize = record(webpPath);
+  const info = describeWebp(webpPath, hasWebpinfo);
+  console.log(`  webp   assets/${scene.webp} — ${megabytes(webpSize)}${info ? ` (${info})` : ''}`);
+}
+
+async function renderStatic(still) {
+  console.log(`\nRendering ${still.label} — ${still.width}x${still.height} at t=${still.frame}…`);
+  const page = await openPage(still);
+  try {
+    await page.evaluate(t => window.__setFrame(t), still.frame);
+    const output = path.join(assetsDir, still.file);
+    await page.screenshot({ path: output });
+    const size = record(output);
+    console.log(`  still  assets/${still.file} — ${megabytes(size)}`);
+  } finally {
+    await page.close();
+  }
+}
+
+async function main() {
+  if (!fs.existsSync(path.join(root, 'node_modules', 'three'))) {
+    fail('Missing dependencies. Run: npm install');
+  }
+  if (!hasCommand('img2webp')) {
+    fail('img2webp is required to encode the animated WebP assets. Install the WebP tools (for example: apt-get install webp, or brew install webp).');
+  }
+  hasWebpinfo = hasCommand('webpinfo');
+  if (!hasWebpinfo) {
+    console.warn('webpinfo not found; WebP frame details will be omitted from the report.');
+  }
+
+  fs.mkdirSync(assetsDir, { recursive: true });
+  tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dikaofc-render-'));
+
+  const scenePlan = SCENES.filter(scene =>
+    scene.key === 'hero' ? !SKIP_HERO && wanted('hero') : wanted(scene.key),
+  );
+  const staticPlan = STATIC_STILLS.filter(
+    still => !SKIP_HERO && (only.size === 0 || wanted('hero') || wanted(still.key)),
+  );
+
+  const unknown = ONLY.filter(
+    name => !SCENES.some(scene => scene.key === name) && !STATIC_STILLS.some(still => still.key === name),
+  );
+  if (unknown.length > 0) {
+    console.warn(`Ignoring unknown ONLY value(s): ${unknown.join(', ')}`);
+  }
+  if (SKIP_HERO) console.log('SKIP_HERO=1 — skipping hero animation, OG still, and avatar still.');
+  if (ONLY.length > 0) console.log(`ONLY=${ONLY.join(',')} — rendering selected assets.`);
+  if (scenePlan.length === 0 && staticPlan.length === 0) {
+    console.log('Nothing selected to render.');
     return;
   }
-  fs.readFile(file, (error, data) => {
-    if (error) {
-      res.writeHead(404);
-      res.end('Not found');
-      return;
-    }
-    res.writeHead(200, {
-      'Content-Type': mime[path.extname(file)] || 'application/octet-stream',
-      'Cache-Control': 'no-store',
-    });
-    res.end(data);
+
+  const started = await startServer();
+  server = started.httpServer;
+  base = `http://127.0.0.1:${started.port}`;
+
+  browser = await chromium.launch({
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+      '--use-gl=angle',
+      '--use-angle=swiftshader',
+      '--enable-unsafe-swiftshader',
+    ],
   });
-});
 
-await new Promise((resolve, reject) => {
-  server.once('error', reject);
-  server.listen(0, '127.0.0.1', resolve);
-});
-const { port } = server.address();
-const base = `http://127.0.0.1:${port}`;
-
-const browser = await chromium.launch({
-  headless: true,
-  args: [
-    '--no-sandbox',
-    '--disable-dev-shm-usage',
-    '--use-gl=angle',
-    '--use-angle=swiftshader',
-    '--enable-unsafe-swiftshader',
-  ],
-});
-
-async function openScene(layout, width, height) {
-  const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
-  page.on('pageerror', error => console.error(`[${layout}] ${error.message}`));
-  await page.goto(`${base}/scripts/hero-scene.html?layout=${layout}`, { waitUntil: 'networkidle' });
-  await page.waitForFunction(() => window.__ready === true, { timeout: 60_000 });
-  await page.waitForTimeout(350);
-  return page;
-}
-
-async function renderSvgAsset(name, width, height) {
-  const page = await browser.newPage({
-    viewport: { width, height },
-    deviceScaleFactor: 1,
-  });
-  await page.goto(`${base}/assets/${name}`, { waitUntil: 'networkidle' });
-  await page.evaluate(() => {
-    document.documentElement.style.margin = '0';
-    document.documentElement.style.padding = '0';
-    document.documentElement.style.background = '#07090c';
-    document.documentElement.style.overflow = 'hidden';
-    if (document.body) {
-      document.body.style.margin = '0';
-      document.body.style.padding = '0';
-      document.body.style.background = '#07090c';
-    }
-    const svg = document.querySelector('svg');
-    if (svg) {
-      svg.style.display = 'block';
-      svg.style.margin = '0';
-    }
-  });
-  await page.evaluate(() => document.fonts.ready);
-  await page.waitForTimeout(200);
-  await page.screenshot({
-    path: path.join(assetsDir, name.replace(/\.svg$/, '.png')),
-  });
-  await page.close();
-}
-
-function encodeGif(framePattern, output, fps, options) {
-  const {
-    lossy = 15,
-    paletteName = 'palette',
-    scale = '1200:450',
-    colors = 160,
-    dither = 'bayer:bayer_scale=5',
-  } = options;
-  const palette = path.join(tmpDir, `${paletteName}.png`);
-  const rawGif = path.join(tmpDir, `${paletteName}.gif`);
-  const scaleFilter = `scale=${scale}:flags=lanczos`;
-  let result = spawnSync('ffmpeg', [
-    '-y', '-framerate', String(fps), '-i', framePattern,
-    '-vf', `${scaleFilter},palettegen=max_colors=${colors}:stats_mode=full`,
-    '-update', '1', palette,
-  ], { stdio: 'inherit' });
-  if (result.status !== 0) throw new Error('ffmpeg palette generation failed');
-
-  result = spawnSync('ffmpeg', [
-    '-y', '-framerate', String(fps), '-i', framePattern, '-i', palette,
-    '-lavfi', `[0:v]${scaleFilter}[x];[x][1:v]paletteuse=dither=${dither}:diff_mode=rectangle`,
-    '-loop', '0', rawGif,
-  ], { stdio: 'inherit' });
-  if (result.status !== 0) throw new Error('ffmpeg GIF encoding failed');
-
-  result = spawnSync('gifsicle', ['-O3', `--lossy=${lossy}`, rawGif, '-o', output], { stdio: 'inherit' });
-  if (result.status !== 0) throw new Error('gifsicle optimization failed');
-}
-
-async function renderPanelScene(url, width, height, frames, frameDir, prefix) {
-  const page = await browser.newPage({
-    viewport: { width, height },
-    deviceScaleFactor: 1,
-  });
-  page.on('pageerror', error => console.error(`[${prefix}] ${error.message}`));
-  await page.goto(`${base}${url}`, { waitUntil: 'networkidle' });
-  await page.waitForFunction(() => window.__ready === true, { timeout: 60_000 });
-  await page.waitForTimeout(200);
-  for (let i = 0; i < frames; i++) {
-    await page.evaluate(t => window.__setFrame(t), i / frames);
-    await page.screenshot({
-      path: path.join(frameDir, `${prefix}-${String(i).padStart(3, '0')}.png`),
-    });
+  for (let i = 0; i < scenePlan.length; i++) {
+    console.log(`\n[${i + 1}/${scenePlan.length}] ${scenePlan[i].key}`);
+    await renderScene(scenePlan[i]);
   }
-  return page;
-}
 
+  for (const still of staticPlan) await renderStatic(still);
+
+  if (written.length > 0) {
+    console.log('\nAssets written:');
+    for (const entry of written) {
+      console.log(`  ${entry.file.padEnd(32)} ${megabytes(entry.size).padStart(9)}`);
+    }
+    const total = written.reduce((sum, entry) => sum + entry.size, 0);
+    console.log(`  ${'Total'.padEnd(32)} ${megabytes(total).padStart(9)}`);
+  }
+  console.log('');
+}
 
 try {
-  if (!SKIP_HERO) {
-    console.log('Rendering hero frames…');
-    const hero = await openScene('hero', HERO_W, HERO_H);
-    for (let i = 0; i < HERO_FRAMES; i++) {
-      await hero.evaluate(t => window.__setFrame(t), i / HERO_FRAMES);
-      await hero.screenshot({
-        path: path.join(framesDir, `frame-${String(i).padStart(3, '0')}.png`),
-      });
-      if (i % 8 === 0) process.stdout.write(`  ${i}/${HERO_FRAMES}\n`);
-    }
-    await hero.evaluate(() => window.__setFrame(0));
-    await hero.screenshot({ path: path.join(assetsDir, 'dikaofc-hero.png') });
-    await hero.close();
-
-    console.log('Rendering Open Graph still…');
-    const og = await openScene('og', 1200, 630);
-    await og.evaluate(() => window.__setFrame(0.25));
-    await og.screenshot({ path: path.join(assetsDir, 'dikaofc-og.png') });
-    await og.close();
-
-    console.log('Rendering avatar still…');
-    const avatar = await openScene('avatar', 1024, 1024);
-    await avatar.evaluate(() => window.__setFrame(0.2));
-    await avatar.screenshot({ path: path.join(assetsDir, 'dikaofc-avatar.png') });
-    await avatar.close();
-  } else {
-    console.log('Skipping 3D hero / OG / avatar render (SKIP_HERO=1).');
-  }
-
-  console.log('Rendering editorial panels…');
-  await renderSvgAsset('dikaofc-identity.svg', 960, 600);
-  await renderSvgAsset('dikaofc-projects.svg', 1200, 350);
-
-  console.log('Rendering animated identity panel…');
-  const identity = await renderPanelScene(
-    '/scripts/identity-scene.html',
-    960,
-    600,
-    PANEL_FRAMES,
-    panelFramesDir,
-    'panel',
-  );
-  await identity.close();
-
-  console.log('Rendering capability map…');
-  const focus = await renderPanelScene(
-    '/scripts/focus-scene.html',
-    FOCUS_W,
-    FOCUS_H,
-    FOCUS_FRAMES,
-    focusFramesDir,
-    'focus',
-  );
-  await focus.evaluate(() => window.__setFrame(0.15));
-  await focus.screenshot({ path: path.join(assetsDir, 'dikaofc-focus.png') });
-  await focus.close();
-
-  console.log('Rendering contact gate…');
-  const cta = await renderPanelScene(
-    '/scripts/cta-scene.html',
-    CTA_W,
-    CTA_H,
-    CTA_FRAMES,
-    ctaFramesDir,
-    'cta',
-  );
-  await cta.evaluate(() => window.__setFrame(0.25));
-  await cta.screenshot({ path: path.join(assetsDir, 'dikaofc-contact.png') });
-  await cta.close();
-
-  if (!SKIP_HERO) {
-    console.log('Encoding hero GIF…');
-    encodeGif(
-      path.join(framesDir, 'frame-%03d.png'),
-      path.join(assetsDir, 'dikaofc-hero.gif'),
-      FPS,
-      {
-        lossy: 30,
-        paletteName: 'hero-palette',
-        scale: '1200:450',
-        colors: 160,
-        dither: 'bayer:bayer_scale=5',
-      },
-    );
-  } else {
-    console.log('Skipping hero GIF encoding (SKIP_HERO=1).');
-  }
-
-  console.log('Encoding identity GIF…');
-  encodeGif(
-    path.join(panelFramesDir, 'panel-%03d.png'),
-    path.join(assetsDir, 'dikaofc-identity.gif'),
-    PANEL_FPS,
-    {
-      lossy: 35,
-      paletteName: 'panel-palette',
-      scale: '800:500',
-      colors: 96,
-      dither: 'bayer:bayer_scale=5',
-    },
-  );
-
-  console.log('Encoding capability map GIF…');
-  encodeGif(
-    path.join(focusFramesDir, 'focus-%03d.png'),
-    path.join(assetsDir, 'dikaofc-focus.gif'),
-    FOCUS_FPS,
-    {
-      lossy: 30,
-      paletteName: 'focus-palette',
-      scale: '1200:440',
-      colors: 128,
-      dither: 'bayer:bayer_scale=5',
-    },
-  );
-
-  console.log('Encoding contact gate GIF…');
-  encodeGif(
-    path.join(ctaFramesDir, 'cta-%03d.png'),
-    path.join(assetsDir, 'dikaofc-contact.gif'),
-    CTA_FPS,
-    {
-      lossy: 30,
-      paletteName: 'cta-palette',
-      scale: '1200:260',
-      colors: 128,
-      dither: 'bayer:bayer_scale=5',
-    },
-  );
-
-  console.log('\nAssets written:');
-  for (const name of [
-    'dikaofc-hero.gif',
-    'dikaofc-hero.png',
-    'dikaofc-og.png',
-    'dikaofc-avatar.png',
-    'dikaofc-identity.gif',
-    'dikaofc-identity.png',
-    'dikaofc-focus.gif',
-    'dikaofc-focus.png',
-    'dikaofc-contact.gif',
-    'dikaofc-contact.png',
-    'dikaofc-projects.png',
-  ]) {
-    const file = path.join(assetsDir, name);
-    const { size } = fs.statSync(file);
-    console.log(`  assets/${name} — ${(size / 1024).toFixed(0)} KB`);
-  }
+  await main();
+} catch (error) {
+  console.error(`\nAsset render failed: ${error instanceof Error ? error.message : error}\n`);
+  process.exitCode = 1;
 } finally {
-  await browser.close();
-  server.close();
-  if (process.env.KEEP_RENDERS === '1') {
-    console.log(`\nIntermediate frames kept at ${tmpDir}`);
-  } else {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+  if (browser) await browser.close().catch(() => {});
+  if (server) {
+    await new Promise(resolve => {
+      server.close(resolve);
+      server.closeAllConnections?.();
+    });
+  }
+  if (tmpDir) {
+    if (process.env.KEEP_RENDERS === '1') {
+      console.log(`Intermediate frames kept at ${tmpDir}`);
+    } else {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
   }
 }

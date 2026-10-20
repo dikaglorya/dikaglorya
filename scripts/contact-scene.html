@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1200, initial-scale=1">
+<title>DikaOfc open channel</title>
+<link rel="stylesheet" href="/scripts/panel.css">
+<style>
+  .portal {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    z-index: 1;
+  }
+
+  .portal-glow {
+    position: absolute;
+    left: -360px;
+    top: -360px;
+    width: 720px;
+    height: 720px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(104, 221, 244, 0.34) 0%, rgba(45, 137, 158, 0.16) 28%, rgba(12, 34, 42, 0.1) 52%, transparent 70%);
+    filter: blur(16px);
+    transform: translateZ(-560px);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .portal-core {
+    position: absolute;
+    left: -94px;
+    top: -94px;
+    width: 188px;
+    height: 188px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 42% 38%, #f4feff 0%, #bff5ff 7%, #60c8dd 22%, #1b5e70 48%, #06151a 72%);
+    box-shadow:
+      0 0 40px rgba(125, 231, 250, 0.5),
+      0 0 130px rgba(47, 151, 173, 0.34),
+      inset -14px -18px 34px rgba(0, 0, 0, 0.7);
+    transform: translateZ(-620px);
+    z-index: 0;
+    will-change: transform;
+  }
+
+  .portal-core::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin: -5px;
+    border-radius: 50%;
+    background: #eaffff;
+    box-shadow: 0 0 20px #d5fbff, 0 0 60px rgba(159, 232, 255, 0.6);
+  }
+
+  .tunnel-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 620px;
+    height: 620px;
+    margin-left: -310px;
+    margin-top: -310px;
+    border: 1px solid rgba(159, 232, 255, 0.42);
+    border-radius: 50%;
+    box-shadow:
+      0 0 22px rgba(93, 207, 230, 0.1),
+      inset 0 0 34px rgba(67, 176, 199, 0.05);
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .tunnel-ring::before {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border: 1px dashed rgba(159, 232, 255, 0.15);
+    border-radius: 50%;
+  }
+
+  .tunnel-ring::after {
+    content: '';
+    position: absolute;
+    inset: 58px;
+    border: 1px solid rgba(159, 232, 255, 0.06);
+    border-radius: 50%;
+  }
+
+  .tunnel-ring .node {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    margin: -3px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 14px rgba(159, 232, 255, 0.9);
+  }
+
+  .tunnel-ring .node.warm {
+    background: var(--warm);
+    box-shadow: 0 0 14px rgba(255, 155, 107, 0.8);
+  }
+
+  .tunnel-ring.warm {
+    border-color: rgba(255, 155, 107, 0.24);
+  }
+
+  .tunnel-ring.warm::before {
+    border-color: rgba(255, 155, 107, 0.1);
+  }
+
+  .portal-rays {
+    position: absolute;
+    left: -700px;
+    top: -700px;
+    width: 1400px;
+    height: 1400px;
+    background: repeating-conic-gradient(from 0deg, rgba(159, 232, 255, 0.14) 0deg 0.45deg, transparent 0.45deg 9deg);
+    border-radius: 50%;
+    mask-image: radial-gradient(circle, transparent 0 18%, #000 31%, transparent 76%);
+    -webkit-mask-image: radial-gradient(circle, transparent 0 18%, #000 31%, transparent 76%);
+    transform: translateZ(-500px) rotateZ(0deg);
+    z-index: 0;
+    opacity: 0.65;
+    will-change: transform;
+    pointer-events: none;
+  }
+
+  .copy {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 940px;
+    margin-left: -470px;
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 5;
+    text-align: center;
+  }
+
+  .copy-aura {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 900px;
+    height: 280px;
+    margin-left: -450px;
+    margin-top: -140px;
+    background: radial-gradient(ellipse, rgba(4, 10, 14, 0.88) 0%, rgba(4, 10, 14, 0.45) 48%, transparent 72%);
+    transform: translateZ(-40px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .copy .eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+
+  .copy .eyebrow .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--accent);
+  }
+
+  .copy .eyebrow i {
+    display: block;
+    width: 42px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(159, 232, 255, 0.52));
+  }
+
+  .copy .eyebrow i:last-child {
+    background: linear-gradient(90deg, rgba(159, 232, 255, 0.52), transparent);
+  }
+
+  .headline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transform-style: preserve-3d;
+  }
+
+  .headline-line {
+    font-family: var(--display);
+    font-size: 56px;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    text-transform: uppercase;
+  }
+
+  .headline-line .ext-face {
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: #eafcff;
+    -webkit-text-fill-color: #eafcff;
+    text-shadow:
+      0 0 34px rgba(159, 232, 255, 0.2),
+      0 8px 22px rgba(0, 0, 0, 0.55),
+      1px 1px 0 #0c2830,
+      2px 2px 0 #0b242c,
+      3px 3px 0 #0a2028,
+      4px 4px 0 #091b21,
+      5px 5px 0 #08181d,
+      6px 6px 0 #061318;
+  }
+
+  .headline-line.accent .ext-face {
+    color: #c8f4ff;
+    -webkit-text-fill-color: #c8f4ff;
+  }
+
+  .copy .meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 23px;
+    font-size: 9.5px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: rgba(168, 190, 199, 0.92);
+  }
+
+  .copy .meta b {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .copy .meta em {
+    font-style: normal;
+    color: rgba(159, 232, 255, 0.28);
+  }
+
+  .copy .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 9px 15px 8px;
+    border: 1px solid rgba(159, 232, 255, 0.32);
+    background: rgba(6, 18, 23, 0.64);
+    color: #eafcff;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .copy .cta .arrow {
+    color: var(--accent);
+  }
+
+  .copy .cta .pulse {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--warm);
+    box-shadow: 0 0 12px var(--warm);
+    will-change: opacity, transform;
+  }
+
+  .front-arc {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1080px;
+    height: 1080px;
+    margin-left: -540px;
+    margin-top: -540px;
+    border: 1px solid rgba(159, 232, 255, 0.2);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    z-index: 3;
+    pointer-events: none;
+    will-change: transform;
+    opacity: 0.6;
+  }
+
+  .front-arc .bead {
+    position: absolute;
+    left: 50%;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 16px var(--accent);
+  }
+
+  .shard {
+    position: absolute;
+    width: 16px;
+    height: 32px;
+    border: 1px solid rgba(159, 232, 255, 0.24);
+    background: linear-gradient(145deg, rgba(61, 139, 159, 0.18), rgba(7, 21, 27, 0.04));
+    box-shadow: 0 0 18px rgba(46, 130, 151, 0.12);
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 4;
+  }
+
+  .shard.warm { border-color: rgba(255, 155, 107, 0.22); background: linear-gradient(145deg, rgba(187, 95, 62, 0.14), rgba(27, 11, 7, 0.04)); }
+
+  .contact-hud-left {
+    position: absolute;
+    left: 36px;
+    top: 30px;
+    z-index: 21;
+    pointer-events: none;
+  }
+
+  .contact-hud-right {
+    position: absolute;
+    right: 36px;
+    top: 30px;
+    z-index: 21;
+    text-align: right;
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    line-height: 1.9;
+    text-transform: uppercase;
+    color: rgba(143, 165, 175, 0.78);
+  }
+
+  .contact-hud-right b { color: var(--accent); font-weight: 500; }
+  .contact-hud-right em { font-style: normal; color: var(--warm); }
+
+  .contact-foot-left,
+  .contact-foot-right {
+    position: absolute;
+    bottom: 27px;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    line-height: 1.7;
+    text-transform: uppercase;
+    color: rgba(143, 165, 175, 0.7);
+    z-index: 21;
+    pointer-events: none;
+  }
+
+  .contact-foot-left { left: 36px; }
+  .contact-foot-right { right: 36px; text-align: right; }
+  .contact-foot-left b, .contact-foot-right b { color: var(--ink); font-weight: 500; }
+  .contact-foot-left span, .contact-foot-right span { color: var(--accent); }
+  .contact-foot-right em { font-style: normal; color: var(--warm); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="bg"></div>
+  <div class="grid-floor" id="grid"></div>
+  <div class="horizon-glow"></div>
+
+  <div class="camera" id="camera">
+    <div class="portal" id="portal">
+      <div class="portal-glow"></div>
+      <div class="portal-core" id="portalCore"></div>
+      <div class="portal-rays" id="rays"></div>
+      <div class="tunnel-ring" data-index="0"><span class="node" style="left: 18%; top: 50%"></span><span class="node warm" style="left: 76%; top: 27%"></span></div>
+      <div class="tunnel-ring warm" data-index="1"><span class="node" style="left: 50%; top: 8%"></span><span class="node" style="left: 22%; top: 73%"></span></div>
+      <div class="tunnel-ring" data-index="2"><span class="node" style="left: 84%; top: 62%"></span><span class="node warm" style="left: 32%; top: 12%"></span></div>
+      <div class="tunnel-ring" data-index="3"><span class="node" style="left: 50%; top: 94%"></span><span class="node" style="left: 8%; top: 38%"></span></div>
+      <div class="tunnel-ring warm" data-index="4"><span class="node" style="left: 64%; top: 92%"></span><span class="node" style="left: 14%; top: 22%"></span></div>
+      <div class="tunnel-ring" data-index="5"><span class="node" style="left: 92%; top: 42%"></span><span class="node warm" style="left: 42%; top: 4%"></span></div>
+      <div class="tunnel-ring" data-index="6"><span class="node" style="left: 20%; top: 86%"></span><span class="node" style="left: 78%; top: 12%"></span></div>
+      <div class="tunnel-ring warm" data-index="7"><span class="node" style="left: 50%; top: 2%"></span><span class="node" style="left: 88%; top: 70%"></span></div>
+    </div>
+
+    <div class="front-arc" id="frontArc"><span class="bead"></span></div>
+
+    <div class="copy" id="copy">
+      <div class="copy-aura"></div>
+      <div class="eyebrow"><i></i><span class="dot"></span>OPEN CHANNEL / 2026<i></i></div>
+      <div class="headline">
+        <div class="headline-line" id="lineA" data-text="LET'S BUILD"></div>
+        <div class="headline-line accent" id="lineB" data-text="SOMETHING USEFUL."></div>
+      </div>
+      <div class="meta"><b>SELECTED PROJECTS</b><em>/</em>COLLABORATION<em>/</em><span>OPEN TO IDEAS</span></div>
+      <div class="cta"><span class="pulse" id="ctaPulse"></span><span>OBITOGLORY.TECH / CONTACT</span><span class="arrow">↗</span></div>
+    </div>
+
+    <div class="shard" id="shardA"></div>
+    <div class="shard warm" id="shardB"></div>
+    <div class="shard" id="shardC"></div>
+
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <div class="scanline" id="scanline"></div>
+  <div class="frame"></div>
+
+  <div class="contact-hud-left" data-hud>
+    <div class="kicker"><span class="dot" id="pulseDot"></span><b>Contact</b><span>/ open channel</span></div>
+  </div>
+  <div class="contact-hud-right" data-hud>STATUS / <b>OPEN</b><br>SIGNAL <em id="signal">99.1%</em></div>
+  <div class="contact-foot-left" data-hud><b>PORTFOLIO</b> <span>/ obitoglory.tech</span><br>PROJECTS / JOURNAL / ABOUT</div>
+  <div class="contact-foot-right" data-hud>ONLY GITHUB <span>/ dikaglorya</span><br>CONTACT SYSTEM / 2026</div>
+</div>
+
+<script type="module">
+import { initHud, applyHud } from '/scripts/hud.mjs';
+const $ = selector => document.querySelector(selector);
+const TwoPi = Math.PI * 2;
+await document.fonts.ready;
+initHud();
+
+function setHeadline(el) {
+  const text = el.dataset.text || el.textContent;
+  el.textContent = '';
+  el.classList.add('extrude');
+  const face = document.createElement('span');
+  face.className = 'ext-face';
+  face.textContent = text;
+  el.appendChild(face);
+}
+setHeadline($('#lineA'));
+setHeadline($('#lineB'));
+
+const particles = [];
+let seed = 20261024;
+function rand() {
+  seed = (seed * 1664525 + 1013904223) % 4294967296;
+  return seed / 4294967296;
+}
+for (let i = 0; i < 26; i++) {
+  const p = document.createElement('i');
+  p.className = 'particle';
+  p.style.left = `${4 + rand() * 92}%`;
+  p.style.top = `${10 + rand() * 76}%`;
+  p.style.width = `${0.7 + rand() * 1.8}px`;
+  p.style.height = p.style.width;
+  p.style.opacity = `${0.1 + rand() * 0.32}`;
+  p.dataset.phase = String(rand() * TwoPi);
+  p.dataset.speed = String(0.5 + rand() * 1.5);
+  $('#particles').appendChild(p);
+  particles.push(p);
+}
+
+const camera = $('#camera');
+const portal = $('#portal');
+const portalCore = $('#portalCore');
+const rays = $('#rays');
+const copy = $('#copy');
+const frontArc = $('#frontArc');
+const scanline = $('#scanline');
+const pulseDot = $('#pulseDot');
+const ctaPulse = $('#ctaPulse');
+const signalEl = $('#signal');
+const grid = $('#grid');
+const rings = [...document.querySelectorAll('.tunnel-ring')];
+const shardA = $('#shardA');
+const shardB = $('#shardB');
+const shardC = $('#shardC');
+
+const RING_RANGE = 1500;
+const RING_START = -1180;
+const RING_SPAN = 1500;
+
+function smoothstep(v) {
+  const x = Math.max(0, Math.min(1, v));
+  return x * x * (3 - 2 * x);
+}
+
+function setFrame(t) {
+  const a = t * TwoPi;
+
+  camera.style.transform = `translate3d(${Math.sin(a + 0.4) * 12}px, ${Math.cos(a * 2 + 0.2) * 6}px, 0) rotateY(${Math.sin(a + 0.65) * 2.6}deg) rotateX(${Math.cos(a + 0.35) * 0.9}deg)`;
+  portal.style.transform = `translate3d(0, ${Math.sin(a * 2) * 4}px, ${Math.sin(a + 0.6) * 18}px) rotateZ(${Math.sin(a + 0.3) * 2.5}deg)`;
+  portalCore.style.transform = `translateZ(-620px) scale(${1 + 0.04 * Math.sin(a * 3)})`;
+
+  rings.forEach((ring, i) => {
+    const offset = i * 198;
+    const z = RING_START + ((t * RING_SPAN + offset) % RING_RANGE);
+    const frac = (z - RING_START) / RING_RANGE;
+    const opacity = 0.14 + 0.62 * Math.sin(Math.PI * Math.pow(frac, 0.88));
+    const scale = 0.92 + (i % 3) * 0.06;
+    ring.style.transform = `translateZ(${z}px) rotateZ(${(i % 2 ? -1 : 1) * (i * 9 + t * 26)}deg) scale(${scale})`;
+    ring.style.opacity = String(opacity);
+  });
+
+  copy.style.transform = `translate3d(0, calc(-50% + ${Math.sin(a * 2 + 0.4) * 4}px), ${70 + Math.sin(a + 0.6) * 16}px) rotateY(${-3.8 + Math.sin(a + 0.5) * 1.2}deg) rotateX(${1.8 + Math.cos(a + 0.9) * 0.8}deg)`;
+  rays.style.transform = `translateZ(-500px) rotateZ(${t * 22}deg)`;
+
+  frontArc.style.transform = `rotateX(${68 + Math.sin(a) * 2}deg) rotateZ(${t * 26}deg) translateZ(-40px)`;
+  frontArc.style.opacity = String(0.28 + 0.22 * (0.5 + 0.5 * Math.sin(a + 0.3)));
+
+  shardA.style.transform = `translate3d(${70 + Math.sin(a + 0.2) * 26}px, ${80 + Math.cos(a * 2) * 18}px, ${-80 + Math.sin(a) * 34}px) rotateX(${a * 31}deg) rotateY(${a * 24}deg) rotateZ(${a * 14}deg)`;
+  shardB.style.transform = `translate3d(${1080 + Math.cos(a + 0.7) * 22}px, ${70 + Math.sin(a * 2 + 0.5) * 20}px, ${-180 + Math.cos(a + 0.4) * 30}px) rotateX(${-a * 27}deg) rotateY(${a * 33}deg) rotateZ(${a * 17}deg)`;
+  shardC.style.transform = `translate3d(${1120 + Math.sin(a + 1.2) * 18}px, ${250 + Math.cos(a * 1.5) * 14}px, ${-20 + Math.sin(a + 0.2) * 24}px) rotateX(${a * 21}deg) rotateY(${-a * 25}deg) rotateZ(${a * 9}deg)`;
+
+  particles.forEach((p, i) => {
+    const phase = Number(p.dataset.phase);
+    const speed = Number(p.dataset.speed);
+    const dx = Math.sin(a * speed + phase) * 12;
+    const dy = Math.cos(a * (speed * 0.8) + phase) * 9;
+    p.style.transform = `translate3d(${dx}px, ${dy}px, ${-160 + (i * 19) % 300}px)`;
+    p.style.opacity = String(0.08 + 0.26 * (0.5 + 0.5 * Math.sin(a * 2.5 + i)));
+  });
+
+  const scanP = 0.5 - 0.5 * Math.cos(a);
+  scanline.style.transform = `translateY(${scanP * 340}px)`;
+  scanline.style.opacity = String(0.06 + 0.3 * Math.sin(Math.PI * scanP));
+  pulseDot.style.opacity = String(0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a * 8)));
+  pulseDot.style.transform = `scale(${1 + 0.5 * Math.sin(a * 8)})`;
+  ctaPulse.style.opacity = String(0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a * 5 + 1)));
+  ctaPulse.style.transform = `scale(${1 + 0.4 * Math.sin(a * 5 + 1)})`;
+  signalEl.textContent = `${(99.0 + Math.sin(a) * 0.7).toFixed(1)}%`;
+  grid.style.backgroundPosition = `0 ${t * 74}px, ${t * 74}px 0`;
+
+  applyHud(t);
+}
+
+window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
+window.__ready = true;
+</script>
+</body>
+</html>

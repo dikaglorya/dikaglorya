@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="330" viewBox="0 0 1200 330" role="img" aria-labelledby="title desc">
+  <title id="title">About Dika Glorya</title>
+  <desc id="desc">Floating isometric terminal showing a typed developer profile beside a short introduction.</desc>
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d1117"/><stop offset="1" stop-color="#0a0f1f"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#00f5ff"/><stop offset=".48" stop-color="#7c3aed"/><stop offset="1" stop-color="#ff2bd6"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#00f5ff" stop-opacity="0"/><stop offset=".5" stop-color="#00f5ff"/><stop offset="1" stop-color="#ff2bd6" stop-opacity="0"/></linearGradient>
+    <radialGradient id="spot"><stop stop-color="#00f5ff" stop-opacity=".2"/><stop offset="1" stop-color="#00f5ff" stop-opacity="0"/></radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="soft" x="-40%" y="-50%" width="180%" height="200%"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="shadow" x="-30%" y="-40%" width="160%" height="190%"><feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/><feOffset dy="10" result="offset"/><feComponentTransfer><feFuncA type="linear" slope=".38"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+  text { font-family: 'Segoe UI', Ubuntu, Arial, sans-serif; }
+  .mono { font-family: 'Courier New', monospace; }
+  .glow { filter: url(#glow); }
+  .float { animation: float 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .pulse { animation: pulse 3s ease-in-out infinite; }
+  .shadow-pulse { animation: shadowPulse 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .drift { animation: drift 18s linear infinite; }
+  .shimmer { animation: shimmer 4s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  @keyframes pulse { 0%,100% { opacity: .52; } 50% { opacity: 1; } }
+  @keyframes shadowPulse { 0%,100% { transform: scaleX(1); opacity: .28; } 50% { transform: scaleX(.72); opacity: .12; } }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-60px); } }
+  @keyframes shimmer { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    text[opacity="0"] { opacity: 1 !important; }
+    .role-cycle:not(:first-child) { display: none; }
+    animate, animateTransform, animateMotion { display: none; }
+  }
+</style>
+  </defs>
+  <rect width="1200" height="330" rx="20" fill="url(#backdrop)"/>
+  <ellipse cx="432" cy="279" rx="290" ry="32" fill="#00f5ff" opacity=".16" filter="url(#soft)"/>
+    <g transform="translate(160 45) skewY(-3)" filter="url(#shadow)">
+      <path d="M0 22Q0 8 14 8H546Q560 8 560 22V237Q560 251 546 251H14Q0 251 0 237Z" fill="#101827" stroke="#00f5ff" stroke-opacity=".65" stroke-width="1.5"/>
+      <path d="M0 22Q0 8 14 8H546Q560 8 560 22V49H0Z" fill="#121d30"/>
+      <circle cx="23" cy="29" r="5" fill="#ff5b7f"/><circle cx="42" cy="29" r="5" fill="#a3ff12"/><circle cx="61" cy="29" r="5" fill="#00f5ff"/>
+      <text x="280" y="33" text-anchor="middle" fill="#8b9bb4" font-size="11" class="mono">~/profile/README.ts</text>
+      <text x="28" y="85" fill="#8b9bb4" font-size="14" class="mono">01</text><text x="28" y="109" fill="#8b9bb4" font-size="14" class="mono">02</text><text x="28" y="133" fill="#8b9bb4" font-size="14" class="mono">03</text><text x="28" y="157" fill="#8b9bb4" font-size="14" class="mono">04</text><text x="28" y="181" fill="#8b9bb4" font-size="14" class="mono">05</text><text x="28" y="205" fill="#8b9bb4" font-size="14" class="mono">06</text>
+      <text x="92" y="88" fill="#00f5ff" font-size="15" class="mono" opacity="0"><tspan>const developer = {</tspan><animate attributeName="opacity" values="0;1;1" keyTimes="0;.1;1" begin="0s" dur="5s" repeatCount="indefinite"/></text><text x="106" y="112" fill="#e6edf3" font-size="15" class="mono" opacity="0"><tspan>  name: &quot;Dika Glorya&quot;,</tspan><animate attributeName="opacity" values="0;1;1" keyTimes="0;.1;1" begin="0.62s" dur="5s" repeatCount="indefinite"/></text><text x="106" y="136" fill="#e6edf3" font-size="15" class="mono" opacity="0"><tspan>  focus: [&quot;web&quot;, &quot;tools&quot;],</tspan><animate attributeName="opacity" values="0;1;1" keyTimes="0;.1;1" begin="1.24s" dur="5s" repeatCount="indefinite"/></text><text x="106" y="160" fill="#e6edf3" font-size="15" class="mono" opacity="0"><tspan>  values: &quot;build useful&quot;,</tspan><animate attributeName="opacity" values="0;1;1" keyTimes="0;.1;1" begin="1.8599999999999999s" dur="5s" repeatCount="indefinite"/></text><text x="106" y="184" fill="#a3ff12" font-size="15" class="mono" opacity="0"><tspan>  status: &quot;always learning&quot;</tspan><animate attributeName="opacity" values="0;1;1" keyTimes="0;.1;1" begin="2.48s" dur="5s" repeatCount="indefinite"/></text><text x="92" y="208" fill="#ff2bd6" font-size="15" class="mono" opacity="0"><tspan>};</tspan><animate attributeName="opacity" values="0;1;1" keyTimes="0;.1;1" begin="3.1s" dur="5s" repeatCount="indefinite"/></text>
+      <rect x="92" y="216" width="8" height="17" fill="#00f5ff" class="pulse"/>
+      <path d="M12 251H548L582 276H-22Z" fill="#121d30" stroke="#7c3aed" stroke-opacity=".6"/>
+      <path d="M202 252H358L372 265H188Z" fill="#0d1117" opacity=".75"/>
+      <path d="M-22 276H582" stroke="#00f5ff" opacity=".6"/>
+    </g>
+    <text x="862" y="111" fill="#00f5ff" font-size="12" class="mono" letter-spacing="2">ABOUT / 01</text>
+    <text x="862" y="149" fill="#e6edf3" font-size="25" font-weight="700">Curious by default.</text>
+    <text x="862" y="178" fill="#8b9bb4" font-size="15">I build thoughtful software,</text>
+    <text x="862" y="201" fill="#8b9bb4" font-size="15">useful tools, and experiences</text>
+    <text x="862" y="224" fill="#8b9bb4" font-size="15">that make the everyday better.</text>
+    <circle cx="825" cy="282" r="4" fill="#a3ff12" class="pulse"/><path d="M842 282h205" stroke="#24556f" stroke-dasharray="2 7"/>
+</svg>

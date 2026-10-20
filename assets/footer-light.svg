@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+  <title id="title">Thanks for visiting</title>
+  <desc id="desc">Three softly animated mountain layers frame a subtle thank-you message.</desc>
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#eef2ff"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0969da"/><stop offset=".48" stop-color="#8250df"/><stop offset="1" stop-color="#d1242f"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#0969da" stop-opacity="0"/><stop offset=".5" stop-color="#0969da"/><stop offset="1" stop-color="#d1242f" stop-opacity="0"/></linearGradient>
+    <radialGradient id="spot"><stop stop-color="#0969da" stop-opacity=".2"/><stop offset="1" stop-color="#0969da" stop-opacity="0"/></radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="soft" x="-40%" y="-50%" width="180%" height="200%"><feGaussianBlur stdDeviation="10"/></filter>
+    <filter id="shadow" x="-30%" y="-40%" width="160%" height="190%"><feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/><feOffset dy="10" result="offset"/><feComponentTransfer><feFuncA type="linear" slope=".38"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+  text { font-family: 'Segoe UI', Ubuntu, Arial, sans-serif; }
+  .mono { font-family: 'Courier New', monospace; }
+  .glow { filter: url(#glow); }
+  .float { animation: float 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .pulse { animation: pulse 3s ease-in-out infinite; }
+  .shadow-pulse { animation: shadowPulse 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .drift { animation: drift 18s linear infinite; }
+  .shimmer { animation: shimmer 4s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  @keyframes pulse { 0%,100% { opacity: .52; } 50% { opacity: 1; } }
+  @keyframes shadowPulse { 0%,100% { transform: scaleX(1); opacity: .28; } 50% { transform: scaleX(.72); opacity: .12; } }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-60px); } }
+  @keyframes shimmer { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+    text[opacity="0"] { opacity: 1 !important; }
+    .role-cycle:not(:first-child) { display: none; }
+    animate, animateTransform, animateMotion { display: none; }
+  }
+</style>
+  </defs>
+  <rect width="1200" height="300" rx="20" fill="url(#backdrop)"/>
+  <g class="drift"><path d="M0 230L0 165L110 120L205 174L320 85L420 164L530 108L660 178L770 90L900 164L1020 103L1200 170V300H0Z" fill="#8250df" opacity=".2"/><path d="M0 248L0 196L140 150L260 208L400 132L520 209L665 143L790 214L930 138L1065 206L1200 160V300H0Z" fill="#0969da" opacity=".13"/><path d="M0 261L130 226L240 250L380 191L500 240L630 201L760 250L910 191L1040 239L1200 207V300H0Z" fill="#d1242f" opacity=".12"/></g>
+    <path d="M0 248Q200 234 400 249T800 248T1200 246V300H0Z" fill="url(#backdrop)" opacity=".65"/>
+    <path d="M0 248Q200 234 400 249T800 248T1200 246" fill="none" stroke="url(#beam)" stroke-width="2" filter="url(#glow)"/>
+    <g text-anchor="middle" class="shimmer"><text x="600" y="210" fill="#1f2328" font-size="24" font-weight="650" opacity=".94">Thanks for visiting</text><text x="600" y="232" fill="#596579" font-size="11" class="mono" letter-spacing="2">LET'S BUILD SOMETHING USEFUL</text></g>
+    <circle cx="186" cy="114" r="2" fill="#0969da" class="pulse"/><circle cx="995" cy="88" r="2.5" fill="#d1242f" class="pulse" style="animation-delay:-1s"/><circle cx="834" cy="149" r="1.5" fill="#188038" class="pulse" style="animation-delay:-2s"/>
+</svg>

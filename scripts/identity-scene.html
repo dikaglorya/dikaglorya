@@ -2,168 +2,698 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=960, initial-scale=1">
-<title>DikaOfc animated identity panel</title>
+<meta name="viewport" content="width=1200, initial-scale=1">
+<title>DikaOfc identity card</title>
+<link rel="stylesheet" href="/scripts/panel.css">
 <style>
-  @font-face {
-    font-family: 'JBMono';
-    src: url('/scripts/fonts/JetBrainsMono.ttf') format('truetype');
-    font-weight: 100 800;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; width: 960px; height: 600px; overflow: hidden; background: #07090c; }
-  #panel { position: relative; width: 960px; height: 600px; overflow: hidden; background: #07090c; }
-  #panel > svg { display: block; width: 960px; height: 600px; }
-  .scan {
+  .id-card {
     position: absolute;
-    left: 54px;
-    top: 54px;
-    width: 500px;
-    height: 500px;
-    overflow: hidden;
-    pointer-events: none;
-    mix-blend-mode: screen;
-  }
-  .scan .bar {
-    position: absolute;
-    left: -30px;
-    right: -30px;
-    top: 0;
-    height: 120px;
-    background: linear-gradient(180deg,
-      transparent 0%,
-      rgba(142, 220, 240, 0.10) 30%,
-      rgba(142, 220, 240, 0.34) 48%,
-      rgba(234, 241, 245, 0.30) 50%,
-      rgba(142, 220, 240, 0.20) 54%,
-      transparent 100%);
-    filter: blur(0.4px);
+    left: 70px;
+    top: 50px;
+    width: 424px;
+    height: 512px;
+    transform-style: preserve-3d;
     will-change: transform;
+    z-index: 8;
   }
-  .scan .noise {
+
+  .card-aura {
+    position: absolute;
+    left: -76px;
+    top: -70px;
+    width: 580px;
+    height: 660px;
+    background: radial-gradient(ellipse at 42% 46%, rgba(45, 145, 170, 0.25), transparent 64%);
+    filter: blur(26px);
+    z-index: -2;
+    pointer-events: none;
+  }
+
+  .card-back {
     position: absolute;
     inset: 0;
-    opacity: 0.18;
-    background-image: repeating-linear-gradient(
-      0deg,
-      rgba(142, 220, 240, 0.22) 0px,
-      rgba(142, 220, 240, 0.22) 1px,
-      transparent 1px,
-      transparent 4px
-    );
+    transform: translateZ(-26px) scale(1.015);
+    background: linear-gradient(145deg, #0a1a21, #03070a);
+    border: 1px solid rgba(159, 232, 255, 0.16);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.75);
+  }
+
+  .card-side {
+    position: absolute;
+    top: 1px;
+    width: 28px;
+    height: calc(100% - 2px);
+    background: linear-gradient(90deg, #214d5c, #5b9cb0 42%, #16313b 72%, #050e12);
+    border-top: 1px solid rgba(206, 250, 255, 0.38);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.72);
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.45);
+  }
+
+  .card-side.left {
+    left: -28px;
+    transform-origin: right center;
+    transform: rotateY(-90deg);
+  }
+
+  .card-side.right {
+    right: -28px;
+    transform-origin: left center;
+    transform: rotateY(90deg);
+  }
+
+  .card-side.top {
+    left: 1px;
+    top: -28px;
+    width: calc(100% - 2px);
+    height: 28px;
+    transform-origin: center bottom;
+    transform: rotateX(90deg);
+    background: linear-gradient(180deg, #5a94a6, #122d37 70%, #061116);
+  }
+
+  .card-side.bottom {
+    left: 1px;
+    bottom: -28px;
+    width: calc(100% - 2px);
+    height: 28px;
+    transform-origin: center top;
+    transform: rotateX(-90deg);
+    background: linear-gradient(0deg, #356777, #0b2028 70%, #040c10);
+  }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(165deg, rgba(22, 37, 46, 0.99), rgba(7, 13, 18, 0.99));
+    border: 1px solid rgba(159, 232, 255, 0.28);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      inset 0 0 0 1px rgba(0, 0, 0, 0.4),
+      0 30px 80px rgba(0, 0, 0, 0.62);
+    overflow: hidden;
+  }
+
+  .card-face::after {
+    content: '';
+    position: absolute;
+    inset: 9px;
+    border: 1px solid rgba(159, 232, 255, 0.08);
+    pointer-events: none;
+  }
+
+  .photo-wrap {
+    position: relative;
+    height: 316px;
+    overflow: hidden;
+    background: #071116;
+    border-bottom: 1px solid rgba(159, 232, 255, 0.2);
+  }
+
+  .photo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 26%;
+    display: block;
+    filter: saturate(0.82) contrast(1.06) brightness(0.94);
+    transform: scale(1.035);
+  }
+
+  .photo-grade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(4, 14, 20, 0.28) 0%, transparent 28%, transparent 56%, rgba(5, 12, 17, 0.92) 100%),
+      linear-gradient(100deg, rgba(34, 133, 160, 0.18), transparent 48%, rgba(255, 122, 74, 0.06) 100%);
     mix-blend-mode: screen;
-    will-change: transform;
+    pointer-events: none;
   }
-  .line {
+
+  .photo-grid {
     position: absolute;
-    left: 24px;
-    right: 24px;
-    top: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(142, 220, 240, 0.55), transparent);
-    opacity: 0.55;
-    will-change: transform;
+    inset: 0;
+    background-image:
+      linear-gradient(90deg, rgba(159, 232, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(159, 232, 255, 0.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+    opacity: 0.35;
+    pointer-events: none;
   }
-  .sheen {
+
+  .photo-lines {
     position: absolute;
-    top: -100px;
+    inset: 0;
+    background: repeating-linear-gradient(180deg, transparent 0px, transparent 3px, rgba(0, 0, 0, 0.21) 3px, rgba(0, 0, 0, 0.21) 4px);
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .photo-scan {
+    position: absolute;
     left: 0;
-    width: 250px;
-    height: 800px;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(142, 220, 240, 0.05) 32%,
-      rgba(142, 220, 240, 0.16) 50%,
-      rgba(142, 220, 240, 0.05) 68%,
-      transparent 100%);
-    transform: rotate(18deg);
+    right: 0;
+    top: 0;
+    height: 74px;
+    background: linear-gradient(180deg, transparent, rgba(159, 232, 255, 0.07) 30%, rgba(218, 250, 255, 0.3) 49%, rgba(159, 232, 255, 0.12) 58%, transparent);
     mix-blend-mode: screen;
-    filter: blur(2px);
-    will-change: transform, opacity;
+    opacity: 0.72;
+    will-change: transform;
+    pointer-events: none;
   }
-  .dot {
+
+  .photo-corners {
     position: absolute;
-    left: 594px;
-    width: 5px;
-    height: 5px;
+    inset: 16px;
+    pointer-events: none;
+  }
+
+  .photo-corners i {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: rgba(159, 232, 255, 0.78);
+    border-style: solid;
+  }
+
+  .photo-corners i:nth-child(1) { left: 0; top: 0; border-width: 1px 0 0 1px; }
+  .photo-corners i:nth-child(2) { right: 0; top: 0; border-width: 1px 1px 0 0; }
+  .photo-corners i:nth-child(3) { left: 0; bottom: 0; border-width: 0 0 1px 1px; }
+  .photo-corners i:nth-child(4) { right: 0; bottom: 0; border-width: 0 1px 1px 0; }
+
+  .photo-top,
+  .photo-bottom {
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(213, 244, 250, 0.78);
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
+  }
+
+  .photo-top { top: 18px; }
+  .photo-bottom { bottom: 14px; color: rgba(159, 232, 255, 0.72); }
+  .photo-top b { color: var(--accent); font-weight: 500; }
+
+  .privacy-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border: 1px solid rgba(159, 232, 255, 0.3);
+    background: rgba(4, 16, 22, 0.58);
+    color: var(--accent);
+  }
+
+  .privacy-chip i {
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
-    background: #8edcf0;
-    box-shadow: 0 0 10px rgba(142, 220, 240, 0.95);
-    will-change: transform, opacity;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
   }
-  .dot.d1 { top: 323px; }
-  .dot.d2 { top: 399px; }
-  .dot.d3 { top: 475px; }
-  .ticker {
+
+  .card-info {
+    position: relative;
+    padding: 20px 23px 18px;
+  }
+
+  .card-info .name {
+    font-size: 44px;
+    line-height: 0.9;
+    letter-spacing: -0.035em;
+    color: #f2fbff;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-info .role {
+    margin-top: 9px;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .card-info .tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .card-info .tags span {
+    padding: 5px 8px 4px;
+    border: 1px solid rgba(159, 232, 255, 0.2);
+    background: rgba(159, 232, 255, 0.045);
+    font-size: 7.5px;
+    letter-spacing: 0.18em;
+    color: rgba(226, 248, 252, 0.84);
+  }
+
+  .card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(159, 232, 255, 0.12);
+    font-size: 7.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(143, 165, 175, 0.76);
+  }
+
+  .card-foot b { color: var(--accent); font-weight: 500; }
+
+  .card-sheen {
     position: absolute;
-    left: 610px;
-    bottom: 46px;
-    font-family: 'JBMono', ui-monospace, monospace;
+    top: -20%;
+    bottom: -20%;
+    width: 27%;
+    left: 0;
+    background: linear-gradient(90deg, transparent, rgba(221, 251, 255, 0.055) 45%, rgba(221, 251, 255, 0.11) 50%, rgba(221, 251, 255, 0.035) 55%, transparent);
+    transform: skewX(-12deg);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    will-change: transform;
+    z-index: 3;
+  }
+
+  .word-column {
+    position: absolute;
+    left: 558px;
+    top: 74px;
+    width: 586px;
+    transform-style: preserve-3d;
+    will-change: transform;
+    z-index: 5;
+  }
+
+  .word-column .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 9px;
+    letter-spacing: 0.27em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 22px;
+  }
+
+  .word-column .eyebrow b { color: var(--ink); font-weight: 500; }
+  .word-column .eyebrow i {
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .big-word {
+    font-size: 94px;
+    transform: rotateY(-16deg) rotateX(2deg);
+    transform-origin: left center;
+  }
+
+  .big-word .ext-face {
+    text-shadow:
+      0 0 28px rgba(159, 232, 255, 0.12),
+      0 0 2px rgba(255, 255, 255, 0.35);
+  }
+
+  .word-caption {
+    margin-top: 18px;
+    max-width: 380px;
     font-size: 10px;
+    line-height: 1.85;
     letter-spacing: 0.12em;
-    color: #6f8792;
+    text-transform: uppercase;
+    color: rgba(143, 165, 175, 0.72);
+  }
+
+  .role-stack {
+    position: relative;
+    margin-top: 34px;
+    height: 176px;
+    transform-style: preserve-3d;
+  }
+
+  .role-plate {
+    position: absolute;
+    left: 0;
+    width: 408px;
+    height: 78px;
+    padding: 14px 17px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .role-plate:nth-child(1) {
+    top: 0;
+    transform: translate3d(0, 0, 30px) rotateY(-13deg);
+  }
+
+  .role-plate:nth-child(2) {
+    top: 94px;
+    left: 36px;
+    transform: translate3d(0, 0, -18px) rotateY(-18deg);
+  }
+
+  .role-plate .idx {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(159, 232, 255, 0.28);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    background: rgba(159, 232, 255, 0.04);
+  }
+
+  .role-plate .role-copy {
+    flex: 1;
+  }
+
+  .role-plate .role-copy b {
+    display: block;
+    font-family: var(--display);
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #f2fbff;
     text-transform: uppercase;
   }
-  .ticker b { color: #8edcf0; font-weight: 400; }
-  .ticker em { font-style: normal; color: #445863; margin: 0 0.6em; }
+
+  .role-plate .role-copy small {
+    display: block;
+    margin-top: 5px;
+    font-size: 7.5px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .role-plate .arrow {
+    font-size: 15px;
+    color: var(--accent);
+    opacity: 0.8;
+  }
+
+  .identity-meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 17px;
+    border-top: 1px solid rgba(159, 232, 255, 0.12);
+    max-width: 470px;
+    font-size: 8px;
+    line-height: 1.8;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    color: rgba(143, 165, 175, 0.7);
+  }
+
+  .identity-meta b {
+    display: block;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .identity-meta .only {
+    color: var(--accent);
+    text-align: right;
+  }
+
+  .identity-meta .only b { color: var(--accent); }
+
+  .mega-d {
+    position: absolute;
+    right: -34px;
+    top: 136px;
+    font-family: var(--display);
+    font-size: 470px;
+    line-height: 0.72;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(159, 232, 255, 0.08);
+    transform: translateZ(-220px) rotateY(-18deg);
+    pointer-events: none;
+    z-index: -1;
+    user-select: none;
+  }
+
+  .ring {
+    position: absolute;
+    left: 282px;
+    top: 306px;
+    width: 700px;
+    height: 700px;
+    margin-left: -350px;
+    margin-top: -350px;
+    border: 1px solid rgba(159, 232, 255, 0.42);
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    transform: rotateX(72deg) rotateZ(0deg) translateZ(-150px);
+    opacity: 0.72;
+    will-change: transform;
+    z-index: -1;
+  }
+
+  .ring::before {
+    content: '';
+    position: absolute;
+    inset: 18px;
+    border: 1px dashed rgba(159, 232, 255, 0.15);
+    border-radius: 50%;
+  }
+
+  .ring.b {
+    width: 830px;
+    height: 830px;
+    margin-left: -415px;
+    margin-top: -415px;
+    border-color: rgba(255, 155, 107, 0.16);
+    transform: rotateX(66deg) rotateZ(30deg) translateZ(-260px);
+    opacity: 0.4;
+  }
+
+  .ring .bead {
+    position: absolute;
+    left: 50%;
+    top: -3px;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 18px rgba(159, 232, 255, 0.9);
+  }
 </style>
 </head>
 <body>
-<div id="panel">
-  <div class="scan"><div class="bar" id="bar"></div><div class="noise" id="noise"></div></div>
-  <div class="sheen" id="sheen"></div>
-  <div class="line" id="line"></div>
-  <div class="dot d1" id="dot1"></div>
-  <div class="dot d2" id="dot2"></div>
-  <div class="dot d3" id="dot3"></div>
-  <div class="ticker">SCAN <b id="scanIndex">000</b><em>/</em>048 <em>·</em> SIGNAL <b id="signal">98.0%</b></div>
+<div id="stage">
+  <div class="bg"></div>
+  <div class="grid-floor" id="grid"></div>
+  <div class="horizon-glow"></div>
+
+  <div class="camera" id="camera">
+    <div class="mega-d">D</div>
+    <div class="ring" id="ringA"><span class="bead"></span></div>
+    <div class="ring b" id="ringB"><span class="bead"></span></div>
+
+    <div class="id-card" id="card">
+      <div class="card-aura"></div>
+      <div class="card-back"></div>
+      <div class="card-side left"></div>
+      <div class="card-side right"></div>
+      <div class="card-side top"></div>
+      <div class="card-side bottom"></div>
+      <div class="card-face">
+        <div class="photo-wrap">
+          <img src="/assets/dika.jpg" alt="Portrait of DikaOfc with a pixelated privacy mark">
+          <div class="photo-grade"></div>
+          <div class="photo-grid"></div>
+          <div class="photo-lines"></div>
+          <div class="photo-scan" id="photoScan"></div>
+          <div class="photo-corners"><i></i><i></i><i></i><i></i></div>
+          <div class="photo-top"><span><b>IDENTITY</b> / 01</span><span>ID-01</span></div>
+          <div class="photo-bottom"><span class="privacy-chip"><i></i>PRIVACY / ACTIVE</span><span>SCAN 000</span></div>
+        </div>
+        <div class="card-info">
+          <div class="name display">DikaOfc</div>
+          <div class="role">Independent developer</div>
+          <div class="tags"><span>DIKACODE</span><span>OBITOGLORY</span><span>MAKER</span></div>
+          <div class="card-foot"><span>Kendal · Indonesia</span><span><b>2026</b> / ACTIVE</span></div>
+        </div>
+        <div class="card-sheen" id="sheen"></div>
+      </div>
+    </div>
+
+    <div class="word-column" id="words">
+      <div class="eyebrow"><i></i><b>PUBLIC IDENTITY</b><span>/ 2026</span></div>
+      <div class="big-word" id="bigWord" data-text="DIKAOFC"></div>
+      <div class="word-caption">Software · web experiences · developer tools.<br>Built with intent, shipped with care.</div>
+      <div class="role-stack">
+        <div class="role-plate plate" id="roleA">
+          <div class="idx">A</div>
+          <div class="role-copy"><b>DikaCode</b><small>Developer identity / code &amp; tools</small></div>
+          <div class="arrow">↗</div>
+        </div>
+        <div class="role-plate plate" id="roleB">
+          <div class="idx">B</div>
+          <div class="role-copy"><b>ObitoGlory</b><small>Website &amp; portfolio brand</small></div>
+          <div class="arrow">↗</div>
+        </div>
+      </div>
+      <div class="identity-meta">
+        <div><b>Kendal · Central Java</b>Indonesia / UTC+7</div>
+        <div class="only"><b>github.com/dikaglorya</b>Only official GitHub</div>
+      </div>
+    </div>
+
+    <div class="particles" id="particles"></div>
+  </div>
+
+  <div class="scanline" id="scanline"></div>
+  <div class="frame"></div>
+  <div class="hud">
+    <div class="top-left">
+      <div class="kicker"><span class="dot" id="pulse"></span><b>DikaOfc</b><span>/ identity archive</span></div>
+    </div>
+    <div class="top-right">IDENT / 01<br><b>SECURE · LOCAL ONLY</b></div>
+    <div class="bottom-left"><b>SCAN</b> <span id="scanIndex">000</span><em>/</em>120 <em>·</em> SIGNAL <span id="signal">98.0%</span></div>
+    <div class="bottom-right">IDENTITY SYSTEM <span>/ 2026</span><br>ARCHIVE / LOCAL ONLY</div>
+  </div>
 </div>
+
 <script type="module">
-const panel = document.getElementById('panel');
-const svgText = await fetch('/assets/dikaofc-identity.svg').then(r => r.text());
-const photoBlob = await fetch('/assets/dika.jpg').then(r => r.blob());
-const photoUrl = await new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onload = () => resolve(reader.result);
-  reader.onerror = reject;
-  reader.readAsDataURL(photoBlob);
-});
-panel.insertAdjacentHTML('afterbegin', svgText.replace('href="dika.jpg"', `href="${photoUrl}"`));
+import { initHud, applyHud } from '/scripts/hud.mjs';
+const $ = selector => document.querySelector(selector);
+const TwoPi = Math.PI * 2;
 
-const bar = document.getElementById('bar');
-const noise = document.getElementById('noise');
-const sheen = document.getElementById('sheen');
-const line = document.getElementById('line');
-const dots = [document.getElementById('dot1'), document.getElementById('dot2'), document.getElementById('dot3')];
-const scanIndex = document.getElementById('scanIndex');
-const signal = document.getElementById('signal');
-const FRAMES = 48;
+await document.fonts.ready;
+initHud();
 
-function setFrame(t) {
-  const a = t * Math.PI * 2;
+function buildExtruded(el, layers = 12, step = 2.6) {
+  const text = el.dataset.text || el.textContent;
+  el.textContent = '';
+  el.classList.add('extrude');
+  for (let i = layers; i >= 1; i--) {
+    const layer = document.createElement('span');
+    layer.className = 'ext-layer';
+    layer.textContent = text;
+    layer.style.transform = `translateZ(${-i * step}px)`;
+    layer.style.color = i < 3 ? '#2d6475' : i < 6 ? '#153943' : '#071a20';
+    el.appendChild(layer);
+  }
+  const face = document.createElement('span');
+  face.className = 'ext-face';
+  face.textContent = text;
+  el.appendChild(face);
+}
+buildExtruded($('#bigWord'));
 
-  // A soft scanner bar travels down the portrait.
-  bar.style.transform = `translateY(${-120 + t * 640}px)`;
-  // Fine scanline texture drifts slowly in the opposite direction.
-  noise.style.transform = `translateY(${-t * 12}px)`;
-  // A faint sheen crosses the text side once per loop.
-  sheen.style.transform = `translateX(${-260 + t * 1260}px) rotate(18deg)`;
-  sheen.style.opacity = String(0.25 + 0.75 * Math.sin(Math.PI * t));
-  // A single crisp scanline crosses the whole panel.
-  line.style.transform = `translateY(${t * 600}px)`;
-
-  dots.forEach((dot, i) => {
-    const p = 0.5 + 0.5 * Math.sin(a * 2 - i * 1.15);
-    dot.style.opacity = String(0.22 + 0.78 * p);
-    dot.style.transform = `scale(${0.75 + p * 0.6})`;
-  });
-
-  scanIndex.textContent = String(Math.round(t * FRAMES)).padStart(3, '0');
-  signal.textContent = `${(97.6 + Math.sin(a) * 1.1).toFixed(1)}%`;
+const particles = [];
+let seed = 20261020;
+function rand() {
+  seed = (seed * 1664525 + 1013904223) % 4294967296;
+  return seed / 4294967296;
+}
+for (let i = 0; i < 30; i++) {
+  const p = document.createElement('i');
+  p.className = 'particle';
+  const x = 4 + rand() * 92;
+  const y = 8 + rand() * 82;
+  const z = -180 + rand() * 300;
+  const s = 0.6 + rand() * 1.9;
+  p.style.left = `${x}%`;
+  p.style.top = `${y}%`;
+  p.style.width = `${s}px`;
+  p.style.height = `${s}px`;
+  p.style.opacity = `${0.12 + rand() * 0.36}`;
+  p.style.transform = `translate3d(0, 0, ${z}px)`;
+  p.dataset.phase = String(rand() * TwoPi);
+  p.dataset.speed = String(0.45 + rand() * 1.4);
+  p.dataset.z = String(z);
+  $('#particles').appendChild(p);
+  particles.push(p);
 }
 
-setFrame(0);
+const camera = $('#camera');
+const card = $('#card');
+const words = $('#words');
+const roles = [$('#roleA'), $('#roleB')];
+const photoScan = $('#photoScan');
+const sheen = $('#sheen');
+const ringA = $('#ringA');
+const ringB = $('#ringB');
+const scanline = $('#scanline');
+const pulse = $('#pulse');
+const scanIndex = $('#scanIndex');
+const signalEl = $('#signal');
+const bigWord = $('#bigWord');
+const grid = $('#grid');
+
+function setFrame(t) {
+  const a = t * TwoPi;
+
+  camera.style.transform = `translate3d(${Math.sin(a + 0.25) * 22}px, ${Math.cos(a * 2 + 0.2) * 10}px, 0) rotateY(${Math.sin(a + 0.6) * 5.2}deg) rotateX(${Math.cos(a + 0.3) * 1.7}deg)`;
+
+  card.style.transform = `translate3d(0, ${Math.sin(a * 2 + 0.35) * 10}px, ${64 + Math.cos(a + 0.1) * 22}px) rotateY(${-23 + Math.sin(a + 0.55) * 5.5}deg) rotateX(${5.5 + Math.cos(a * 2 + 0.4) * 2.2}deg) rotateZ(${-2 + Math.sin(a + 0.2) * 1.3}deg)`;
+
+  words.style.transform = `translate3d(${Math.sin(a + 0.8) * 10}px, ${Math.cos(a * 2 + 0.1) * 6}px, ${-24 + Math.sin(a + 0.35) * 20}px) rotateY(${Math.sin(a + 0.3) * 2.8}deg) rotateX(${Math.cos(a + 0.9) * 1.1}deg)`;
+
+  roles[0].style.transform = `translate3d(${Math.cos(a + 0.4) * 6}px, ${Math.sin(a * 2 + 0.2) * 6}px, ${30 + Math.sin(a + 0.5) * 10}px) rotateY(${-13 + Math.sin(a + 0.7) * 2.5}deg)`;
+  roles[1].style.transform = `translate3d(${Math.cos(a + 1.8) * 8}px, ${Math.sin(a * 2 + 1.4) * 7}px, ${-18 + Math.cos(a + 0.8) * 14}px) rotateY(${-18 + Math.cos(a + 0.5) * 2.5}deg)`;
+
+  bigWord.style.transform = `rotateY(${-16 + Math.sin(a + 0.5) * 2.8}deg) rotateX(${2 + Math.cos(a * 2) * 1.1}deg)`;
+  bigWord.style.translate = `0 ${Math.sin(a * 2 + 0.4) * 4}px`;
+
+  ringA.style.transform = `rotateX(72deg) rotateZ(${a * 22}deg) translateZ(-150px)`;
+  ringB.style.transform = `rotateX(66deg) rotateZ(${30 - a * 15}deg) translateZ(-260px)`;
+
+  const photoP = 0.5 - 0.5 * Math.cos(a);
+  const scanY = photoP * 326 - 10;
+  photoScan.style.transform = `translate3d(0, ${scanY}px, 0)`;
+  photoScan.style.opacity = String(0.08 + 0.34 * Math.sin(Math.PI * photoP));
+
+  const sheenP = 0.5 - 0.5 * Math.cos(a);
+  sheen.style.transform = `translate3d(${-260 + sheenP * 780}px, 0, 0) skewX(-12deg)`;
+  sheen.style.opacity = String(0.08 + 0.38 * Math.sin(Math.PI * sheenP));
+
+  particles.forEach((p, i) => {
+    const phase = Number(p.dataset.phase);
+    const speed = Number(p.dataset.speed);
+    const z = Number(p.dataset.z);
+    const dx = Math.sin(a * speed + phase) * 16;
+    const dy = Math.cos(a * (speed * 0.8) + phase) * 12;
+    const dz = Math.sin(a + phase) * 22;
+    p.style.transform = `translate3d(${dx}px, ${dy}px, ${z + dz}px)`;
+    p.style.opacity = String(0.1 + 0.3 * (0.5 + 0.5 * Math.sin(a * 3 + i)));
+  });
+
+  const beamP = 0.5 - 0.5 * Math.cos(a);
+  scanline.style.transform = `translateY(${beamP * 620}px)`;
+  scanline.style.opacity = String(0.07 + 0.32 * Math.sin(Math.PI * beamP));
+  pulse.style.opacity = String(0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a * 8)));
+  pulse.style.transform = `scale(${1 + 0.5 * Math.sin(a * 8)})`;
+  scanIndex.textContent = String(Math.round(t * 120)).padStart(3, '0');
+  signalEl.textContent = `${(97.6 + Math.sin(a) * 1.2).toFixed(1)}%`;
+  grid.style.backgroundPosition = `0 ${t * 74}px, ${t * 74}px 0`;
+
+  applyHud(t);
+}
+
 window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
 window.__ready = true;
 </script>
 </body>
