@@ -7,7 +7,8 @@
 
 <div align="center">
   <img src="assets/dika.jpg" alt="Portrait chosen by Dika Glorya; the face is intentionally obscured in this image" width="180">
-  <p>Full-stack developer building useful software, open-source tools, and thoughtful digital experiences.</p>
+  <p><strong>dikaofc</strong> · he/him · Kendal</p>
+  <p>I'm DikaCode / ObitoGlory / DikaOfc · EXECUIDOR</p>
   <a href="https://github.com/dikaglorya"><img src="https://komarev.com/ghpvc/?username=dikaglorya&style=flat-square&color=00f5ff" alt="Profile views"></a>
 </div>
 
@@ -80,9 +81,14 @@
 ## Connect
 
 <div align="center">
-  <a href="https://github.com/dikaglorya"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
-  <a href="mailto:hello@example.com"><img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
-  <a href="https://www.obitoglory.tech"><img src="https://img.shields.io/badge/Portfolio-8250DF?style=for-the-badge&logo=firefoxbrowser&logoColor=white" alt="Portfolio"></a>
+  <a href="https://github.com/dikaglorya"><img src="https://img.shields.io/badge/GitHub-%40dikaglorya-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub @dikaglorya"></a>
+  <a href="https://www.obitoglory.tech"><img src="https://img.shields.io/badge/Website-ObitoGlory-8250DF?style=for-the-badge&logo=firefoxbrowser&logoColor=white" alt="ObitoGlory website"></a>
+  <a href="https://t.me/dikaacode"><img src="https://img.shields.io/badge/Telegram-%40dikaacode-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram @dikaacode"></a>
+  <a href="https://t.me/execuidorbaru"><img src="https://img.shields.io/badge/Telegram-Execuidor%20Baru-26A5E4?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram Execuidor Baru"></a>
+  <a href="https://www.instagram.com/xxcdicka/"><img src="https://img.shields.io/badge/Instagram-%40xxcdicka-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram @xxcdicka"></a>
+  <a href="https://www.tiktok.com/@dikasecx"><img src="https://img.shields.io/badge/TikTok-%40dikasecx-000000?style=for-the-badge&logo=tiktok&logoColor=white" alt="TikTok @dikasecx"></a>
+  <a href="mailto:dikasukasukaa@gmail.com"><img src="https://img.shields.io/badge/Email-dikasukasukaa%40gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email Dika"></a>
+  <a href="https://www.obitoglory.tech/layanan">Open Jasa, Digital Solution</a>
 </div>
 
 <div align="center">
