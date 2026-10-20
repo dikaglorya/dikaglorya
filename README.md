@@ -46,40 +46,6 @@ DikaOfc is my public identity. I also work as **DikaCode**, while **ObitoGlory**
   </a>
 </p>
 
-## Selected work
-
-<p align="center">
-  <a href="assets/dikaofc-projects.png" title="Open the full-size project schematic">
-    <img
-      src="assets/dikaofc-projects.png"
-      alt="Original schematic illustrations of DikaRoute provider routing, ObitoBuff CLI agent tools, and a Telegram bot workflow"
-      width="100%"
-    />
-  </a>
-</p>
-
-### 01 / [DikaRoute](https://www.obitoglory.tech/proyek/dikaroute)
-
-An OpenAI-compatible gateway that puts several AI providers behind one endpoint, routes each request to an available provider, and falls through automatically when one fails or rate-limits.
-
-`TypeScript` · `Node.js` · `OpenAI API`
-
-### 02 / [ObitoBuff CLI](https://www.obitoglory.tech/proyek/obitobuff)
-
-A terminal AI coding agent with focused sub-agents for finding files, editing, running commands, research, and code review — running against models you choose.
-
-`TypeScript` · `Bun` · `OpenAI-compatible API`
-
-### 03 / [PentesterBot](https://www.obitoglory.tech/proyek/pentesterbot)
-
-A Telegram bot that turns recon and vulnerability-scanning workflows into commands you can run from inside a chat.
-
-`JavaScript` · `Node.js` · `Telegram Bot API`
-
-Also documented: [TelegramBot AI](https://www.obitoglory.tech/proyek/telegrambot-ai), [RemoteUniversalDevice](https://www.obitoglory.tech/proyek/remoteuniversal), [AgentBuff](https://www.obitoglory.tech/proyek/agentbuff), and [Freebuff Patch](https://www.obitoglory.tech/proyek/freebuff-patch). The [project index](https://www.obitoglory.tech/proyek) has the full list.
-
-Case studies are public; the tools themselves are not published as source here.
-
 ## Technical focus
 
 - **Languages** — TypeScript, JavaScript, Python, Kotlin
@@ -94,7 +60,7 @@ A map of what I work with, not a claim of equal depth in every item.
 
 - Building practical tools around AI routing, terminal workflows, and automation.
 - Exploring local-first AI tooling and Android / Termux.
-- Improving performance, documentation, and maintainability in the projects above.
+- Improving performance, documentation, and maintainability in the tools I build.
 
 ## Engineering principles
 

@@ -28,12 +28,12 @@ Typography: **Archivo Black** for the 3D wordmark, **JetBrains Mono** for metada
 | `assets/dikaofc-mark.svg`         | 2 KB    | 512 × 512  | no             | Scalable monogram / favicon / small mark                                |
 | `assets/dikaofc-identity.png`     | 489 KB  | 960 × 600  | yes            | Editorial identity panel with the intentionally obscured portrait       |
 | `assets/dikaofc-identity.svg`     | 3 KB    | 960 × 600  | no             | Editable source for the identity panel                                  |
-| `assets/dikaofc-projects.png`     | 143 KB  | 1200 × 350 | yes            | Original schematic of DikaRoute, ObitoBuff CLI, and PentesterBot flows  |
-| `assets/dikaofc-projects.svg`     | 4 KB    | 1200 × 350 | no             | Editable source for the project schematic                               |
+| `assets/dikaofc-projects.png`     | 143 KB  | 1200 × 350 | no             | Optional project schematic (removed from README; kept as an asset)      |
+| `assets/dikaofc-projects.svg`     | 4 KB    | 1200 × 350 | no             | Editable source for the optional project schematic                      |
 | `assets/dikaofc-hero.svg`         | 4 KB    | 1200 × 630 | no             | Alternate flat hero poster kept as an earlier design study              |
 | `assets/dika.jpg`                 | 42 KB   | 480 × 480  | via identity   | Owner-provided portrait, used with permission; face already obscured    |
 
-The project schematic is an illustration of how each project works, not a product screenshot. The identity panel uses the owner-provided photo; it is not a stock image.
+The optional project schematic is an illustration of how each project works, not a product screenshot. It is no longer included in the README. The identity panel uses the owner-provided photo; it is not a stock image.
 
 ## Rendering pipeline
 

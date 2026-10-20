@@ -9,7 +9,6 @@ Checked on 2026-10-20 with `npm run check:links` (HTTP GET, redirects followed) 
 | `assets/dikaofc-hero.gif`       | OK     |
 | `assets/dikaofc-hero.png`       | OK     |
 | `assets/dikaofc-identity.png`   | OK     |
-| `assets/dikaofc-projects.png`   | OK     |
 
 ## External links used in the README
 
@@ -17,6 +16,18 @@ Checked on 2026-10-20 with `npm run check:links` (HTTP GET, redirects followed) 
 | ----------------------------------------------------- | ------ | ------------------------------------------- |
 | `https://www.obitoglory.tech/`                        | 200    | Portfolio and services                      |
 | `https://www.obitoglory.tech/proyek`                  | 200    | Project index                               |
+| `https://www.obitoglory.tech/tentang`                 | 200    | About                                       |
+| `https://www.obitoglory.tech/kontak`                  | 200    | Contact                                     |
+| `https://dikaglorya.github.io/journal/`               | 200    | Archive technical journal                   |
+| `https://github.com/dikaglorya`                       | 200    | The only official GitHub account            |
+| `https://t.me/dikaacode`                              | 200    | Telegram contact                            |
+
+## Verified but no longer linked
+
+The project case studies below were checked during the audit. They were removed from the README when the Selected work section was removed; the project index above remains the supported entry point.
+
+| URL                                                   | Status | Note                                        |
+| ----------------------------------------------------- | ------ | ------------------------------------------- |
 | `https://www.obitoglory.tech/proyek/dikaroute`        | 200    | DikaRoute case study                        |
 | `https://www.obitoglory.tech/proyek/obitobuff`        | 200    | ObitoBuff CLI case study                    |
 | `https://www.obitoglory.tech/proyek/pentesterbot`     | 200    | PentesterBot case study                     |
@@ -24,17 +35,12 @@ Checked on 2026-10-20 with `npm run check:links` (HTTP GET, redirects followed) 
 | `https://www.obitoglory.tech/proyek/remoteuniversal`  | 200    | RemoteUniversalDevice case study            |
 | `https://www.obitoglory.tech/proyek/agentbuff`        | 200    | AgentBuff case study                        |
 | `https://www.obitoglory.tech/proyek/freebuff-patch`   | 200    | Freebuff Patch case study                   |
-| `https://www.obitoglory.tech/tentang`                 | 200    | About                                       |
-| `https://www.obitoglory.tech/kontak`                  | 200    | Contact                                     |
-| `https://dikaglorya.github.io/journal/`               | 200    | Archive technical journal                   |
-| `https://github.com/dikaglorya`                       | 200    | The only official GitHub account            |
-| `https://t.me/dikaacode`                              | 200    | Telegram contact                            |
 
 ## Route changes found during inspection
 
 - `obitoglory.tech` now uses Indonesian routes: `/proyek`, `/tentang`, `/kontak`, `/layanan`, `/harga`, `/faq`. The English paths suggested in the original brief (`/projects/`, `/about/`, `/contact/`) return 404 on that domain, so the README uses the real routes.
 - The new website has no `/journal` route. The only verified journal is the archive site `https://dikaglorya.github.io/journal/`; the README labels it as technical notes on the archive site.
-- The old GitHub Pages case studies (`https://dikaglorya.github.io/projects/...`) still return 200, but the README links to the current ObitoGlory pages for a consistent destination.
+- The old GitHub Pages case studies (`https://dikaglorya.github.io/projects/...`) still return 200. The current ObitoGlory project pages remain available; the README no longer includes the Selected work section.
 
 ## Identity consistency findings (outside this repository)
 
