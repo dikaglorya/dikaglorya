@@ -6,6 +6,7 @@
 </div>
 
 <div align="center">
+  <img src="assets/dika.jpg" alt="Portrait chosen by Dika Glorya; the face is intentionally obscured in this image" width="180">
   <p>Full-stack developer building useful software, open-source tools, and thoughtful digital experiences.</p>
   <a href="https://github.com/dikaglorya"><img src="https://komarev.com/ghpvc/?username=dikaglorya&style=flat-square&color=00f5ff" alt="Profile views"></a>
 </div>
@@ -80,7 +81,6 @@
 
 <div align="center">
   <a href="https://github.com/dikaglorya"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
-  <a href="https://www.linkedin.com/in/dikaglorya/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
   <a href="mailto:hello@example.com"><img src="https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"></a>
   <a href="https://www.obitoglory.tech"><img src="https://img.shields.io/badge/Portfolio-8250DF?style=for-the-badge&logo=firefoxbrowser&logoColor=white" alt="Portfolio"></a>
 </div>
