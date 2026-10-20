@@ -88,7 +88,7 @@
   <a href="https://www.instagram.com/xxcdicka/"><img src="https://img.shields.io/badge/Instagram-%40xxcdicka-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram @xxcdicka"></a>
   <a href="https://www.tiktok.com/@dikasecx"><img src="https://img.shields.io/badge/TikTok-%40dikasecx-000000?style=for-the-badge&logo=tiktok&logoColor=white" alt="TikTok @dikasecx"></a>
   <a href="mailto:dikasukasukaa@gmail.com"><img src="https://img.shields.io/badge/Email-dikasukasukaa%40gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email Dika"></a>
-  <a href="https://www.obitoglory.tech/layanan">Open Jasa, Digital Solution</a>
+  <a href="https://www.obitoglory.tech/layanan"><img src="https://img.shields.io/badge/Layanan-Open%20Jasa%20%2F%20Digital%20Solution-0969DA?style=for-the-badge&logo=briefcase&logoColor=white" alt="Open Jasa, Digital Solution"></a>
 </div>
 
 <div align="center">
