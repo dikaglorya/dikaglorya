@@ -111,9 +111,9 @@ function hero(theme) {
       <text x="600" y="326" fill="${c.text}" font-size="47" font-weight="750" letter-spacing="1.5" opacity="0">Dika Glorya<animate attributeName="opacity" values="0;1;1;1" keyTimes="0;.08;.2;1" dur="7s" repeatCount="indefinite"/></text>
       <text x="600" y="354" fill="${c.muted}" font-size="14" class="mono" letter-spacing="2">BUILDING DIGITAL WORLDS <tspan fill="${c.cyan}">/</tspan> OPEN SOURCE</text>
       <g font-size="13" class="mono">
-        <text class="role-cycle" x="600" y="385" fill="${c.cyan}" opacity="0">Full-Stack Developer<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.08;.28;.36" dur="9s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0 8;0 0;0 0;0 -5" keyTimes="0;.08;.28;.36" dur="9s" repeatCount="indefinite"/></text>
-        <text class="role-cycle" x="600" y="385" fill="${c.magenta}" opacity="0">Open Source Enthusiast<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.32;.4;.61;.69" dur="9s" repeatCount="indefinite"/></text>
-        <text class="role-cycle" x="600" y="385" fill="${c.lime}" opacity="0">Problem Solver<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.64;.72;.92;1" dur="9s" repeatCount="indefinite"/></text>
+        <text class="role-cycle" x="600" y="385" fill="${c.cyan}" opacity="0">Full-Stack Developer<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.04;.29;.34;1" dur="9s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0 8;0 0;0 0;0 -5;0 -5" keyTimes="0;.04;.29;.34;1" dur="9s" repeatCount="indefinite"/></text>
+        <text class="role-cycle" x="600" y="385" fill="${c.magenta}" opacity="0">Open Source Enthusiast<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.29;.34;.60;.65;1" dur="9s" repeatCount="indefinite"/></text>
+        <text class="role-cycle" x="600" y="385" fill="${c.lime}" opacity="0">Problem Solver<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.60;.65;.91;.96;1" dur="9s" repeatCount="indefinite"/></text>
       </g>
     </g>
     <path d="M32 32h34M32 32v34M1168 32h-34M1168 32v34M32 388h34M32 388v-34M1168 388h-34M1168 388v-34" fill="none" stroke="${c.cyan}" opacity=".62"/>`;
