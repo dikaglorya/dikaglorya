@@ -1,78 +1,116 @@
+<!--
+  Primary identity: DikaOfc
+  Supporting identities: DikaCode (developer identity), ObitoGlory (website / portfolio brand)
+  Asset pipeline and source notes: docs/ASSET-GUIDE.md
+-->
 
-# DikaGlorya
+<p align="center">
+  <a href="https://www.obitoglory.tech/" title="ObitoGlory — DikaOfc's website">
+    <img
+      src="assets/dikaofc-hero.gif"
+      alt="DikaOfc — a metallic 3D D monogram and extruded DIKAOFC wordmark lit by ice-blue rim light in a dark studio"
+      width="100%"
+    />
+  </a>
+</p>
 
-**Also known as DikaCode · DikaOfc · DikaGlory · ObitoGlory**
+<p align="center"><sub><a href="assets/dikaofc-hero.png">View static hero poster</a></sub></p>
 
-Independent developer in Kendal, Central Java, Indonesia. I build developer tools, Telegram bots, AI gateways, and web applications.
+<h1 align="center">DikaOfc</h1>
 
-**Website:** [obitoglory.tech](https://obitoglory.tech/) · **GitHub:** [@dikaglorya](https://github.com/dikaglorya)
+<p align="center">
+  <strong>Independent developer</strong> · DikaCode · ObitoGlory
+</p>
 
----
-
-## About Me
-
-DikaGlorya is my primary name. DikaCode is the handle I publish developer work under, ObitoGlory is my site and portfolio brand, and DikaOfc and DikaGlory are older aliases that still appear in links.
-
-- Building tools that solve one specific, concrete problem
-- Working mostly in TypeScript, Node.js, and Python
-- Interested in AI coding agents, self-hosted tooling, and Android/Termux
-- Documenting projects as short technical case studies rather than feature lists
-
-I'm based in Kendal, Indonesia, and open for selected projects.
-
-## Selected Work
-
-### DikaRoute
-
-An OpenAI-compatible gateway that puts several AI providers behind one endpoint. Requests are routed automatically, and when a provider fails or rate-limits, the request falls through to the next one.
-
-`TypeScript` `Node.js` `OpenAI API` — [case study](https://dikaglorya.github.io/projects/dikaroute/)
-
-### ObitoBuff CLI
-
-A terminal AI coding agent with sub-agents for finding files, editing, running bash, research, and code review. Runs fully locally against your own models, with no backend.
-
-`TypeScript` `Bun` `OpenAI-compatible API` — [case study](https://dikaglorya.github.io/projects/obitobuff/)
-
-### PentesterBot
-
-A Telegram bot that runs recon and vulnerability scanning workflows from inside a chat.
-
-`JavaScript` `Node.js` `Telegram Bot API` — [case study](https://dikaglorya.github.io/projects/pentesterbot/)
-
-### TelegramBot AI
-
-A Telethon userbot that replies to chats with AI, learns your writing style, keeps long-term memory, and transcribes voice notes.
-
-`Python` `Telethon` `OpenAI-compatible API` — [case study](https://dikaglorya.github.io/projects/telegrambot-ai/)
-
-Also documented: **Freebuff Patch**, running Freebuff on Termux without proot, and **RemoteUniversalDevice**, an Android remote for smart TVs. See the [full project list](https://dikaglorya.github.io/projects/).
-
-## Tech & Tools
-
-- **Languages:** TypeScript, JavaScript, Python, Kotlin, HTML, CSS
-- **Web:** Astro, React, Node.js
-- **Systems:** Linux, Termux, shell scripting
-- **AI:** OpenAI-compatible APIs, coding agents, local model tooling
-
-This is a map of what I work with, not a claim of equal depth in each.
-
-## Explore
-
-- [Projects](https://dikaglorya.github.io/projects/) — documented case studies
-- [About](https://dikaglorya.github.io/about/) — who I am and what the aliases mean
-- [Journal](https://dikaglorya.github.io/journal/) — technical notes
-- [Services](https://dikaglorya.github.io/services/) — what I take on
-- [Contact](https://dikaglorya.github.io/contact/) — Telegram is fastest
-
-## Find Me Online
-
-- Website: [obitoglory.tech](https://obitoglory.tech/)
-- GitHub: [@dikaglorya](https://github.com/dikaglorya)
-- Telegram: [@dikaacode](https://t.me/dikaacode)
-
-For the most reliable information about my work and official links, start at [obitoglory.tech](https://obitoglory.tech/). The live site is currently served from [dikaglorya.github.io](https://dikaglorya.github.io/) while the domain migration finishes.
+<p align="center">
+  <a href="https://www.obitoglory.tech/">Portfolio</a> ·
+  <a href="https://www.obitoglory.tech/proyek">Projects</a> ·
+  <a href="https://dikaglorya.github.io/journal/">Journal</a> ·
+  <a href="https://www.obitoglory.tech/tentang">About</a> ·
+  <a href="https://www.obitoglory.tech/kontak">Contact</a>
+</p>
 
 ---
 
-*Building, learning, documenting, and improving, one project at a time.*
+I build software, web experiences, and practical developer tools from Kendal, Central Java, Indonesia.
+
+DikaOfc is my public identity. I also work as **DikaCode**, while **ObitoGlory** is my website and portfolio brand. Older links may use **DikaGlory** or **DikaGlorya**. This GitHub profile — **dikaglorya** — is the only GitHub account I publish from.
+
+<p align="center">
+  <a href="assets/dikaofc-identity.png" title="Open the full-size identity panel">
+    <img
+      src="assets/dikaofc-identity.png"
+      alt="DikaOfc identity panel with an intentionally obscured portrait and the DikaCode and ObitoGlory identities"
+      width="100%"
+    />
+  </a>
+</p>
+
+## Selected work
+
+<p align="center">
+  <a href="assets/dikaofc-projects.png" title="Open the full-size project schematic">
+    <img
+      src="assets/dikaofc-projects.png"
+      alt="Original schematic illustrations of DikaRoute provider routing, ObitoBuff CLI agent tools, and a Telegram bot workflow"
+      width="100%"
+    />
+  </a>
+</p>
+
+### 01 / [DikaRoute](https://www.obitoglory.tech/proyek/dikaroute)
+
+An OpenAI-compatible gateway that puts several AI providers behind one endpoint, routes each request to an available provider, and falls through automatically when one fails or rate-limits.
+
+`TypeScript` · `Node.js` · `OpenAI API`
+
+### 02 / [ObitoBuff CLI](https://www.obitoglory.tech/proyek/obitobuff)
+
+A terminal AI coding agent with focused sub-agents for finding files, editing, running commands, research, and code review — running against models you choose.
+
+`TypeScript` · `Bun` · `OpenAI-compatible API`
+
+### 03 / [PentesterBot](https://www.obitoglory.tech/proyek/pentesterbot)
+
+A Telegram bot that turns recon and vulnerability-scanning workflows into commands you can run from inside a chat.
+
+`JavaScript` · `Node.js` · `Telegram Bot API`
+
+Also documented: [TelegramBot AI](https://www.obitoglory.tech/proyek/telegrambot-ai), [RemoteUniversalDevice](https://www.obitoglory.tech/proyek/remoteuniversal), [AgentBuff](https://www.obitoglory.tech/proyek/agentbuff), and [Freebuff Patch](https://www.obitoglory.tech/proyek/freebuff-patch). The [project index](https://www.obitoglory.tech/proyek) has the full list.
+
+Case studies are public; the tools themselves are not published as source here.
+
+## Technical focus
+
+- **Languages** — TypeScript, JavaScript, Python, Kotlin
+- **Web** — React, Vite, Node.js
+- **Systems** — Linux, Termux, Android, shell tooling
+- **AI** — OpenAI-compatible APIs, local model tooling, coding agents
+- **Bots & automation** — Telegram Bot API, Telethon, workflow automation
+
+A map of what I work with, not a claim of equal depth in every item.
+
+## Current focus
+
+- Building practical tools around AI routing, terminal workflows, and automation.
+- Exploring local-first AI tooling and Android / Termux.
+- Improving performance, documentation, and maintainability in the projects above.
+
+## Engineering principles
+
+- Build useful things.
+- Prefer maintainable solutions.
+- Measure rather than fabricate performance claims.
+- Document important decisions.
+- Keep interfaces accessible.
+- Improve through feedback.
+
+## Contact
+
+Open to selected projects and collaboration. Explore the [portfolio and case studies](https://www.obitoglory.tech/proyek), or reach me directly on [Telegram](https://t.me/dikaacode). This is my only GitHub profile: [@dikaglorya](https://github.com/dikaglorya).
+
+---
+
+<p align="center">
+  <sub>Building useful software, one project at a time.</sub>
+</p>

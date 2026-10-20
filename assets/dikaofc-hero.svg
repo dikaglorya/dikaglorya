@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#07090C"/>
+      <stop offset="1" stop-color="#10151B"/>
+    </linearGradient>
+    <radialGradient id="atmosphere" cx="28%" cy="48%" r="65%">
+      <stop stop-color="#245B70" stop-opacity=".33"/>
+      <stop offset="1" stop-color="#07090C" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#EAF1F5"/>
+      <stop offset=".22" stop-color="#7D929D"/>
+      <stop offset=".48" stop-color="#26343D"/>
+      <stop offset=".72" stop-color="#B9C8CE"/>
+      <stop offset="1" stop-color="#526873"/>
+    </linearGradient>
+    <linearGradient id="face" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#EAF1F5"/>
+      <stop offset=".3" stop-color="#80939D"/>
+      <stop offset=".56" stop-color="#34434C"/>
+      <stop offset=".82" stop-color="#A9BBC3"/>
+      <stop offset="1" stop-color="#4B626E"/>
+    </linearGradient>
+    <linearGradient id="sweep" x1="8%" y1="0%" x2="24%" y2="0%">
+      <stop stop-color="#8EDCF0" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#8EDCF0" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#8EDCF0" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#9BA8B2" stroke-opacity=".07" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="18"/>
+      <feOffset dy="14"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".42"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <path id="d-shape" fill-rule="evenodd" d="M146 128H292C426 128 516 204 516 315S426 502 292 502H146ZM246 220V410H294C361 410 403 375 403 315S361 220 294 220Z"/>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <rect width="1200" height="630" fill="url(#atmosphere)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <path d="M0 530H1200" stroke="#9BA8B2" stroke-opacity=".12"/>
+  <rect width="1200" height="630" fill="url(#sweep)" opacity=".48"/>
+
+  <g filter="url(#shadow)">
+    <use href="#d-shape" transform="translate(34 28)" fill="#14232B" stroke="#8EDCF0" stroke-opacity=".4" stroke-width="2"/>
+    <use href="#d-shape" fill="url(#face)" stroke="#EAF1F5" stroke-opacity=".65" stroke-width="2"/>
+    <path d="M147 129H292C422 129 511 202 516 307" fill="none" stroke="#EAF1F5" stroke-opacity=".82" stroke-width="2"/>
+    <path d="M248 222V408" fill="none" stroke="#8EDCF0" stroke-opacity=".48" stroke-width="2"/>
+  </g>
+
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="588" y="179" fill="#8EDCF0" font-size="15" font-weight="700" letter-spacing="3">INDEPENDENT DEVELOPER</text>
+    <text x="576" y="308" fill="#EAF1F5" font-size="90" font-weight="700" letter-spacing="1">DIKAOFC</text>
+    <path d="M588 345H1072" stroke="#8EDCF0" stroke-opacity=".68"/>
+    <text x="588" y="388" fill="#B7C4CB" font-size="19" letter-spacing=".4">Software · Web · Developer tools</text>
+    <text x="588" y="438" fill="#9BA8B2" font-size="14" letter-spacing="2">DIKACODE  /  OBITOGLORY</text>
+    <text x="68" y="578" fill="#9BA8B2" font-family="monospace" font-size="12" letter-spacing="1">IDENTITY STUDY  /  01</text>
+    <text x="1010" y="578" fill="#9BA8B2" font-family="monospace" font-size="12">KENDAL, ID</text>
+  </g>
+</svg>

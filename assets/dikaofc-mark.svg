@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">DikaOfc monogram</title>
+  <desc id="desc">A geometric metallic D with an ice-blue illuminated inner edge and a single cyan point in the counter.</desc>
+  <defs>
+    <radialGradient id="bg" cx="46%" cy="42%" r="72%">
+      <stop offset="0" stop-color="#12222a"/>
+      <stop offset="0.55" stop-color="#0a1015"/>
+      <stop offset="1" stop-color="#07090c"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3c5964"/>
+      <stop offset="0.42" stop-color="#24373f"/>
+      <stop offset="1" stop-color="#0e191f"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8edcf0" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#245b70" stop-opacity="0.15"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="196" fill="none" stroke="#245b70" stroke-opacity="0.22"/>
+
+  <!-- Geometric D: square stem, true semicircular bowl. -->
+  <path d="M140 96 L220 96 A160 160 0 0 1 220 416 L140 416 Z
+           M200 136 L220 136 A120 120 0 0 1 220 376 L200 376 Z"
+        fill="url(#metal)" fill-rule="evenodd"/>
+  <path d="M140 96 L220 96 A160 160 0 0 1 220 416 L140 416"
+        fill="none" stroke="url(#edge)" stroke-width="2" stroke-opacity="0.5"/>
+  <path d="M220 136 A120 120 0 0 1 220 376"
+        fill="none" stroke="#8edcf0" stroke-width="3.5" stroke-linecap="round" opacity="0.92"/>
+  <circle cx="220" cy="256" r="9" fill="#8edcf0" filter="url(#glow)"/>
+</svg>

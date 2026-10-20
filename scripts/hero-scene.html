@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DikaOfc identity scene</title>
+<style>
+  @font-face {
+    font-family: 'JBMono';
+    src: url('/scripts/fonts/JetBrainsMono.ttf') format('truetype');
+    font-weight: 100 800;
+  }
+  :root {
+    --bg: #07090c;
+    --panel: #10151b;
+    --ink: #eaf1f5;
+    --muted: #9ba8b2;
+    --accent: #8edcf0;
+    --shadow: #245b70;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); overflow: hidden; }
+  body { width: 100vw; height: 100vh; }
+  #stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 72% 110% at 58% 50%, rgba(36, 91, 112, 0.24), transparent 63%),
+      radial-gradient(ellipse 42% 62% at 17% 43%, rgba(142, 220, 240, 0.075), transparent 68%),
+      radial-gradient(ellipse 50% 70% at 86% 18%, rgba(36, 91, 112, 0.10), transparent 70%),
+      #07090c;
+  }
+  #stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(7,9,12,0.55) 0%, transparent 18%, transparent 82%, rgba(7,9,12,0.45) 100%),
+      linear-gradient(180deg, rgba(7,9,12,0.18) 0%, transparent 28%, transparent 72%, rgba(7,9,12,0.55) 100%);
+    z-index: 3;
+  }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; }
+  .frame {
+    position: absolute;
+    inset: 20px;
+    border: 1px solid rgba(234, 241, 245, 0.075);
+    pointer-events: none;
+    z-index: 4;
+  }
+  .frame::before, .frame::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: rgba(142, 220, 240, 0.65);
+    border-style: solid;
+  }
+  .frame::before { left: -1px; top: -1px; border-width: 1px 0 0 1px; }
+  .frame::after { right: -1px; bottom: -1px; border-width: 0 1px 1px 0; }
+  .hud {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    font-family: 'JBMono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--ink);
+  }
+  .kicker {
+    position: absolute;
+    left: 47px;
+    top: 42px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .kicker .pulse {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(142, 220, 240, 0.9);
+  }
+  .kicker strong { color: var(--ink); font-weight: 600; letter-spacing: 0.24em; }
+  .site {
+    position: absolute;
+    right: 47px;
+    top: 42px;
+    text-align: right;
+    font-size: 9px;
+    letter-spacing: 0.26em;
+    color: var(--muted);
+    line-height: 1.9;
+    text-transform: uppercase;
+  }
+  .site b { color: var(--accent); font-weight: 500; }
+  .rule {
+    position: absolute;
+    left: 34%;
+    bottom: 147px;
+    width: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(142, 220, 240, 0.7), rgba(142, 220, 240, 0.1) 72%, transparent);
+  }
+  .caption {
+    position: absolute;
+    left: 34%;
+    bottom: 91px;
+    font-size: 11px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .subcaption {
+    position: absolute;
+    left: 34%;
+    bottom: 65px;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .footer-left {
+    position: absolute;
+    left: 47px;
+    bottom: 39px;
+    font-size: 8.5px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(155, 168, 178, 0.82);
+  }
+  .footer-right {
+    position: absolute;
+    right: 47px;
+    bottom: 39px;
+    font-size: 8.5px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: rgba(155, 168, 178, 0.82);
+    text-align: right;
+  }
+  .footer-right span { color: var(--accent); }
+  .vertical {
+    position: absolute;
+    right: 34px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: center;
+    font-size: 8px;
+    letter-spacing: 0.38em;
+    color: rgba(155, 168, 178, 0.5);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .index {
+    position: absolute;
+    left: 47px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    color: rgba(155, 168, 178, 0.62);
+    text-transform: uppercase;
+  }
+  .index i {
+    display: block;
+    width: 22px;
+    height: 1px;
+    background: rgba(155, 168, 178, 0.32);
+  }
+  .index .on { color: var(--accent); }
+  .index .on + i { background: var(--accent); }
+
+  body.layout-og .frame { inset: 26px; }
+  body.layout-og .kicker { left: 56px; top: 54px; }
+  body.layout-og .site { right: 56px; top: 54px; }
+  body.layout-og .rule { left: 30.5%; bottom: 164px; width: 52%; }
+  body.layout-og .caption { left: 30.5%; bottom: 108px; }
+  body.layout-og .subcaption { left: 30.5%; bottom: 80px; }
+  body.layout-og .footer-left { left: 56px; bottom: 48px; }
+  body.layout-og .footer-right { right: 56px; bottom: 48px; }
+  body.layout-og .vertical { display: none; }
+  body.layout-avatar .hud, body.layout-avatar .frame { display: none; }
+  body.layout-avatar #stage { background:
+      radial-gradient(ellipse 68% 68% at 50% 46%, rgba(36, 91, 112, 0.30), transparent 67%),
+      radial-gradient(ellipse 42% 42% at 38% 36%, rgba(142, 220, 240, 0.10), transparent 72%),
+      #07090c; }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "/node_modules/three/build/three.module.js",
+    "three/addons/": "/node_modules/three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="scene"></canvas>
+  <div class="frame"></div>
+  <div class="hud">
+    <div class="kicker"><span class="pulse"></span><strong>DikaOfc</strong><span>/ identity system</span></div>
+    <div class="site">Obitoglory<strong>.</strong>tech<br><b>Independent developer</b></div>
+    <div class="rule"></div>
+    <div class="caption">Independent developer</div>
+    <div class="subcaption">Software · Web · Developer tools</div>
+    <div class="footer-left">Kendal · Indonesia</div>
+    <div class="footer-right">2026 <span>/</span> DikaCode <span>·</span> ObitoGlory</div>
+    <div class="vertical">Digital identity / 01</div>
+  </div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { TTFLoader } from 'three/addons/loaders/TTFLoader.js';
+import { Font } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const DPR = 1;
+const params = new URLSearchParams(location.search);
+const LAYOUT = params.get('layout') || 'hero';
+const IS_OG = LAYOUT === 'og';
+const IS_AVATAR = LAYOUT === 'avatar';
+const W = IS_AVATAR ? 1024 : IS_OG ? 1200 : 1440;
+const H = IS_AVATAR ? 1024 : IS_OG ? 630 : 540;
+document.body.classList.add(`layout-${LAYOUT}`);
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: true,
+  powerPreference: 'high-performance',
+  preserveDrawingBuffer: true,
+});
+renderer.setPixelRatio(DPR);
+renderer.setSize(W, H, false);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x07090c, 0.022);
+
+const CAM_Z = IS_AVATAR ? 13.5 : IS_OG ? 18.0 : 14.6;
+const CAM_Y = IS_AVATAR ? 0.05 : 0.12;
+const camera = new THREE.PerspectiveCamera(31, W / H, 0.1, 120);
+camera.position.set(0, CAM_Y, CAM_Z);
+camera.lookAt(0, 0.05, 0);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+scene.environment = envRT.texture;
+scene.environmentIntensity = 0.28;
+
+// ---------- lighting ----------
+scene.add(new THREE.HemisphereLight(0x9fc9d6, 0x07090c, 0.7));
+scene.add(new THREE.AmbientLight(0x7fa6b3, 0.18));
+const key = new THREE.DirectionalLight(0xc8eef8, 2.1);
+key.position.set(-6.5, 8.5, 7);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.near = 1;
+key.shadow.camera.far = 35;
+key.shadow.camera.left = -13;
+key.shadow.camera.right = 13;
+key.shadow.camera.top = 9;
+key.shadow.camera.bottom = -7;
+key.shadow.bias = -0.0005;
+key.shadow.normalBias = 0.03;
+scene.add(key);
+
+const frontKey = new THREE.DirectionalLight(0xbfe4ee, 2.9);
+frontKey.position.set(1.5, 2.6, 9.5);
+scene.add(frontKey);
+
+const rim = new THREE.PointLight(0x8edcf0, 26, 32, 2.0);
+rim.position.set(-8.4, 3.2, -3.6);
+scene.add(rim);
+
+const rim2 = new THREE.PointLight(0x66c6dd, 15, 26, 2.0);
+rim2.position.set(8.8, -0.3, -2.4);
+scene.add(rim2);
+
+const fill = new THREE.PointLight(0x245b70, 18, 28, 2.0);
+fill.position.set(3.8, -3.4, 6.5);
+scene.add(fill);
+
+const sweep = new THREE.PointLight(0x8edcf0, 6, 16, 2.0);
+sweep.position.set(2, 0.6, 5.5);
+scene.add(sweep);
+
+// ---------- ground ----------
+// A shadow-only plane keeps the objects grounded without introducing a visible
+// horizon line through the wordmark.
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(60, 34),
+  new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.34 })
+);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -2.48;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// ---------- materials ----------
+const faceMat = new THREE.MeshPhysicalMaterial({
+  color: 0x3f535d,
+  metalness: 0.8,
+  roughness: 0.33,
+  clearcoat: 0.4,
+  clearcoatRoughness: 0.2,
+  envMapIntensity: 1.05,
+});
+const sideMat = new THREE.MeshPhysicalMaterial({
+  color: 0x6d929f,
+  metalness: 0.96,
+  roughness: 0.15,
+  clearcoat: 0.45,
+  clearcoatRoughness: 0.16,
+  envMapIntensity: 1.3,
+});
+const darkMat = new THREE.MeshPhysicalMaterial({
+  color: 0x0c1318,
+  metalness: 0.9,
+  roughness: 0.3,
+  envMapIntensity: 0.65,
+});
+const glowMat = new THREE.MeshBasicMaterial({
+  color: 0x8edcf0,
+  toneMapped: false,
+});
+
+// ---------- wordmark ----------
+const ttf = await new TTFLoader().loadAsync('/scripts/fonts/ArchivoBlack-Regular.ttf');
+const font = new Font(ttf);
+const wordGeo = new TextGeometry('DIKAOFC', {
+  font,
+  size: 1,
+  depth: 0.26,
+  curveSegments: 12,
+  bevelEnabled: true,
+  bevelThickness: 0.028,
+  bevelSize: 0.022,
+  bevelOffset: 0,
+  bevelSegments: 5,
+});
+wordGeo.center();
+wordGeo.computeBoundingBox();
+const wb = wordGeo.boundingBox;
+const targetW = 11.7;
+const ws = targetW / (wb.max.x - wb.min.x);
+wordGeo.scale(ws, ws, ws);
+wordGeo.computeBoundingBox();
+const word = new THREE.Mesh(wordGeo, [faceMat, sideMat]);
+word.position.set(2.35, 0.18, 0.25);
+word.castShadow = true;
+word.receiveShadow = true;
+scene.add(word);
+
+// ---------- D monogram ----------
+// The mark is a geometric D: a square stem and a true semicircular bowl.
+// It is built as one extruded ring, with a fine illuminated inner edge.
+const dOuterR = 1.66;
+const dInnerR = 1.1;
+const dStemOuter = -1.42;
+const dStemInner = -0.88;
+const dArcX = 0.08;
+const outerShape = new THREE.Shape();
+outerShape.moveTo(dStemOuter, -dOuterR);
+outerShape.lineTo(dStemOuter, dOuterR);
+outerShape.lineTo(dArcX, dOuterR);
+outerShape.absarc(dArcX, 0, dOuterR, Math.PI / 2, -Math.PI / 2, true);
+outerShape.lineTo(dStemOuter, -dOuterR);
+
+const hole = new THREE.Path();
+hole.moveTo(dStemInner, dInnerR);
+hole.lineTo(dArcX, dInnerR);
+hole.absarc(dArcX, 0, dInnerR, Math.PI / 2, -Math.PI / 2, true);
+hole.lineTo(dStemInner, -dInnerR);
+hole.lineTo(dStemInner, dInnerR);
+outerShape.holes.push(hole);
+
+const dGeo = new THREE.ExtrudeGeometry(outerShape, {
+  depth: 0.62,
+  bevelEnabled: true,
+  bevelThickness: 0.07,
+  bevelSize: 0.06,
+  bevelSegments: 5,
+  curveSegments: 40,
+});
+dGeo.computeBoundingBox();
+const dCenter = new THREE.Vector3();
+dGeo.boundingBox.getCenter(dCenter);
+dGeo.translate(-dCenter.x, -dCenter.y, -dCenter.z);
+
+const dGroup = new THREE.Group();
+const dMesh = new THREE.Mesh(dGeo, [faceMat, sideMat]);
+dMesh.castShadow = true;
+dMesh.receiveShadow = true;
+dGroup.add(dMesh);
+
+// A fine cyan line traces the inside of the counter. It reads as an engineered
+// edge, not a neon outline around the whole monogram.
+const innerCurve = new THREE.EllipseCurve(dArcX, 0, dInnerR, dInnerR, Math.PI / 2, -Math.PI / 2, true);
+const innerPts = innerCurve.getPoints(60).map(p => new THREE.Vector3(p.x - dCenter.x, p.y - dCenter.y, 0.39));
+const innerTube = new THREE.Mesh(
+  new THREE.TubeGeometry(new THREE.CatmullRomCurve3(innerPts), 60, 0.013, 6, false),
+  new THREE.MeshBasicMaterial({ color: 0x8edcf0, transparent: true, opacity: 0.85, toneMapped: false })
+);
+dGroup.add(innerTube);
+
+// The iris point sits in the open counter of the D.
+const dHoleGlow = new THREE.Mesh(new THREE.SphereGeometry(0.075, 24, 16), glowMat);
+dHoleGlow.position.set(dArcX - dCenter.x, -dCenter.y, 0.43);
+dGroup.add(dHoleGlow);
+
+const dHoleLight = new THREE.PointLight(0x8edcf0, 1.6, 3.4, 2);
+dHoleLight.position.set(dArcX - dCenter.x, -dCenter.y, 0.6);
+dGroup.add(dHoleLight);
+
+// Orbital arc around the mark.
+const arcCurve = new THREE.EllipseCurve(0, 0, 2.42, 2.42, -Math.PI * 0.78, Math.PI * 0.74, false, 0);
+const arcPts = arcCurve.getPoints(80).map(p => new THREE.Vector3(p.x, p.y, -0.65));
+const arcGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(arcPts), 80, 0.012, 8, false);
+const arc = new THREE.Mesh(arcGeo, new THREE.MeshBasicMaterial({ color: 0x4f7785, transparent: true, opacity: 0.55, toneMapped: false }));
+arc.rotation.z = 0.22;
+dGroup.add(arc);
+
+const D_BASE_X = IS_AVATAR ? 0 : -6.6;
+const D_BASE_Y = IS_AVATAR ? 0 : 0.2;
+dGroup.position.set(D_BASE_X, D_BASE_Y, IS_AVATAR ? 0 : 0.3);
+dGroup.rotation.set(0.05, IS_AVATAR ? -0.16 : -0.28, -0.04);
+dGroup.scale.setScalar(IS_AVATAR ? 1.65 : 0.9);
+arc.visible = !IS_AVATAR;
+word.visible = !IS_AVATAR;
+scene.add(dGroup);
+if (IS_AVATAR) floor.visible = false;
+
+
+// Sparse dust, low contrast.
+const dustGeo = new THREE.BufferGeometry();
+const dustCount = 90;
+const dustPos = new Float32Array(dustCount * 3);
+for (let i = 0; i < dustCount; i++) {
+  dustPos[i * 3] = (Math.random() - 0.5) * 22;
+  dustPos[i * 3 + 1] = (Math.random() - 0.35) * 8;
+  dustPos[i * 3 + 2] = (Math.random() - 0.5) * 10 - 2;
+}
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dustMat = new THREE.PointsMaterial({
+  color: 0x8edcf0,
+  size: 0.012,
+  transparent: true,
+  opacity: 0.32,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+});
+const dust = new THREE.Points(dustGeo, dustMat);
+scene.add(dust);
+
+// ---------- render loop / frame API ----------
+const clock = new THREE.Clock();
+function setFrame(t) {
+  const a = t * Math.PI * 2;
+  camera.position.x = Math.sin(a) * (IS_AVATAR ? 0.08 : 0.15);
+  camera.position.y = CAM_Y + Math.cos(a) * 0.05;
+  camera.position.z = CAM_Z + Math.sin(a) * 0.16;
+  camera.lookAt(0, 0.05, 0);
+
+  dGroup.rotation.y = (IS_AVATAR ? -0.16 : -0.28) + Math.sin(a) * 0.06;
+  dGroup.rotation.x = 0.05 + Math.cos(a) * 0.018;
+  dGroup.position.y = D_BASE_Y + Math.sin(a) * 0.025;
+
+  word.rotation.y = -0.018 + Math.sin(a + 0.9) * 0.016;
+  word.position.y = 0.18 + Math.cos(a) * 0.018;
+
+  rim.position.x = -8.4 + Math.sin(a) * 0.45;
+  rim.position.y = 3.2 + Math.cos(a) * 0.12;
+  rim2.position.y = -0.3 + Math.sin(a + 1.8) * 0.16;
+  sweep.position.x = 2 + Math.sin(a + 0.4) * 3.2;
+  sweep.intensity = 5.6;
+
+  dust.rotation.y = a * 0.02;
+  renderer.render(scene, camera);
+}
+
+window.__setFrame = setFrame;
+window.__ready = false;
+setFrame(0);
+window.__ready = true;
+document.body.dataset.ready = 'true';
+</script>
+</body>
+</html>

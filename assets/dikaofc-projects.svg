@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="350" viewBox="0 0 1200 350">
+  <defs>
+    <linearGradient id="surface" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#0B1014"/>
+      <stop offset="1" stop-color="#101920"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#9BA8B2" stroke-opacity=".045"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="350" fill="url(#surface)"/>
+  <rect width="1200" height="350" fill="url(#grid)"/>
+  <path d="M24 26H1176V324H24Z" fill="none" stroke="#9BA8B2" stroke-opacity=".18"/>
+
+  <g font-family="monospace">
+    <text x="48" y="58" fill="#8EDCF0" font-size="12" letter-spacing="2">01 / ROUTING</text>
+    <text x="440" y="58" fill="#A7E2C1" font-size="12" letter-spacing="2">02 / LOCAL AGENT</text>
+    <text x="832" y="58" fill="#F0B094" font-size="12" letter-spacing="2">03 / TELEGRAM</text>
+  </g>
+  <path d="M408 42V308M800 42V308" stroke="#9BA8B2" stroke-opacity=".16"/>
+
+  <g fill="none" stroke="#8EDCF0" stroke-width="2">
+    <circle cx="67" cy="168" r="18"/>
+    <path d="M85 168H132M236 168H275M275 168L304 133M275 168L304 168M275 168L304 203"/>
+    <rect x="132" y="139" width="104" height="58" rx="3"/>
+    <circle cx="314" cy="133" r="10" fill="#8EDCF0" fill-opacity=".12"/>
+    <circle cx="314" cy="168" r="10" fill="#8EDCF0" fill-opacity=".12"/>
+    <circle cx="314" cy="203" r="10" fill="#8EDCF0" fill-opacity=".12"/>
+    <path d="M58 168H76M67 159V177M155 160H213M155 176H192" stroke-width="1.5"/>
+    <path d="M82 265H346" stroke-opacity=".3" stroke-width="1"/>
+  </g>
+  <g fill="#B7C4CB" font-family="monospace" font-size="10">
+    <text x="53" y="207">REQ</text><text x="151" y="216">DikaRoute</text>
+    <text x="330" y="137">A</text><text x="330" y="172">B</text><text x="330" y="207">C</text>
+    <text x="48" y="290">One endpoint. Providers selected by availability.</text>
+  </g>
+
+  <g fill="none" stroke="#A7E2C1" stroke-width="2">
+    <rect x="450" y="111" width="308" height="133" rx="4"/>
+    <path d="M450 143H758M469 128H478M487 128H496M505 128H514" stroke-width="1.5"/>
+    <path d="M479 169H537L554 185L537 201H479M568 169H615M568 185H632M568 201H606" stroke-width="1.5"/>
+    <circle cx="691" cy="171" r="9" fill="#A7E2C1" fill-opacity=".14"/>
+    <circle cx="715" cy="185" r="9" fill="#A7E2C1" fill-opacity=".14"/>
+    <circle cx="691" cy="199" r="9" fill="#A7E2C1" fill-opacity=".14"/>
+    <path d="M440 265H764" stroke-opacity=".3" stroke-width="1"/>
+  </g>
+  <g fill="#C3D1C8" font-family="monospace" font-size="10">
+    <text x="469" y="128">OBITOBUFF / LOCAL SESSION</text>
+    <text x="440" y="290">Tools for edits, research, and review.</text>
+  </g>
+
+  <g fill="none" stroke="#F0B094" stroke-width="2">
+    <path d="M866 114H1114Q1124 114 1124 124V191Q1124 201 1114 201H940L916 220V201H866Q856 201 856 191V124Q856 114 866 114Z"/>
+    <path d="M879 141H1042M879 159H1080M879 177H1011" stroke-width="1.5"/>
+    <circle cx="1101" cy="235" r="22" fill="#F0B094" fill-opacity=".1"/>
+    <path d="M1089 235H1113M1101 223V247M832 265H1156" stroke-opacity=".45" stroke-width="1"/>
+  </g>
+  <g fill="#D3C2B9" font-family="monospace" font-size="10">
+    <text x="832" y="290">Chat interface for authorized workflows.</text>
+    <text x="1093" y="239" fill="#F0B094">BOT</text>
+  </g>
+
+  <g font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700">
+    <text x="48" y="84" fill="#EAF1F5">DikaRoute</text>
+    <text x="440" y="84" fill="#EAF1F5">ObitoBuff CLI</text>
+    <text x="832" y="84" fill="#EAF1F5">PentesterBot</text>
+  </g>
+</svg>
